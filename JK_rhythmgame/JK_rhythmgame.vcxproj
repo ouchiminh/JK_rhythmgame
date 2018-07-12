@@ -158,6 +158,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="JK_rhythmgame.h" />
+    <ClInclude Include="src\menu_scene.hpp" />
+    <ClInclude Include="src\scene.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JK_rhythmgame.cpp" />
