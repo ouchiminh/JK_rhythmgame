@@ -34,4 +34,10 @@ namespace jk {
 		}
 		t.setPosition(mvdpos);
 	}
+	template<typename T, typename T2>
+	inline T gradual_change(T begin, T end, T2 duration, T2 current) {
+		auto min_width = (end - begin) / duration;
+		if (current >= duration) return end;
+		return static_cast<T>(begin + min_width * current);
+	}
 }

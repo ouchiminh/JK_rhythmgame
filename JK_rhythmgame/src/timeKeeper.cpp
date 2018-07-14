@@ -11,6 +11,15 @@ timeKeeper::timeKeeper(microseconds d) {
 
 timeKeeper::~timeKeeper() {}
 
+void timeKeeper::start() {
+	if(f_started) m_lastCalled = steady_clock::now();
+	f_started = true;
+}
+
+void timeKeeper::finish() {
+	f_started = false;
+}
+
 bool timeKeeper::isTime() {
 	bool istime = remainingTime() <= nanoseconds(0);
 	if (istime) m_lastCalled = steady_clock::now();
