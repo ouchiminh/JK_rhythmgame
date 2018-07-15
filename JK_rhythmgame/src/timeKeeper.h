@@ -14,11 +14,11 @@ public:
 	void finish();
 	bool isTime();
 	void sleep();
-	template<typename Clock>
-	void setDuration(std::chrono::duration<Clock> d);
+	template<typename Clock, typename Period>
+	void setDuration(std::chrono::duration<Clock, Period> d);
 };
 
-template<typename Clock>
-void timeKeeper::setDuration(std::chrono::duration<Clock> d) {
+template<typename Clock, typename Period>
+void timeKeeper::setDuration(std::chrono::duration<Clock, Period> d) {
 	m_duration = std::chrono::duration_cast<decltype(m_duration)>(d);
 }
