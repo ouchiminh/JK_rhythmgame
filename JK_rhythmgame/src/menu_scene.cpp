@@ -9,20 +9,22 @@ jk::SCENEFLAG jk::mainmenu::render_logo() {
 	using namespace std::chrono;
 	unsigned render_target = 0;
 	auto current_pod = logo_started_;
-	if (steady_clock::now() > logo_time * 2 + logo_started_) { 
+	auto current_time = steady_clock::now();
+	if (current_time > logo_time * 2 + logo_started_) { 
 		cur_renderer = &jk::mainmenu::render_menu;
 		return SCENEFLAG::RUNNING;
 	}
-	else if (steady_clock::now() > logo_time + logo_started_) {
+	else if (current_time > logo_time + logo_started_) {
 		render_target++;
 		current_pod = logo_started_ + logo_time;
 	}
 	auto alpha = gradual_change((std::uint8_t)0, (std::uint8_t)255, 
-		(double)fade_time.count(), (double)(steady_clock::now() - current_pod).count());
+		(double)fade_time.count(), (double)(current_time - current_pod).count());
 	logoSpr_[render_target].setColor(sf::Color{ 255,255,255,alpha });
-	w_->clear(sf::Color::Black);
+	w_->clear(sf::Color::White);
 	w_->draw(logoSpr_[render_target], sf::BlendAlpha);
 	w_->display();
+	fps_.sleep();
 	return SCENEFLAG::RUNNING;
 }
 
@@ -46,7 +48,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	}
 	cur_renderer = &jk::mainmenu::render_logo;
 	w_ = &w;
-	fps.start();
+	fps_.start();
 	logo_started_ = std::chrono::steady_clock::now();
 }
 
