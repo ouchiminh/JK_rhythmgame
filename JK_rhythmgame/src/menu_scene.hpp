@@ -9,27 +9,45 @@
 #include "timeKeeper.h"
 
 namespace jk {
-	class mainmenu : public scene {
-		using myduration = std::chrono::steady_clock::duration;
-		inline static const myduration fade_time =
-			std::chrono::duration_cast<myduration>(std::chrono::milliseconds(1400));
-		inline static const myduration disp_time =
-			std::chrono::duration_cast<myduration>(std::chrono::milliseconds(1000));
-		inline static const myduration logo_time = fade_time + disp_time;
-		
-		enum LOGONUM : unsigned { SFML, MIKAN, CNT };
+	
+	inline static const sf::Color bkg_color = sf::Color::White;
+	inline static const timeKeeper fps;
 
+	class logo_renderer {
+		using myduration = std::chrono::steady_clock::duration;
+		static constexpr myduration fade_time =
+			std::chrono::duration_cast<myduration>(std::chrono::milliseconds(1400));
+		static constexpr myduration disp_time =
+			std::chrono::duration_cast<myduration>(std::chrono::milliseconds(1000));
+		static constexpr myduration logo_time = fade_time + disp_time + fade_time;
+
+		enum LOGONUM : unsigned { SFML, MIKAN, CNT };
 		sf::Image logo_[2];
 		sf::Sprite logoSpr_[2];
 		sf::Texture tx_[2];
 		sf::RenderWindow * w_;
-		timeKeeper fps_;
 		std::chrono::steady_clock::time_point logo_started_;
+	public:
+		[[nodiscard]] SCENEFLAG operator() ();
+		void init(HMODULE hm, sf::RenderWindow & w);
+		void free_resource() noexcept;
+	};
 
-		SCENEFLAG (mainmenu::*cur_renderer)();
+	class bkg_renderer {
+		sf::RenderWindow * w_;
+	public:
+		[[nodiscard]] SCENEFLAG operator() ();
+		void init(sf::RenderWindow & w);
+	};
+
+	class mainmenu : public scene {
+		logo_renderer logo;
+		bkg_renderer bkg;
+		SCENEFLAG(mainmenu::*cur_renderer)();
 
 		SCENEFLAG render_logo();
-		SCENEFLAG render_menu();	// メニューUIデザイン未定のため未実装
+		SCENEFLAG render_bkg();
+		SCENEFLAG render_menu();
 	protected:
 		void finish() override;
 	public:

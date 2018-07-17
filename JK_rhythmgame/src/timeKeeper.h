@@ -1,19 +1,17 @@
 #pragma once
 #include <chrono>
 class timeKeeper {
-	std::chrono::steady_clock::time_point m_lastCalled;
+	mutable std::chrono::steady_clock::time_point m_lastCalled;
 	std::chrono::steady_clock::duration m_duration;
 
-	std::chrono::steady_clock::duration remainingTime();
-	bool f_started;
+	std::chrono::steady_clock::duration remainingTime() const;
 public:
 	timeKeeper(std::chrono::microseconds d = std::chrono::microseconds(1'000'000) / 60);
-	~timeKeeper();
+	~timeKeeper() = default;
 
-	void start();
-	void finish();
-	bool isTime();
-	void sleep();
+	void start() const;
+	bool isTime() const;
+	void sleep() const;
 	template<typename Clock, typename Period>
 	void setDuration(std::chrono::duration<Clock, Period> d);
 };
