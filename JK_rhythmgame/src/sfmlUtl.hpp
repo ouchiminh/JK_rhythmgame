@@ -37,7 +37,7 @@ namespace jk {
 		t.setPosition(mvdpos);
 	}
 	template<typename T, typename T2>
-	inline T gradual_change(T begin, T end, T2 duration, T2 current) {
+	constexpr T gradual_change(T begin, T end, T2 duration, T2 current) {
 		auto min_width = (end - begin) / duration;
 		if (current >= duration) return end;
 		else if (current <= static_cast<T2>(0)) return begin;
