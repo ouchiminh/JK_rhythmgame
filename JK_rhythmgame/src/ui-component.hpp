@@ -19,20 +19,34 @@ namespace jk {
 	class ui_component : public sf::Drawable {
 	protected:
 		bool focused_;
+		sf::Rect<std::int32_t> pos_;
 	public:
 		ui_component() : focused_{ false } {}
+		ui_component(sf::Rect<std::int32_t> && p) : pos_{p} {}
 		virtual ~ui_component() = default;
+
 		virtual void draw(sf::RenderTarget &, sf::RenderStates) const override = 0;
 		virtual PROCESSED recieve_event(const sf::Event & e) noexcept {}
 		bool is_focused() const noexcept { return focused_; }
-		void focus(bool b) noexcept { focused_ = b; }
+		void set_focus(bool b) noexcept { focused_ = b; }
 	};
 
 	class ui_mng {
-		std::list<std::unique_ptr<ui_component>> ui_list;
+		std::list<std::shared_ptr<ui_component>> ui_list;
 		
 	public:
 		std::uint32_t recieve_event(const sf::Event & e);
-		void draw(sf::RenderTarget & rt, sf::RenderStates rs) const;
+		void draw(sf::RenderWindow & rt, sf::RenderStates rs) const;
+		template<class T,typename ...T>
+		std::shared_ptr<T> create(T ...args);
+		std::list<std::shared_ptr<ui_component>> get_list() const noexcept;
 	};
+
+	template<class T, typename ...T>
+	inline std::shared_ptr<T> ui_mng::create(T ...args) {
+		static_assert(std::is_base_of_v<ui_component, T>);
+		auto r{ std::make_shared<T>(args...) };
+		ui_list.push_front(r);
+		return r;
+	}
 }
