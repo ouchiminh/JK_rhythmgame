@@ -167,12 +167,14 @@
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\sfmlUtl.hpp" />
     <ClInclude Include="src\timeKeeper.h" />
+    <ClInclude Include="src\ui-component.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JK_rhythmgame.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
     <ClCompile Include="src\sfmlUtl.cpp" />
     <ClCompile Include="src\timeKeeper.cpp" />
+    <ClCompile Include="src\ui-component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="JK_rhythmgame.rc" />

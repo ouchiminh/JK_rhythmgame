@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "SFML\Window\Event.hpp"
+#include "SFML/Window/Event.hpp"
 
 namespace jk {
 	enum SCENEFLAG{
