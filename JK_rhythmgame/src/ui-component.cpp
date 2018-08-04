@@ -2,7 +2,7 @@
 using namespace jk;
 inline std::uint32_t jk::ui_mng::recieve_event(const sf::Event & e) {
 	PROCESSED r{ 0 };
-	for (auto & i : ui_list) {
+	for (auto & i : ui_list_) {
 		r = i->recieve_event(e);
 		if (r.mini[0] == NO_FALLTHROUGH && r.mini[1] == true) break;
 	}
@@ -10,9 +10,9 @@ inline std::uint32_t jk::ui_mng::recieve_event(const sf::Event & e) {
 }
 
 void jk::ui_mng::draw(sf::RenderWindow & rt, sf::RenderStates rs) const {
-	for (auto & i : ui_list) rt.draw(*i, rs);
+	for (auto & i : ui_list_) rt.draw(*i, rs);
 }
 
 std::list<std::shared_ptr<ui_component>> jk::ui_mng::get_list() const noexcept {
-	return ui_list;
+	return ui_list_;
 }

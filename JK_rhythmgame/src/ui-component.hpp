@@ -32,7 +32,7 @@ namespace jk {
 	};
 
 	class ui_mng {
-		std::list<std::shared_ptr<ui_component>> ui_list;
+		std::list<std::shared_ptr<ui_component>> ui_list_;
 		
 	public:
 		std::uint32_t recieve_event(const sf::Event & e);
@@ -46,7 +46,7 @@ namespace jk {
 	inline std::shared_ptr<T> ui_mng::create(T ...args) {
 		static_assert(std::is_base_of_v<ui_component, T>);
 		auto r{ std::make_shared<T>(args...) };
-		ui_list.push_front(r);
+		ui_list_.push_front(r);
 		return r;
 	}
 }
