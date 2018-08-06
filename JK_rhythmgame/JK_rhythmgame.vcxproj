@@ -174,6 +174,7 @@
   <ItemGroup>
     <ClCompile Include="JK_rhythmgame.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
+    <ClCompile Include="src\sfml-button.cpp" />
     <ClCompile Include="src\sfmlUtl.cpp" />
     <ClCompile Include="src\timeKeeper.cpp" />
     <ClCompile Include="src\ui-component.cpp" />

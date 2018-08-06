@@ -9,7 +9,7 @@ void jk::button::draw(sf::RenderTarget & rt, sf::RenderStates rs) const {
 
 jk::PROCESSED jk::button::recieve_event(const sf::Event & e) noexcept {
 	jk::PROCESSED r{ 0 };
-	if (!is_processable(e)) return r;
-	r.each[1] = handlers_(e, bkg_, title_);
-	r.mini[1] = true;
+	bool did = false;
+	r.each[1] = handlers_(e, bkg_, title_, did);
+	r.mini[1] = did;
 }
