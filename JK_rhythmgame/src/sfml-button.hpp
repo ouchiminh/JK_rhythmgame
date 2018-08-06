@@ -10,16 +10,13 @@ namespace jk {
 		sf::Sprite bkg_;
 		sf::Text title_;
 	public:
-		event_handlers handlers_;
+		event_handlers<sf::Sprite &, sf::Text&> handlers_;
 
 	public:
 		button() = default;
-		button(const sf::Text & t, const sf::Sprite bkg);
-		button(const sf::Text & t, const sf::Color bkg = sf::Color::Black);
+		button(const sf::Text & t, const sf::Sprite & bkg);
 
 		void draw(sf::RenderTarget & rt, sf::RenderStates rs) const override;
 		PROCESSED recieve_event(const sf::Event & e) noexcept override;
-	private:
-		bool is_processable(sf::Event & e) const noexcept;
 	};
 }

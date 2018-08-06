@@ -4,7 +4,7 @@ inline std::uint32_t jk::ui_mng::recieve_event(const sf::Event & e) {
 	PROCESSED r{ 0 };
 	for (auto & i : ui_list_) {
 		r = i->recieve_event(e);
-		if (r.mini[0] == NO_FALLTHROUGH && r.mini[1] == true) break;
+		if (r.mini[0] == NO_FALLTHROUGH && r.mini[1]) break;
 	}
 	return r.each[1];
 }

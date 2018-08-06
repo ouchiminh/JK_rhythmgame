@@ -5,10 +5,12 @@
 #include "SFML/Window/Event.hpp"
 
 namespace jk {
-	using event_handler_t = std::function<std::uint32_t(sf::Event)>;
+	template<typename ret_t, class ...Args>
+	using event_handler_t = std::function<ret_t(const sf::Event &, Args...)>;
 
+	template<class ...Args, typename ret_t = std::uint32_t>
 	class event_handlers {
-		std::map<sf::Event::EventType, event_handler_t> handlers_;
+		std::map<sf::Event::EventType, event_handler_t<ret_t, Args...>> handlers_;
 
 	public:
 		event_handlers & operator << (std::pair<sf::Event::EventType, event_handler_t> && pack) {
@@ -19,8 +21,9 @@ namespace jk {
 			handlers_.erase(key);
 			return *this;
 		}
-		std::uint32_t operator () (const sf::Event & e) {
-			if (handlers_.count(e.type)) handlers_.at(e.type)(e);
+		std::uint32_t operator () (const sf::Event & e, Args ...args) {
+			if (handlers_.count(e.type)) return handlers_.at(e.type)(e, args...);
+			return 0;
 		}
 
 		void clear();
