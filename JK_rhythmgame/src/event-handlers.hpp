@@ -21,13 +21,13 @@ namespace jk {
 			handlers_.erase(key);
 			return *this;
 		}
-		std::uint32_t operator () (const sf::Event & e, Args ...args, bool & did) {
+		std::uint32_t operator () (bool & did, const sf::Event & e, Args ...args) {
 			did = true;
 			if (handlers_.count(e.type)) return handlers_.at(e.type)(e, args...);
 			did = false;
 			return 0;
 		}
 
-		void clear();
+		void clear() noexcept { handlers_.clear(); }
 	};
 }

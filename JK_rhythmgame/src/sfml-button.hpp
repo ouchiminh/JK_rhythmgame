@@ -10,7 +10,7 @@ namespace jk {
 		sf::Sprite bkg_;
 		sf::Text title_;
 	public:
-		event_handlers<sf::Sprite &, sf::Text&> handlers_;
+		event_handlers<sf::Sprite &, sf::Text &> handlers_;
 
 	public:
 		button() = default;

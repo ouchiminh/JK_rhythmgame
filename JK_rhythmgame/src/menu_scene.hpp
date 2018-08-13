@@ -5,14 +5,12 @@
 #include <Windows.h>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics.hpp"
+#include "ui-component.hpp"
 #include "scene.hpp"
 #include "timeKeeper.h"
 
 namespace jk {
 	
-	inline static const sf::Color bkg_color = sf::Color::White;
-	inline static const timeKeeper fps;
-
 	class logo_renderer {
 		using myduration = std::chrono::steady_clock::duration;
 		static constexpr myduration fade_time =
@@ -40,6 +38,15 @@ namespace jk {
 		void init(sf::RenderWindow & w);
 	};
 
+	class menu_renderer {
+		sf::Texture bkg_;
+		ui_mng ui_mng_;
+	public:
+		[[nodiscard]] SCENEFLAG operator() ();
+		void init(HMODULE hm, sf::RenderWindow & w);
+		void free_resource() noexcept;
+	};
+
 	class mainmenu : public scene {
 		logo_renderer logo;
 		bkg_renderer bkg;
@@ -48,6 +55,8 @@ namespace jk {
 		SCENEFLAG render_logo();
 		SCENEFLAG render_bkg();
 		SCENEFLAG render_menu();
+
+		SCENE_LIST next_scene;
 	protected:
 		void finish() override;
 	public:

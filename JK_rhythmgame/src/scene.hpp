@@ -18,6 +18,10 @@ namespace jk {
 		MethodExec<T>(T::*func_)(); // 実行するT型クラスのメソッドポインタ
 	};
 
+	enum SCENE_LIST : std::intptr_t {
+		Main_Menu
+	};
+
 	class scene {
 		virtual void finish() = 0;
 	public:

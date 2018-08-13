@@ -5,6 +5,11 @@
 #include "menu_scene.hpp"
 #include "sfmlUtl.hpp"
 
+namespace {
+	const timeKeeper fps;
+	const sf::Color bkg_color = sf::Color::White;
+}
+
 jk::SCENEFLAG jk::mainmenu::render_logo() {
 	jk::SCENEFLAG ret;
 	if ((ret = logo()) == SCENEFLAG::FINISHED) cur_renderer = &jk::mainmenu::render_bkg;
@@ -29,6 +34,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	logo.init(hm, w);
 	bkg.init(w);
 	cur_renderer = &jk::mainmenu::render_logo;
+	next_scene = SCENE_LIST::Main_Menu;
 }
 
 bool jk::mainmenu::free_resource() noexcept {
