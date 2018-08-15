@@ -1,18 +1,22 @@
 #include "ui-component.hpp"
 using namespace jk;
-inline std::uint32_t jk::ui_mng::recieve_event(const sf::Event & e) {
+std::uint32_t jk::ui_mng::event_procedure(const sf::Event & e) {
 	PROCESSED r{ 0 };
 	for (auto & i : ui_list_) {
-		r = i->recieve_event(e);
-		if (r.get_fall_through() == NO_FALLTHROUGH && r.get_is_processed()) break;
+		r = i->event_procedure(e);
+		if (r.get_fallthrough() == NO_FALLTHROUGH && r.get_is_processed()) break;
 	}
-	return r.each[1];
+	return r.get_retv();
 }
 
 void jk::ui_mng::draw(sf::RenderWindow & rt, sf::RenderStates rs) const {
 	for (auto & i : ui_list_) rt.draw(*i, rs);
 }
 
-std::list<std::shared_ptr<ui_component>> jk::ui_mng::get_list() const noexcept {
+std::list<std::shared_ptr<ui_component>> & jk::ui_mng::get_list() noexcept {
+	return ui_list_;
+}
+
+const std::list<std::shared_ptr<ui_component>>& jk::ui_mng::get_list() const noexcept {
 	return ui_list_;
 }

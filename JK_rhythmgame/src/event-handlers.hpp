@@ -5,27 +5,36 @@
 #include "SFML/Window/Event.hpp"
 
 namespace jk {
+	//	error:exception
 	template<class ...Args>
 	using event_handler_t = std::function<std::uint32_t(const sf::Event &, Args...)>;
 
 	template<class ...Args>
 	class event_handlers {
-		std::map<sf::Event::EventType, event_handler_t<Args...>> handlers_;
+		std::multimap<sf::Event::EventType, event_handler_t<Args...>> handlers_;
 
 	public:
 		event_handlers & operator << (std::pair<sf::Event::EventType, event_handler_t<Args...>> && pack) {
-			handlers_.insert_or_assign(pack.first, pack.second);
+			handlers_.insert(pack);
 			return *this;
 		}
 		event_handlers & operator -=(sf::Event::EventType key) {
 			handlers_.erase(key);
 			return *this;
 		}
-		std::uint32_t operator () (bool & did, const sf::Event & e, Args ...args) {
-			did = true;
-			if (handlers_.count(e.type)) return handlers_.at(e.type)(e, args...);
-			did = false;
-			return 0;
+		PROCESSED operator () (const sf::Event & e, Args ...args) {
+			std::uint32_t ret{ 0 };
+			PROCESSED did{ 0 };
+			if (handlers_.count(e.type)) {
+				auto r = handlers_.equal_range(e.type);
+				std::uint32_t buf;
+				std::for_each(r.first, r.second, [&](auto & a) { ret = (buf = a.second(e, args...)) ? buf : ret; });
+				did.processed();
+				did.set_retv(ret);
+				return did;
+			}
+			did.processed(false);
+			return did;
 		}
 
 		void clear() noexcept { handlers_.clear(); }

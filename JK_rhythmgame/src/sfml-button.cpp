@@ -7,10 +7,10 @@ void jk::button::draw(sf::RenderTarget & rt, sf::RenderStates rs) const {
 	rt.draw(title_, rs);
 }
 
-jk::PROCESSED jk::button::recieve_event(const sf::Event & e) noexcept {
-	jk::PROCESSED r{ 0 };
-	bool did = false;
-	r.set_ret(handlers_(did, e, bkg_, title_));
-	r.processed(did);
-	return r;
+sf::FloatRect jk::button::get_rect() const noexcept {
+	return bkg_.getGlobalBounds();
+}
+
+jk::PROCESSED jk::button::event_procedure(const sf::Event & e) {
+	return handlers_(e, bkg_, title_, *this);
 }

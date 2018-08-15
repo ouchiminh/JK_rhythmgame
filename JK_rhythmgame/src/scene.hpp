@@ -19,7 +19,7 @@ namespace jk {
 	};
 
 	enum SCENE_LIST : std::intptr_t {
-		Main_Menu
+		Main_Menu, Map_Select
 	};
 
 	class scene {

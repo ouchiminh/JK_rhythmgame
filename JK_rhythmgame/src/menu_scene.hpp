@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics.hpp"
-#include "ui-component.hpp"
+#include "sfml-button.hpp"
 #include "scene.hpp"
 #include "timeKeeper.h"
 
@@ -33,30 +33,46 @@ namespace jk {
 
 	class bkg_renderer {
 		sf::RenderWindow * w_;
+		sf::Time time_;
+		sf::Clock clock_;
+		bool started_;
 	public:
 		[[nodiscard]] SCENEFLAG operator() ();
-		void init(sf::RenderWindow & w);
+		void init(sf::RenderWindow & w, sf::Time render_time = sf::seconds(1.0f));
 	};
 
 	class menu_renderer {
-		sf::Texture bkg_;
+		sf::Texture bkg_tx_;
+		sf::Sprite bkg_;
+		sf::Font f;
 		ui_mng ui_mng_;
+
+		sf::RenderWindow * w_;
+
+		bool did_initialized_;
+		SCENEFLAG flag_;
 	public:
+		menu_renderer();
+
 		[[nodiscard]] SCENEFLAG operator() ();
 		void init(HMODULE hm, sf::RenderWindow & w);
 		void free_resource() noexcept;
+		std::uint32_t input(const sf::Event & e);
+	private:
+		std::int32_t on_button_click(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b);
 	};
 
 	class mainmenu : public scene {
-		logo_renderer logo;
-		bkg_renderer bkg;
+		logo_renderer logo_;
+		bkg_renderer bkg_;
+		menu_renderer menu_;
 		SCENEFLAG(mainmenu::*cur_renderer)();
 
 		SCENEFLAG render_logo();
 		SCENEFLAG render_bkg();
 		SCENEFLAG render_menu();
 
-		SCENE_LIST next_scene;
+		SCENE_LIST next_scene_;
 	protected:
 		void finish() override;
 	public:
@@ -66,5 +82,7 @@ namespace jk {
 		virtual SCENEFLAG render() override;
 		[[nodiscard]] virtual std::intptr_t get_next_scene() const noexcept override;
 		virtual void input(const sf::Event & e) noexcept override;
+
+		~mainmenu() = default;
 	};
 }
