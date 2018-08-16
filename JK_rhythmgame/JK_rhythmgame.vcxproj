@@ -163,17 +163,27 @@
   <ItemGroup>
     <ClInclude Include="JK_rhythmgame.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\aes\aes-utl.hpp" />
+    <ClInclude Include="src\aes\include\aes.hpp" />
+    <ClInclude Include="src\aes\include\key.hpp" />
+    <ClInclude Include="src\aes\include\SHA256.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
+    <ClInclude Include="src\meta-helper.h" />
     <ClInclude Include="src\scene-mng.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\sfml-button.hpp" />
     <ClInclude Include="src\sfmlUtl.hpp" />
+    <ClInclude Include="src\stream-traits.hpp" />
     <ClInclude Include="src\timeKeeper.h" />
     <ClInclude Include="src\ui-component.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JK_rhythmgame.cpp" />
+    <ClCompile Include="src\aes\aes-utl.cpp" />
+    <ClCompile Include="src\aes\src\aes.cpp" />
+    <ClCompile Include="src\aes\src\main.cpp" />
+    <ClCompile Include="src\aes\src\SHA256.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
     <ClCompile Include="src\sfml-button.cpp" />
     <ClCompile Include="src\sfmlUtl.cpp" />
