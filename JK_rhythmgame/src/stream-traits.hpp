@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <istream>
 #include "SFML/System/InputStream.hpp"
-#include "meta-helper.h"
+#include "meta-helper.hpp"
 
 
 namespace jk {
@@ -63,17 +63,17 @@ namespace jk {
 
 
 	template<class T>
-	class ostream_traits{};
+	class ostream_traits_impl{};
 
-	template<typename T>
-	class ostream_traits<std::basic_ostream<T>> {
+	template<typename CharT>
+	class ostream_traits_impl<std::basic_ostream<CharT>> {
 	public:
-		static_assert(sizeof(T) == 1, "Size of T should be 1 byte for perfect compatibility with sf::InputStream.");
+		static_assert(sizeof(CharT) == 1, "Size of T should be 1 byte for perfect compatibility with sf::InputStream.");
 
-		using stream_t = std::basic_ostream<T>;
+		using stream_t = std::basic_ostream<CharT>;
 
 		static void write(stream_t & s, void * data, std::int64_t size) {
-			s.write((T*)data, size);
+			s.write((CharT*)data, size);
 		}
 		static std::int64_t seekp(stream_t & s, std::int64_t pos) {
 			s.seekp(pos, std::ios::beg);
@@ -83,4 +83,11 @@ namespace jk {
 			return s.tellp();
 		}
 	};
+
+	template<class T>
+	class ostream_traits :
+		public ostream_traits_impl<typename search_base<T, std::basic_ostream<char>, std::basic_ostream<unsigned char>>::type>
+	{ };
+
+
 }
