@@ -169,7 +169,7 @@
     <ClInclude Include="src\aes\include\SHA256.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
-    <ClInclude Include="src\meta-helper.h" />
+    <ClInclude Include="src\meta-helper.hpp" />
     <ClInclude Include="src\scene-mng.hpp" />
     <ClInclude Include="src\scene.hpp" />
     <ClInclude Include="src\sfml-button.hpp" />

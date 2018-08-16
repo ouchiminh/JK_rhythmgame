@@ -223,14 +223,3 @@ int enc::mul(int dt, int n) {
 int enc::dataget(void * data, int n) {
 	return (((unsigned char*)data)[n]);
 }
-
-enc::block_16::block_16(void * data) {
-	memcpy(bytes, data, 16);
-}
-
-enc::block_16::block_16() : bytes{} {}
-
-enc::block_16 & enc::block_16::operator=(const void * data) {
-	memcpy(bytes, data, 16);
-	return *this;
-}

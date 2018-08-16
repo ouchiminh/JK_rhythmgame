@@ -22,15 +22,40 @@ namespace enc {
 		uint8_t bytes[32];
 		std::uint32_t fours[8];
 	};
-	typedef union block_16 {
-		uint8_t bytes[16];
-		uint32_t fours[4];
+	template<size_t size = 16>
+	union block {
+		uint8_t bytes[size];
+		uint32_t fours[size/4];
 
-		block_16(void * data);
-		block_16();
+		block(void * data);
+		block();
 
-		block_16 & operator=(const void * data);
-	} block;
+		block & operator=(const void * data);
+		bool operator==(const block<size> & obj);
+	};
+
+	template<size_t size>
+	enc::block<size>::block(void * data) {
+		memcpy(bytes, data, size);
+	}
+
+	template<size_t size>
+	enc::block<size>::block() : bytes{} {}
+
+	template<size_t size>
+	enc::block<size> & enc::block<size>::operator=(const void * data) {
+		memcpy(bytes, data, 16);
+		return *this;
+	}
+
+	template<size_t size>
+	bool enc::block<size>::operator==(const block<size> & obj) {
+		for (unsigned i = 0; i < size; i++)
+			if (obj.bytes[i] != bytes[i]) return false;
+		return true;
+	}
+
+	using block_16 = block<16>;
 
 	enum class CIPHERMODE { ECB, CBC };
 	struct aesKey {
@@ -159,7 +184,7 @@ namespace enc {
 	template<CIPHERMODE mode>
 	inline void aes::decryptBlock(void * data) const noexcept {
 		size_t i;
-		block pbTmp(data);
+		block_16 pbTmp(data);
 		addRoundKey(data, (int)nr);
 		for (i = nr - 1; i > 0; i--) {
 			invShiftRows(data);

@@ -26,12 +26,18 @@ namespace enc {
 		using in_traits = jk::istream_traits<IStream>;
 		auto size = in_traits::get_size(in);
 		void * data = new uint8_t[size];
+		SHA256 hash;
+		block<32> newb, orgb;
 
 		in_traits::read(in, data, size);
 		auto result = encoder_.decrypt(data, size);
-
 		delete[] data;
-		return std::forward<std::vector<std::uint8_t>>(result);
+		orgb = result.data() + (result.size() - 32);
+		hash.Push(result.data(), (u_32)result.size() - 32);
+		hash.Final((unsigned char*)(void*)newb.bytes);
+		
+		if (orgb == newb) return std::forward<std::vector<std::uint8_t>>(result);
+		throw std::runtime_error("hash incorrenct. data may be corrupted.");
 	}
 
 	template<class IStream, class OStream>
