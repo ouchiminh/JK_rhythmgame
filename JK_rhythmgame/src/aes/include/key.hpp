@@ -2,7 +2,7 @@
 #include "aes.hpp"
 
 namespace enc{
-    inline aesKey makeKey(const char * password = nullptr, size_t sizeInByte = 0){
+    [[nodiscard]] inline aesKey makeKey(const char * password = nullptr, size_t sizeInByte = 0){
 		SHA256 sha;
 		aesKey k;
 		if(sizeInByte == 0) return k;
@@ -11,10 +11,10 @@ namespace enc{
 		sha.Final(k.data.bytes);
 		return k;
     }
-    inline aesKey makeKey(const std::string & password){
+    [[nodiscard]] inline aesKey makeKey(const std::string & password){
         return makeKey(password.c_str(), password.size());
     }
-    inline aesKey makeKey(std::string && password){
+    [[nodiscard]] inline aesKey makeKey(std::string && password){
         return makeKey(password);
     }
 

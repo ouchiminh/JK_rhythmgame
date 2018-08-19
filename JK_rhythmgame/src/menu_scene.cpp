@@ -7,19 +7,19 @@
 #include "sfml-button.hpp"
 
 namespace {
-	const sf::Color bkg_color = sf::Color::Black;
+	const sf::Color bkg_color = sf::Color::White;
 }
 
 jk::SCENEFLAG jk::mainmenu::render_logo() {
 	jk::SCENEFLAG ret;
 	if ((ret = logo_()) == SCENEFLAG::FINISHED) cur_renderer = &jk::mainmenu::render_bkg;
-	return ret;
+	return SCENEFLAG::RUNNING;
 }
 
 jk::SCENEFLAG jk::mainmenu::render_bkg() {
 	jk::SCENEFLAG ret;
 	if ((ret = bkg_()) == SCENEFLAG::FINISHED) cur_renderer = &jk::mainmenu::render_menu;
-	return ret;
+	return SCENEFLAG::RUNNING;
 }
 
 jk::SCENEFLAG jk::mainmenu::render_menu() {
@@ -40,15 +40,15 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 
 bool jk::mainmenu::free_resource() noexcept {
 	logo_.free_resource();
+	menu_.free_resource();
 	return true;
 }
 
 jk::SCENEFLAG jk::mainmenu::render() {
-	(this->*cur_renderer)();
-	return SCENEFLAG();
+	return (this->*cur_renderer)();
 }
 
-std::intptr_t jk::mainmenu::get_next_scene() const noexcept { return SCENEFLAG(); }
+jk::SCENE_LIST jk::mainmenu::get_next_scene() const noexcept { return next_scene_; }
 
 void jk::mainmenu::input(const sf::Event & e) noexcept {
 	menu_.input(e);
@@ -96,9 +96,9 @@ void jk::logo_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 
 inline void jk::logo_renderer::free_resource() noexcept {
 	for (unsigned i = 0; i < LOGONUM::CNT; ++i) {
-		logo_[i].~Image();
-		logoSpr_[i].~Sprite();
-		tx_[i].~Texture();
+		logo_[i] = sf::Image{};
+		logoSpr_[i] = sf::Sprite{};
+		tx_[i] = sf::Texture{};
 		w_ = nullptr;
 	}
 	return;
@@ -136,7 +136,7 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	using namespace std::placeholders;
 	if (did_initialized_) return;
 	f.loadFromFile(".\\res\\fonts\\meiryo.ttc");
-	ui_mng_.create<jk::button>(sf::Text("GAME START", f), sf::Sprite{})->handlers_ <<
+	ui_mng_.create<jk::button>(sf::Text("GAME START", f))->handlers_ <<
 		std::make_pair(sf::Event::EventType::MouseButtonPressed, [&](const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
 			return on_button_click(e, s, t, b);
 		});
@@ -146,9 +146,9 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 }
 
 void jk::menu_renderer::free_resource() noexcept {
-	bkg_tx_.~Texture();
-	bkg_.~Sprite();
-	f.~Font();
+	bkg_tx_ = sf::Texture{};
+	bkg_ = sf::Sprite{};
+	f = sf::Font{};
 	ui_mng_.get_list().clear();
 	did_initialized_ = false;
 }
@@ -159,8 +159,8 @@ std::uint32_t jk::menu_renderer::input(const sf::Event & e) {
 
 std::int32_t jk::menu_renderer::on_button_click(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
 	if (flag_ == jk::SCENEFLAG::NOTYET ||
-		!b.get_rect().contains(sf::Vector2f{ (float)e.mouseButton.x, (float)e.mouseButton.y })
-		)
+		!b.get_rect().contains(sf::Vector2f{ (float)e.mouseButton.x, (float)e.mouseButton.y }) ||
+		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;
 	flag_ = FINISHED;
 	return 0;

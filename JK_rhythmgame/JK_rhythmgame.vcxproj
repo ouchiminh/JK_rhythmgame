@@ -182,9 +182,9 @@
     <ClCompile Include="JK_rhythmgame.cpp" />
     <ClCompile Include="src\aes\aes-utl.cpp" />
     <ClCompile Include="src\aes\src\aes.cpp" />
-    <ClCompile Include="src\aes\src\main.cpp" />
     <ClCompile Include="src\aes\src\SHA256.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
+    <ClCompile Include="src\scene-mng.cpp" />
     <ClCompile Include="src\sfml-button.cpp" />
     <ClCompile Include="src\sfmlUtl.cpp" />
     <ClCompile Include="src\timeKeeper.cpp" />

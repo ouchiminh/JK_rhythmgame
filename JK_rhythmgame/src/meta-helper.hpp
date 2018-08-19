@@ -4,20 +4,20 @@ namespace jk {
 	template<class D, class Head, class ...Arg>
 	class search_base {
 	public:
-		typedef typename std::conditional_t<
-			std::is_base_of<Head, D>::value,
+		typedef std::conditional_t<
+			std::is_base_of_v<Head, D>,
 			Head,
 			typename search_base<D, Arg...>::type
-		> typename type;
+		> type;
 	};
 
 	template<class D, class Head>
 	class search_base<D, Head> {
 	public:
-		typedef typename std::conditional_t<
-			std::is_base_of<Head, D>::value,
+		typedef std::conditional_t<
+			std::is_base_of_v<Head, D>,
 			Head,
 			void
-		> typename type;
+		> type;
 	};
 }

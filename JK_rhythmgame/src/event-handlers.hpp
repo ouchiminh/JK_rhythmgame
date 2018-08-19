@@ -22,9 +22,9 @@ namespace jk {
 			handlers_.erase(key);
 			return *this;
 		}
-		PROCESSED operator () (const sf::Event & e, Args ...args) {
+		result_t operator () (const sf::Event & e, Args ...args) {
 			std::uint32_t ret{ 0 };
-			PROCESSED did{ 0 };
+			result_t did{ 0 };
 			if (handlers_.count(e.type)) {
 				auto r = handlers_.equal_range(e.type);
 				std::uint32_t buf;

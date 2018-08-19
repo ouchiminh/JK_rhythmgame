@@ -3,7 +3,7 @@
 #include "aes-utl.hpp"
 
 void enc::aes_utl::set_encoder(aes && encoder) {
-	encoder_ = encoder;
+	encoder_ = std::move(encoder);
 }
 
 enc::aes & enc::aes_utl::get_encoder() noexcept {

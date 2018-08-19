@@ -20,9 +20,9 @@ namespace jk {
 		static constexpr myduration logo_time = fade_time + disp_time + fade_time;
 
 		enum LOGONUM : unsigned { SFML, MIKAN, CNT };
-		sf::Image logo_[2];
-		sf::Sprite logoSpr_[2];
-		sf::Texture tx_[2];
+		sf::Image logo_[CNT];
+		sf::Sprite logoSpr_[CNT];
+		sf::Texture tx_[CNT];
 		sf::RenderWindow * w_;
 		std::chrono::steady_clock::time_point logo_started_;
 	public:
@@ -76,11 +76,11 @@ namespace jk {
 	protected:
 		void finish() override;
 	public:
-		void init(HMODULE hm, sf::RenderWindow & w);
+		void init(HMODULE hm, sf::RenderWindow & w) override;
 		virtual bool free_resource() noexcept override;
 
 		virtual SCENEFLAG render() override;
-		[[nodiscard]] virtual std::intptr_t get_next_scene() const noexcept override;
+		[[nodiscard]] virtual SCENE_LIST get_next_scene() const noexcept override;
 		virtual void input(const sf::Event & e) noexcept override;
 
 		~mainmenu() = default;
