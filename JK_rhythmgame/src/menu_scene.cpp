@@ -135,8 +135,18 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	using namespace std::placeholders;
 	if (did_initialized_) return;
+	sf::Text button_title;
 	f.loadFromFile(".\\res\\fonts\\meiryo.ttc");
-	ui_mng_.create<jk::button>(sf::Text("GAME START", f))->handlers_ <<
+	{
+		button_title.setFont(f);
+		button_title.setString("Game Start");
+		jk::adjust_pos(button_title, w, jk::ADJUSTFLAG::HCENTER);
+		auto pos = button_title.getPosition();
+		pos.y = w.getSize().y * 0.7f;
+		button_title.setPosition(pos);
+		button_title.setFillColor(sf::Color(0xFF,0xB3,0x00));
+	}
+	ui_mng_.create<jk::button>(button_title)->handlers_ <<
 		std::make_pair(sf::Event::EventType::MouseButtonPressed, [&](const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
 			return on_button_click(e, s, t, b);
 		});

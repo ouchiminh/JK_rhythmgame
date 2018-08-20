@@ -21,6 +21,6 @@ void jk::scene_mng::render() {
 	auto endflag = scene_list_.at(cur_scene_)->render();
 	if (endflag == SCENEFLAG::FINISHED) {
 		cur_scene_ = scene_list_.at(cur_scene_)->get_next_scene();
-		scene_list_.at(cur_scene_)->init(hm_, rw_);
+		if(scene_list_.count(cur_scene_))scene_list_.at(cur_scene_)->init(hm_, rw_);
 	}
 }
