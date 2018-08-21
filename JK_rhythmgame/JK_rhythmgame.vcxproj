@@ -167,7 +167,8 @@
     <ClInclude Include="src\aes\include\aes.hpp" />
     <ClInclude Include="src\aes\include\key.hpp" />
     <ClInclude Include="src\aes\include\SHA256.hpp" />
-    <ClInclude Include="src\effect-button.hpp" />
+    <ClInclude Include="src\button_effect.hpp" />
+    <ClInclude Include="src\effect.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
     <ClInclude Include="src\meta-helper.hpp" />

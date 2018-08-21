@@ -1,13 +1,16 @@
 #pragma once
+#ifndef NOMIMMAX
 #define NOMINMAX
+#endif
 #include <chrono>
 #include <functional>
 #include <Windows.h>
+#include <shared_mutex>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics.hpp"
 #include "sfml-button.hpp"
+#include "button_effect.hpp"
 #include "scene.hpp"
-#include "timeKeeper.h"
 
 namespace jk {
 	
@@ -42,11 +45,12 @@ namespace jk {
 	};
 
 	class menu_renderer {
+		std::shared_mutex mtx_;
 		sf::Texture bkg_tx_;
 		sf::Sprite bkg_;
 		sf::Font f;
 		ui_mng ui_mng_;
-
+		expand_effect<on_mouse_hover> ee_{mtx_};
 		sf::RenderWindow * w_;
 
 		bool did_initialized_;

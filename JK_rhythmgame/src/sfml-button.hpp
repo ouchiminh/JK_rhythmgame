@@ -8,6 +8,7 @@
 namespace jk {
 
 	class button : public ui_component{
+	protected:
 		sf::Texture texture_;
 		sf::Sprite bkg_;
 		sf::Text title_;
@@ -20,7 +21,7 @@ namespace jk {
 		button(const sf::Text & t, std::string_view bkg_filename);
 		button(const sf::Text & t);
 
-		void draw(sf::RenderTarget & rt, sf::RenderStates rs) const override;
+		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;
 		result_t event_procedure(const sf::Event & e) override;
 		sf::FloatRect get_rect() const noexcept override;
 	};
