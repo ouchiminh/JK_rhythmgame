@@ -139,11 +139,13 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	using namespace std::placeholders;
 	std::lock_guard<std::shared_mutex> lg(mtx_);
+
+	expand_effect<on_mouse_hover> ee{mtx_};
 	
 	if (did_initialized_) return;
 	sf::Text button_title;
 	event_handler_t<sf::Sprite&, sf::Text&, button&> eh;
-	eh = ee_;
+	eh = ee;
 	f.loadFromFile(".\\res\\fonts\\meiryo.ttc");
 	{
 		button_title.setFont(f);
@@ -179,7 +181,7 @@ std::uint32_t jk::menu_renderer::input(const sf::Event & e) {
 
 std::int32_t jk::menu_renderer::on_button_click(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
 	std::lock_guard<std::shared_mutex> lg(mtx_);
-	if (flag_ == jk::SCENEFLAG::NOTYET ||
+	if (flag_ != jk::SCENEFLAG::RUNNING ||
 		!b.get_rect().contains(sf::Vector2f{ (float)e.mouseButton.x, (float)e.mouseButton.y }) ||
 		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;

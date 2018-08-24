@@ -170,6 +170,7 @@
     <ClInclude Include="src\button_effect.hpp" />
     <ClInclude Include="src\effect.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
+    <ClInclude Include="src\map-select.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
     <ClInclude Include="src\meta-helper.hpp" />
     <ClInclude Include="src\scene-mng.hpp" />

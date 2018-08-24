@@ -50,7 +50,6 @@ namespace jk {
 		sf::Sprite bkg_;
 		sf::Font f;
 		ui_mng ui_mng_;
-		expand_effect<on_mouse_hover> ee_{mtx_};
 		sf::RenderWindow * w_;
 
 		bool did_initialized_;
