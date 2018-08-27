@@ -11,10 +11,10 @@ namespace jk::archive {
 		std::filesystem::path filepath_;
 	public:
 		template<class IStream>
-		file(const std::filesystem::path & filepath, IStream & in, size_t size);
+		file(const std::filesystem::path & filepath, IStream & in, size_t size) throw(std::runtime_error);
 		template<class IStream>
-		file(std::filesystem::path && filepath, IStream & in, size_t size);
-		file();			// initialize as invalid object
+		file(std::filesystem::path && filepath, IStream & in, size_t size) throw(std::runtime_error);
+		file() noexcept;			// initialize as invalid object
 
 		bool is_avail() const noexcept;
 		void * get_body() noexcept;
@@ -24,6 +24,7 @@ namespace jk::archive {
 		template<class OStream>
 		void write(OStream & out);
 
+		file & operator=(const std::filesystem::path & p);
 		static bool operator==(const file & f, const std::filesystem::path & p) noexcept;
 		static bool operator==(const std::filesystem::path & p, const file & f) noexcept;
 	};

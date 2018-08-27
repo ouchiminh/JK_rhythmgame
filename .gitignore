@@ -44,3 +44,8 @@
 *.filters
 *.user
 *.aps
+*.xdc
+*.pdf
+*.html
+*.xml
+

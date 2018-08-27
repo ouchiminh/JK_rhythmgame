@@ -107,6 +107,7 @@
       <AdditionalIncludeDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,6 +149,8 @@
       <AdditionalIncludeDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -167,6 +170,7 @@
     <ClInclude Include="src\aes\include\aes.hpp" />
     <ClInclude Include="src\aes\include\key.hpp" />
     <ClInclude Include="src\aes\include\SHA256.hpp" />
+    <ClInclude Include="src\arcfile.hpp" />
     <ClInclude Include="src\archiver.hpp" />
     <ClInclude Include="src\button_effect.hpp" />
     <ClInclude Include="src\effect.hpp" />
