@@ -8,7 +8,14 @@
 
 namespace jk {
 	template<class T>
-	class istream_traits_impl {};
+	class istream_traits_impl {
+	public:
+		using stream_t = T;
+		static std::int64_t read(stream_t & s, void * data, std::int64_t size);
+		static std::int64_t seekg(stream_t  & s, std::int64_t pos);
+		static std::int64_t get_size(stream_t & s);
+		static std::int64_t tellg(stream_t & s);
+	};
 
 	template<>
 	class istream_traits_impl<sf::InputStream>{
