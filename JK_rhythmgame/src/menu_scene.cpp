@@ -10,7 +10,7 @@
 #include "sfml-button.hpp"
 
 namespace {
-	const sf::Color bkg_color = sf::Color::White;
+	const sf::Color bkg_color = sf::Color(0xecf0f100);
 }
 
 jk::SCENEFLAG jk::mainmenu::render_logo() {
@@ -152,9 +152,10 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 		button_title.setString("Game Start");
 		jk::adjust_pos(button_title, w, jk::ADJUSTFLAG::HCENTER);
 		auto pos = button_title.getPosition();
-		pos.y = w.getSize().y * 0.7f;
+		pos.y = w.getSize().y * 0.8f;
+		button_title.setCharacterSize(static_cast<unsigned>(w.getSize().y * 0.04));
 		button_title.setPosition(pos);
-		button_title.setFillColor(sf::Color(0xFF,0xB3,0x00));
+		button_title.setFillColor(sf::Color(0xFF, 0x8F, 0x00));
 	}
 	ui_mng_.create<jk::button>(button_title)->handlers_ <<
 		std::make_pair(sf::Event::EventType::MouseButtonPressed, [&](const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
