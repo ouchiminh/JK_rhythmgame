@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <memory>
 #include "SFML/Window.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

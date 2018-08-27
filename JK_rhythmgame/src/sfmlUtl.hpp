@@ -43,4 +43,18 @@ namespace jk {
 		else if (current <= static_cast<T2>(0)) return begin;
 		return static_cast<T>(begin + min_width * current);
 	}
+	template<typename T>
+	inline sf::Vector2<T> get_center_pos(const sf::Rect<T> & r) {
+		return sf::Vector2<T>{r.left + r.width / 2, r.top + r.height / 2};
+	}
+	template<typename T>
+	inline sf::Vector2<T> shift_ceter_pos(const sf::Rect<T> & target, const sf::Vector2<T> & dest) {
+		auto buf = get_center_pos(target);
+		return sf::Vector2<T>{target.left + dest.x - buf.x, target.top + dest.y - buf.y};
+	}
+	template<class T, typename Type>
+	inline void set_center_pos(T & target, const sf::Vector2<Type> & dest) {
+		auto new_pos{ shift_ceter_pos<Type>(target.getGlobalBounds(), dest) };
+		target.setPosition(new_pos);
+	}
 }

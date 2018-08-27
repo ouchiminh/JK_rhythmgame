@@ -1,6 +1,9 @@
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <windows.h>
 #include <stdexcept>
+#include <mutex>
 #include "../resource.h"
 #include "menu_scene.hpp"
 #include "sfmlUtl.hpp"
@@ -124,6 +127,7 @@ void jk::bkg_renderer::init(sf::RenderWindow & w, sf::Time render_time) {
 jk::menu_renderer::menu_renderer() : did_initialized_{ false }, flag_{ SCENEFLAG::NOTYET } {}
 
 jk::SCENEFLAG jk::menu_renderer::operator()() {
+	std::shared_lock<std::shared_mutex> lg(mtx_);
 	if (flag_ == jk::SCENEFLAG::NOTYET) flag_ = jk::SCENEFLAG::RUNNING;
 	w_->clear(bkg_color);
 	w_->draw(bkg_);
@@ -134,8 +138,14 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 
 void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	using namespace std::placeholders;
+	std::lock_guard<std::shared_mutex> lg(mtx_);
+
+	expand_effect<on_mouse_hover> ee{mtx_};
+	
 	if (did_initialized_) return;
 	sf::Text button_title;
+	event_handler_t<sf::Sprite&, sf::Text&, button&> eh;
+	eh = ee;
 	f.loadFromFile(".\\res\\fonts\\meiryo.ttc");
 	{
 		button_title.setFont(f);
@@ -149,13 +159,15 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	ui_mng_.create<jk::button>(button_title)->handlers_ <<
 		std::make_pair(sf::Event::EventType::MouseButtonPressed, [&](const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
 			return on_button_click(e, s, t, b);
-		});
+		}) << 
+		std::make_pair(sf::Event::EventType::MouseMoved, eh);
 	w_ = &w;
 	did_initialized_ = true;
 	flag_ = jk::SCENEFLAG::NOTYET;
 }
 
 void jk::menu_renderer::free_resource() noexcept {
+	std::lock_guard<std::shared_mutex> lg(mtx_);
 	bkg_tx_ = sf::Texture{};
 	bkg_ = sf::Sprite{};
 	f = sf::Font{};
@@ -168,7 +180,8 @@ std::uint32_t jk::menu_renderer::input(const sf::Event & e) {
 }
 
 std::int32_t jk::menu_renderer::on_button_click(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
-	if (flag_ == jk::SCENEFLAG::NOTYET ||
+	std::lock_guard<std::shared_mutex> lg(mtx_);
+	if (flag_ != jk::SCENEFLAG::RUNNING ||
 		!b.get_rect().contains(sf::Vector2f{ (float)e.mouseButton.x, (float)e.mouseButton.y }) ||
 		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;

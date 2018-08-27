@@ -14,6 +14,7 @@ namespace jk {
 		std::multimap<sf::Event::EventType, event_handler_t<Args...>> handlers_;
 
 	public:
+		using this_event_handler_t = event_handler_t<Args...>;
 		event_handlers & operator << (std::pair<sf::Event::EventType, event_handler_t<Args...>> && pack) {
 			handlers_.insert(pack);
 			return *this;
