@@ -1,5 +1,7 @@
 #include "arcfile.hpp"
 
+jk::archive::file::file(std::filesystem::path && filepath) noexcept(false) { load_from_file(filepath); }
+
 jk::archive::file::file() noexcept : body_{ nullptr }, size_{ 0 } {}
 
 jk::archive::file::~file() {

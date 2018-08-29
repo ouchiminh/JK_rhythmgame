@@ -19,8 +19,8 @@ namespace jk::archive {
 		/// <para>false : if file does not exist, cannot be read, or failed for other reasons.</para>
 		/// <para>true : if nothing happened(succeeded)</para>
 		/// </returns>
-		bool add_file(const std::filesystem::path & filepath) noexcept;
-		void remove_file(const std::filesystem::path & filepath);
+		bool add_file(const std::filesystem::path & filepath) noexcept(false);
+		void remove_file(const std::filesystem::path & filepath) noexcept;
 
 		/// <summary>
 		/// if fail, throw exception
@@ -29,9 +29,9 @@ namespace jk::archive {
 		void write(OStream & out) const;
 		void write(const std::filesystem::path & filepath) const;
 
-		/// <summary>load designated file.</summary>
+		/// <summary>load designated archive file.</summary>
 		/// <param name = "filepath">path to the file will be loaded.</param>
-		/// <returns>ture</returns>
+		/// <returns>true:succeed</returns>
 		bool load(const std::filesystem::path & filepath);
 
 		file & get(const std::filesystem::path & filepath);
