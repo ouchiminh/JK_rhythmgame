@@ -1,0 +1,64 @@
+#include <string>
+#include <algorithm>
+#include "archiver.hpp"
+
+namespace fs = std::filesystem;
+
+void jk::archive::archiver::init(std::ifstream & in) noexcept(false) {
+	size_t filecnt;
+	list_.clear();
+	in.read((char*)&filecnt, sizeof(filecnt));
+	if(filecnt == 0) throw std::out_of_range("archive file is too short");
+	list_.reserve(filecnt);
+	for (unsigned i = 0; i < filecnt; i++) {
+		std::string filepath;
+		size_t filesize;
+		in >> filepath >> filesize;
+		list_.emplace_back(filepath, filesize);
+	}
+}
+
+bool jk::archive::archiver::add_file(const std::filesystem::path & filepath) noexcept {
+	if(!fs::exists(filepath)) return false;
+	try {
+		list_.emplace_back(filepath);
+	} catch (...) { return false; }
+	return true;
+}
+
+void jk::archive::archiver::remove_file(const std::filesystem::path & filepath) noexcept {
+	using namespace std;
+	auto tar = std::find(begin(list_), end(list_), filepath);
+	if (tar == end(list_)) return;
+	list_.erase(tar);
+}
+
+void jk::archive::archiver::write(const std::filesystem::path & filepath) const {
+	using namespace std;
+	std::ofstream out;
+	if (!fs::exists(filepath)) throw fs::filesystem_error("no such file."s, std::make_error_code(std::errc::no_such_file_or_directory));
+	out.open(filepath, std::ios::binary);
+	write(out);
+}
+
+bool jk::archive::archiver::load(const std::filesystem::path & filepath) noexcept {
+	if(!fs::exists(filepath)) return false;
+	std::ifstream in(filepath, std::ios::binary || std::ios::in);
+	init(in);
+	for (auto & i : list_) i.load_from_archive(in);
+	return true;
+}
+
+jk::archive::file & jk::archive::archiver::get(const std::filesystem::path & filepath) {
+	using namespace std;
+	auto tar = find(begin(list_), end(list_), filepath);
+	if (tar != end(list_)) return *tar;
+	throw std::out_of_range("no such elements in this archive file");
+}
+
+const jk::archive::file & jk::archive::archiver::get(const std::filesystem::path & filepath) const {
+	using namespace std;
+	auto tar = find(cbegin(list_), cend(list_), filepath);
+	if (tar != cend(list_)) return *tar;
+	throw std::out_of_range("no such elements in this archive file");
+}

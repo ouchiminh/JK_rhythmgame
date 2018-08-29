@@ -4,6 +4,7 @@
 #include <string>
 #include <cstddef>
 #include <fstream>
+#include <utility>
 #include "stream-traits.hpp"
 
 namespace jk::archive {
@@ -11,6 +12,8 @@ namespace jk::archive {
 		void * body_;	// if invalid, nullptr
 		size_t size_;	// if invalid, 0
 		std::filesystem::path filepath_;
+
+		void discard() noexcept;
 	public:
 		/// <summary>
 		/// construct & load content from normal file.
@@ -18,6 +21,8 @@ namespace jk::archive {
 		/// <param name="filepath">path to normal file NOT ARCHIVE HEADER INFO</param>
 		/// <returns></returns>
 		file(std::filesystem::path && filepath) noexcept(false);
+		file(const std::filesystem::path & filepath);
+		file(std::string filepath, size_t size) noexcept;
 		file() noexcept;			// initialize as invalid object
 		~file();
 
@@ -42,17 +47,17 @@ namespace jk::archive {
 		size_t size() const noexcept;
 
 		template<class OStream>
-		void write_header(OStream & out) noexcept(false);
+		void write_header(OStream & out) const noexcept(false);
 		template<class OStream>
-		void write_body(OStream & out) noexcept(false);
+		void write_body(OStream & out) const noexcept(false);
 
-		static bool operator==(const file & f, const std::filesystem::path & p) noexcept;
-		static bool operator==(const std::filesystem::path & p, const file & f) noexcept;
+		bool operator==(const std::filesystem::path & p) const noexcept;
 	};
 
 	inline void file::load_from_file(const std::filesystem::path & filepath) {
 		namespace fs = std::filesystem;
 		if(!fs::exists(filepath)) throw std::runtime_error("file not found.");
+		discard();
 		std::ifstream in;
 		filepath_ = filepath;
 		in.open(filepath, std::ios::binary | std::ios::in);
@@ -61,12 +66,13 @@ namespace jk::archive {
 			body_ = new std::int8_t[size_+1];
 			in.read(static_cast<char*>(body_), size_);
 		} catch (std::bad_alloc & e) {
-			throw std::runtime_error("allocation failed");
+			throw std::runtime_error(e.what());
 		} catch (std::exception & e) { throw std::runtime_error(e.what()); }
 
 	}
 
 	inline void file::register_archived_info(const std::filesystem::path & filepath, size_t filesize) noexcept {
+		discard();
 		filepath_ = filepath;
 		size_ = filesize;
 	}
@@ -74,25 +80,24 @@ namespace jk::archive {
 	template<class IStream>
 	inline void file::load_from_archive(IStream & in) noexcept(false) {
 		using is = jk::istream_traits<IStream>;
-		if (filepath_.empty() || size_ = 0) throw std::logic_error("invalid pre-condition.");
-		if (body_) delete[] body_;
+		if (filepath_.empty() || size_ == 0) throw std::logic_error("invalid pre-condition.");
 		body_ = new std::int8_t[size_];
 		is::read(in, body_, size_);
 	}
 
 	template<class OStream>
-	inline void file::write_header(OStream & out) noexcept(false) {
+	inline void file::write_header(OStream & out) const noexcept(false) {
 		namespace fs = std::filesystem;
-		using is = istream_traits<OStream>;
-		if(!is_avail()) throw(std::runtime_error("invalid data"))
+		using is = ostream_traits<OStream>;
+		if (!is_avail()) throw(std::runtime_error("invalid data"));
 		auto relative_path = filepath_.lexically_relative(fs::current_path());
-		is::write(out, relative_path.c_str(), relative_path.string().size()+1);
-		is::write(out, &size_, sizeof(size));
+		is::write(out, (void*)relative_path.c_str(), relative_path.string().size()+1);
+		is::write(out, (void*)&size_, sizeof(size_));
 	}
 
 	template<class OStream>
-	inline void file::write_body(OStream & out) noexcept(false) {
-		using is = istream_traits<OStream>;
+	inline void file::write_body(OStream & out) const noexcept(false) {
+		using is = ostream_traits<OStream>;
 		if (!is_avail()) throw std::runtime_error("invalid data");
 		is::write(out, body_, size_);
 	}

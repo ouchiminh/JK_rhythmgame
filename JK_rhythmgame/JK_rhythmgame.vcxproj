@@ -193,6 +193,7 @@
     <ClCompile Include="src\aes\src\aes.cpp" />
     <ClCompile Include="src\aes\src\SHA256.cpp" />
     <ClCompile Include="src\arcfile.cpp" />
+    <ClCompile Include="src\archiver.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
     <ClCompile Include="src\scene-mng.cpp" />
     <ClCompile Include="src\sfml-button.cpp" />
