@@ -12,7 +12,7 @@ namespace jk::archive {
 		/// <summary>
 		/// discard existing data, and read archive file header / reserve list_
 		/// </summary>
-		void init(std::ifstream & in) noexcept(false);	
+		void init(std::istream & in) noexcept(false);
 	public:
 		/// <summary>
 		/// add file to archive list.
@@ -36,6 +36,7 @@ namespace jk::archive {
 		/// <param name = "filepath">path to the file will be loaded.</param>
 		/// <returns>true:succeed</returns>
 		bool load(const std::filesystem::path & filepath) noexcept;
+		bool load(std::istream & in) noexcept;
 
 		file & get(const std::filesystem::path & filepath);
 		const file & get(const std::filesystem::path & filepath) const;

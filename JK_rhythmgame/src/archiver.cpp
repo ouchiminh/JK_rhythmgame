@@ -4,11 +4,16 @@
 
 namespace fs = std::filesystem;
 
-void jk::archive::archiver::init(std::ifstream & in) noexcept(false) {
+
+/// <summary>
+/// discard existing data, and read archive file header / reserve list_
+/// </summary>
+
+inline void jk::archive::archiver::init(std::istream & in) noexcept(false) {
 	size_t filecnt;
 	list_.clear();
 	in.read((char*)&filecnt, sizeof(filecnt));
-	if(filecnt == 0) throw std::out_of_range("archive file is too short");
+	if (filecnt == 0) throw std::out_of_range("archive file is too short");
 	list_.reserve(filecnt);
 	for (unsigned i = 0; i < filecnt; i++) {
 		std::string filepath;
@@ -44,7 +49,13 @@ void jk::archive::archiver::write(const std::filesystem::path & filepath) const 
 bool jk::archive::archiver::load(const std::filesystem::path & filepath) noexcept {
 	if(!fs::exists(filepath)) return false;
 	std::ifstream in(filepath, std::ios::binary || std::ios::in);
-	init(in);
+	return load(in);
+}
+
+inline bool jk::archive::archiver::load(std::istream & in) noexcept {
+	try {
+		init(in);
+	} catch (...) { return false; }
 	for (auto & i : list_) i.load_from_archive(in);
 	return true;
 }
