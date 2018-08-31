@@ -2,6 +2,7 @@
 #include <list>
 #include <cassert>
 #include <string>
+#include <iostream>
 #include "log/record.hpp"
 namespace jk::test {
 	struct test_initializer;
@@ -16,31 +17,35 @@ namespace jk::test {
 		inline static void test() {
 			for (auto & i : test_list_) (*i)();
 		}
-		~test_base() {
-			for (auto & i : test_list_) delete i;
-		}
+		~test_base() = default;
 	};
 
 }
+#define LOG(str) r << str;
 #define REQUIRE_TRUE(expr) do{\
-	if(!expr) r << name_ << "failed." << std::endl << #expr << " is false" << std::endl;\
-}while(false);
+	if(!(expr)) {\
+		using namespace std::string_literals;\
+		r << name_ << " failed.\n"s << "\""s << #expr ## s  << "\" is false\n"s;\
+		return;\
+	}\
+}while(false)
+
+#define CHECK_TRUE(expr) do{\
+	using namespace std::string_literals;\
+	if(!(expr)) r << name_ << "failed.\n"s << "\""s << #expr ## s << "\" is false\n"s;\
+}while(false)
 
 #define DEFINE_TEST(test_name) \
-struct test_name ## _initializer;\
 class test_name : public jk::test::test_base{\
-	static test_name ## _initializer initializer;\
 	const std::string name_ = #test_name;\
-	test_name();\
 public:\
+	test_name(){test_list_.push_back(this);}\
 	static void init(){\
 		test_list_.push_back(new test_name);\
 	}\
 	void operator()() noexcept override;\
 };\
-struct test_name ## _initializer{\
-	test_name ## _initializer(){\
-		test_name :: init();\
-	}\
-};\
-void test_name::operator()() noexcept
+namespace {\
+	test_name test_name ## _instance;\
+}\
+inline void test_name::operator()() noexcept

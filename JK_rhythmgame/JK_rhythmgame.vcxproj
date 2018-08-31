@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\include;D:\Boost\1.68.0\include\boost-1_68;D:\Users\Root\Documents\lib\myown\log\include\log</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\include;D:\Boost\1.68.0\include\boost-1_68;D:\Users\Root\Documents\lib\myown\log\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
@@ -146,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\include;D:\Boost\1.68.0\include\boost-1_68;D:\Users\Root\Documents\lib\myown\log\include\log</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\include;D:\Boost\1.68.0\include\boost-1_68;D:\Users\Root\Documents\lib\myown\log\include\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -186,8 +186,8 @@
     <ClInclude Include="src\stream-traits.hpp" />
     <ClInclude Include="src\timeKeeper.h" />
     <ClInclude Include="src\ui-component.hpp" />
-    <ClInclude Include="test.cpp" />
     <ClInclude Include="test\test.hpp" />
+    <ClInclude Include="test\test_archiver.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JK_rhythmgame.cpp" />
