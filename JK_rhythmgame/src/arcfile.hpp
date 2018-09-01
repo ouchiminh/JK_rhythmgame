@@ -28,6 +28,7 @@ namespace jk::archive {
 		file(const std::filesystem::path & filepath);
 		file(const std::string & filepath, size_t size);
 		file() noexcept;			// initialize as invalid object
+		file(const file & f);
 		~file();
 
 		void load_from_file(const std::filesystem::path & filepath);

@@ -20,20 +20,28 @@ namespace jk::test {
 }
 #define FAILED_LOG(expr, test_name, additional_msg) do{\
 	using namespace std::string_literals;\
-	r << test_name << "failed\n"s << "\""s << #expr ## s << "\""s << additional_msg;\
+	r << test_name << "failed\n"s << "\""s << #expr ## s << "\""s << std::string(additional_msg);\
 }while(false)
 
 #define REQUIRE_TRUE(expr) do{\
-	if(!(expr)) {\
-		using namespace std::string_literals;\
-		FAILED_LOG(expr, name_, "is false\n"s);\
-		return;\
+	try{\
+		if(!(expr)) {\
+			using namespace std::string_literals;\
+			FAILED_LOG(expr, name_, "is false\n"s);\
+			return;\
+		}\
+	} catch (std::exception & e) {\
+		FAILED_LOG(expr, name_, e.what());\
 	}\
 }while(false)
 
 #define CHECK_TRUE(expr) do{\
 	using namespace std::string_literals;\
-	if(!(expr)) FAILED_LOG(expr, name_, "is false\n"s);\
+	try{\
+		if(!(expr)) FAILED_LOG(expr, name_, "is false\n"s);\
+	} catch (std::exception & e) {\
+		FAILED_LOG(expr, name_, e.what());\
+	}\
 }while(false)
 
 #define DEFINE_TEST(test_name) \

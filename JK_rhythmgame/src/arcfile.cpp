@@ -1,8 +1,10 @@
+#include <memory.h>
 #include "arcfile.hpp"
 
 void jk::archive::file::discard() noexcept {
 	size_ = 0;
 	if (body_) delete[] body_;
+	body_ = nullptr;
 	filepath_.clear();
 }
 
@@ -15,6 +17,11 @@ jk::archive::file::file(const std::string & filepath, size_t size) : body_( NULL
 }
 
 jk::archive::file::file() noexcept : body_{ nullptr }, size_{ 0 } {}
+
+jk::archive::file::file(const file & f) : filepath_{ f.filepath_ }, size_{ f.size_ } {
+	body_ = new std::int8_t[size_];
+	memcpy(body_, f.body_, size_);
+}
 
 jk::archive::file::~file() {
 	discard();

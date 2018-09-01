@@ -14,7 +14,7 @@ inline void jk::archive::archiver::init(std::istream & in) noexcept(false) {
 	list_.clear();
 	in.read((char*)&filecnt, sizeof(filecnt));
 	if (filecnt == 0) throw std::out_of_range("archive file is too short");
-	list_.reserve(filecnt);
+	list_.reserve(filecnt + 1);
 	for (unsigned i = 0; i < filecnt; i++) {
 		std::string filepath;
 		size_t filesize;
