@@ -1,10 +1,14 @@
 #pragma once
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <stdexcept>
 #include <filesystem>
 #include <string>
 #include <cstddef>
 #include <fstream>
 #include <utility>
+#include <windows.h>
 #include "stream-traits.hpp"
 
 namespace jk::archive {
@@ -22,7 +26,7 @@ namespace jk::archive {
 		/// <returns></returns>
 		file(std::filesystem::path && filepath) noexcept(false);
 		file(const std::filesystem::path & filepath);
-		file(std::string filepath, size_t size) noexcept;
+		file(const std::string & filepath, size_t size);
 		file() noexcept;			// initialize as invalid object
 		~file();
 
@@ -68,7 +72,6 @@ namespace jk::archive {
 		} catch (std::bad_alloc & e) {
 			throw std::runtime_error(e.what());
 		} catch (std::exception & e) { throw std::runtime_error(e.what()); }
-
 	}
 
 	inline void file::register_archived_info(const std::filesystem::path & filepath, size_t filesize) noexcept {
@@ -90,8 +93,7 @@ namespace jk::archive {
 		namespace fs = std::filesystem;
 		using is = ostream_traits<OStream>;
 		if (!is_avail()) throw(std::runtime_error("invalid data"));
-		auto relative_path = filepath_.lexically_relative(fs::current_path());
-		is::write(out, (void*)relative_path.c_str(), relative_path.string().size()+1);
+		is::write(out, (void*)filepath_.string<char>().c_str(), filepath_.string<char>().size() + 1);
 		is::write(out, (void*)&size_, sizeof(size_));
 	}
 
@@ -101,5 +103,4 @@ namespace jk::archive {
 		if (!is_avail()) throw std::runtime_error("invalid data");
 		is::write(out, body_, size_);
 	}
-
 }

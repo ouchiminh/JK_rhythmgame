@@ -1,6 +1,15 @@
 #pragma once
 #include "test.hpp"
+#include "../src/archiver.hpp"
 
-DEFINE_TEST(test_archiver) {
-	REQUIRE_TRUE(0);
+namespace jk::archive::test {
+	DEFINE_TEST(test_archiver) {
+		jk::archive::archiver a;
+		namespace fs = std::filesystem;
+		REQUIRE_TRUE(
+			a.add_file(".\\res\\sfml-logo-big.png")
+		);
+		a.write(fs::path(".\\res\\graphic.arc"));
+		REQUIRE_TRUE(a.load(fs::path(".\\res\\graphic.arc")));
+	}
 }

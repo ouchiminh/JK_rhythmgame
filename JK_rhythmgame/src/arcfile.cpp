@@ -6,11 +6,13 @@ void jk::archive::file::discard() noexcept {
 	filepath_.clear();
 }
 
-jk::archive::file::file(std::filesystem::path && filepath) noexcept(false) { load_from_file(filepath); }
+jk::archive::file::file(std::filesystem::path && filepath) noexcept(false) : body_( NULL ), size_{ 0 } { load_from_file(filepath); }
 
-jk::archive::file::file(const std::filesystem::path & filepath) { load_from_file(filepath); }
+jk::archive::file::file(const std::filesystem::path & filepath) : body_( NULL ), size_{ 0 } { load_from_file(filepath); }
 
-jk::archive::file::file(std::string filepath, size_t size) noexcept { register_archived_info(filepath, size); }
+jk::archive::file::file(const std::string & filepath, size_t size) : body_( NULL ), size_( 0 ) { 
+	register_archived_info(std::filesystem::path(filepath), size); 
+}
 
 jk::archive::file::file() noexcept : body_{ nullptr }, size_{ 0 } {}
 
@@ -19,8 +21,8 @@ jk::archive::file::~file() {
 }
 
 bool jk::archive::file::is_avail() const noexcept {
-	return body_ == nullptr ||
-		size_ == 0 ||
+	return body_ != nullptr &&
+		size_ != 0 &&
 		filepath_.empty() ?
 		false :
 		true;
@@ -41,5 +43,5 @@ size_t jk::archive::file::size() const noexcept {
 bool jk::archive::file::operator==(const std::filesystem::path & p) const noexcept {
 	namespace fs = std::filesystem;
 	const auto cur = fs::current_path();
-	return filepath_.lexically_relative(cur) == p.lexically_relative(cur);
+	return p == filepath_;
 }

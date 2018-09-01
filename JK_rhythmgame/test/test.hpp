@@ -1,14 +1,11 @@
 #pragma once
 #include <list>
-#include <cassert>
 #include <string>
 #include <iostream>
 #include "log/record.hpp"
 namespace jk::test {
-	struct test_initializer;
 
 	class test_base {
-		friend test_initializer;
 	protected:
 		inline static std::list<test_base*> test_list_;
 		inline static util::record<char> r;
@@ -21,18 +18,22 @@ namespace jk::test {
 	};
 
 }
-#define LOG(str) r << str;
+#define FAILED_LOG(expr, test_name, additional_msg) do{\
+	using namespace std::string_literals;\
+	r << test_name << "failed\n"s << "\""s << #expr ## s << "\""s << additional_msg;\
+}while(false)
+
 #define REQUIRE_TRUE(expr) do{\
 	if(!(expr)) {\
 		using namespace std::string_literals;\
-		r << name_ << " failed.\n"s << "\""s << #expr ## s  << "\" is false\n"s;\
+		FAILED_LOG(expr, name_, "is false\n"s);\
 		return;\
 	}\
 }while(false)
 
 #define CHECK_TRUE(expr) do{\
 	using namespace std::string_literals;\
-	if(!(expr)) r << name_ << "failed.\n"s << "\""s << #expr ## s << "\" is false\n"s;\
+	if(!(expr)) FAILED_LOG(expr, name_, "is false\n"s);\
 }while(false)
 
 #define DEFINE_TEST(test_name) \

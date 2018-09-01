@@ -18,7 +18,13 @@ inline void jk::archive::archiver::init(std::istream & in) noexcept(false) {
 	for (unsigned i = 0; i < filecnt; i++) {
 		std::string filepath;
 		size_t filesize;
-		in >> filepath >> filesize;
+		char buf;
+		do {
+			in.read(&buf, sizeof(char));
+			filepath.push_back(buf);
+		} while (buf);
+		in.read((char*)(void*)&filesize, sizeof(filesize));
+		auto tmp = in.gcount();
 		list_.emplace_back(filepath, filesize);
 	}
 }
@@ -41,7 +47,6 @@ void jk::archive::archiver::remove_file(const std::filesystem::path & filepath) 
 void jk::archive::archiver::write(const std::filesystem::path & filepath) const {
 	using namespace std;
 	std::ofstream out;
-	if (!fs::exists(filepath)) throw fs::filesystem_error("no such file."s, std::make_error_code(std::errc::no_such_file_or_directory));
 	out.open(filepath, std::ios::binary);
 	write(out);
 }
@@ -55,8 +60,9 @@ bool jk::archive::archiver::load(const std::filesystem::path & filepath) noexcep
 inline bool jk::archive::archiver::load(std::istream & in) noexcept {
 	try {
 		init(in);
-	} catch (...) { return false; }
-	for (auto & i : list_) i.load_from_archive(in);
+		for (auto & i : list_) i.load_from_archive(in);
+	} catch (std::ios::failure & e) { return false; }
+	catch (...) { return false; }
 	return true;
 }
 

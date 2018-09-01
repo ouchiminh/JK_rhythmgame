@@ -35,17 +35,23 @@ namespace jk::archive {
 		/// <summary>load designated archive file.</summary>
 		/// <param name = "filepath">path to the file will be loaded.</param>
 		/// <returns>true:succeed</returns>
-		bool load(const std::filesystem::path & filepath) noexcept;
-		bool load(std::istream & in) noexcept;
+		[[nodiscard]] bool load(const std::filesystem::path & filepath) noexcept;
+		[[nodiscard]] bool load(std::istream & in) noexcept;
 
-		file & get(const std::filesystem::path & filepath);
-		const file & get(const std::filesystem::path & filepath) const;
+		[[nodiscard]] file & get(const std::filesystem::path & filepath);
+		[[nodiscard]] const file & get(const std::filesystem::path & filepath) const;
 	};
 	template<class OStream>
 	inline void archiver::write(OStream & out) const {
 		using os = jk::ostream_traits<OStream>;
-
+		auto filecnt = list_.size();
+		os::write(out, static_cast<void*>(&filecnt), sizeof(filecnt));
 		for (auto & i : list_) i.write_header(out);
 		for (auto & i : list_) i.write_body(out);
 	}
 }
+/** HEADER
+ *	<file count><each header>......
+ ** BODY
+ *	<file body>.....
+ **/
