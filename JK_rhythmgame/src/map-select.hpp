@@ -11,7 +11,7 @@ namespace jk {
 
 		bool did_initialized_;
 	public:
-		map_select() : did_initialized_{false} {}
+		map_select() : did_initialized_{ false } {}
 		void init(HMODULE hm, sf::RenderWindow & w) noexcept override;
 		bool free_resource() noexcept override;
 		
