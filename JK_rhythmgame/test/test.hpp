@@ -20,7 +20,7 @@ namespace jk::test {
 }
 #define FAILED_LOG(expr, test_name, additional_msg) do{\
 	using namespace std::string_literals;\
-	r << test_name << "failed\n"s << "\""s << #expr ## s << "\""s << std::string(additional_msg);\
+	r << test_name << "failed. "s << "\""s << #expr ## s << "\""s << std::string(additional_msg);\
 }while(false)
 
 #define REQUIRE_TRUE(expr) do{\
