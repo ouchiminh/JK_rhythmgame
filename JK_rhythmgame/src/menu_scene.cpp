@@ -15,13 +15,13 @@ namespace {
 
 jk::SCENEFLAG jk::mainmenu::render_logo() {
 	jk::SCENEFLAG ret;
-	if ((ret = logo_()) == SCENEFLAG::FINISHED) cur_renderer = &jk::mainmenu::render_bkg;
+	if ((ret = logo_()) == SCENEFLAG::FINISHED) cur_renderer_ = dynamic_cast<renderer*>(&bkg_);
 	return SCENEFLAG::RUNNING;
 }
 
 jk::SCENEFLAG jk::mainmenu::render_bkg() {
 	jk::SCENEFLAG ret;
-	if ((ret = bkg_()) == SCENEFLAG::FINISHED) cur_renderer = &jk::mainmenu::render_menu;
+	if ((ret = bkg_()) == SCENEFLAG::FINISHED) cur_renderer_ = dynamic_cast<renderer*>(&menu_);
 	return SCENEFLAG::RUNNING;
 }
 
@@ -37,7 +37,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	logo_.init(hm, w);
 	bkg_.init(w);
 	menu_.init(hm, w);
-	cur_renderer = &jk::mainmenu::render_logo;
+	cur_renderer_ = dynamic_cast<renderer*>(&logo_);
 	next_scene_ = SCENE_LIST::Main_Menu;
 }
 
@@ -48,13 +48,13 @@ bool jk::mainmenu::free_resource() noexcept {
 }
 
 jk::SCENEFLAG jk::mainmenu::render() {
-	return (this->*cur_renderer)();
+	return (*cur_renderer_.value_or(&bkg_))();
 }
 
 jk::SCENE_LIST jk::mainmenu::get_next_scene() const noexcept { return next_scene_; }
 
 void jk::mainmenu::input(const sf::Event & e) noexcept {
-	menu_.input(e);
+	cur_renderer_.value_or(&logo_)->input(e);
 }
 
 jk::SCENEFLAG jk::logo_renderer::operator()() {

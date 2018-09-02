@@ -28,12 +28,16 @@ jk::archive::file::~file() {
 	discard();
 }
 
-bool jk::archive::file::is_avail() const noexcept {
+bool jk::archive::file::is_valid() const noexcept {
 	return body_ != nullptr &&
 		size_ != 0 &&
 		filepath_.empty() ?
 		false :
 		true;
+}
+
+const std::filesystem::path jk::archive::file::get_filepath() const noexcept {
+	return filepath_;
 }
 
 void * jk::archive::file::get_body() noexcept {

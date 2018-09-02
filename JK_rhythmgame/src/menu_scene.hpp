@@ -6,6 +6,7 @@
 #include <functional>
 #include <Windows.h>
 #include <shared_mutex>
+#include <optional>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics.hpp"
 #include "sfml-button.hpp"
@@ -14,7 +15,7 @@
 
 namespace jk {
 	
-	class logo_renderer {
+	class logo_renderer : public renderer {
 		using myduration = std::chrono::steady_clock::duration;
 		static constexpr myduration fade_time =
 			std::chrono::duration_cast<myduration>(std::chrono::milliseconds(1400));
@@ -29,22 +30,23 @@ namespace jk {
 		sf::RenderWindow * w_;
 		std::chrono::steady_clock::time_point logo_started_;
 	public:
-		[[nodiscard]] SCENEFLAG operator() ();
+		[[nodiscard]] SCENEFLAG operator() () override;
 		void init(HMODULE hm, sf::RenderWindow & w);
-		void free_resource() noexcept;
+		void free_resource() noexcept override;
 	};
 
-	class bkg_renderer {
+	class bkg_renderer : public renderer{
 		sf::RenderWindow * w_;
 		sf::Time time_;
 		sf::Clock clock_;
 		bool started_;
 	public:
-		[[nodiscard]] SCENEFLAG operator() ();
+		[[nodiscard]] SCENEFLAG operator() ()override;
+		void free_resource() noexcept {}
 		void init(sf::RenderWindow & w, sf::Time render_time = sf::seconds(1.0f));
 	};
 
-	class menu_renderer {
+	class menu_renderer : public renderer{
 		std::shared_mutex mtx_;
 		sf::Texture bkg_tx_;
 		sf::Sprite bkg_;
@@ -69,7 +71,7 @@ namespace jk {
 		logo_renderer logo_;
 		bkg_renderer bkg_;
 		menu_renderer menu_;
-		SCENEFLAG(mainmenu::*cur_renderer)();
+		std::optional<renderer*> cur_renderer_;
 
 		SCENEFLAG render_logo();
 		SCENEFLAG render_bkg();

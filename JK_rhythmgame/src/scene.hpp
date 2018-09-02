@@ -17,6 +17,13 @@ namespace jk {
 		Main_Menu, Map_Select
 	};
 
+	class renderer {
+	public:
+		virtual SCENEFLAG operator()() = 0;
+		virtual std::uint32_t input(const sf::Event & e) noexcept { return 0; }
+		virtual void free_resource() noexcept = 0;
+	};
+
 	class scene : public virtual std::enable_shared_from_this<scene> {
 		virtual void finish() = 0;
 	protected:

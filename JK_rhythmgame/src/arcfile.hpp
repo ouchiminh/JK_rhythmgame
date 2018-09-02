@@ -47,7 +47,8 @@ namespace jk::archive {
 		template<class IStream>
 		void load_from_archive(IStream & in) noexcept(false);
 
-		bool is_avail() const noexcept;
+		bool is_valid() const noexcept;
+		const std::filesystem::path get_filepath() const noexcept;
 		void * get_body() noexcept;
 		void const * get_body() const noexcept;
 		size_t size() const noexcept;
@@ -95,7 +96,7 @@ namespace jk::archive {
 	inline void file::write_header(OStream & out) const noexcept(false) {
 		namespace fs = std::filesystem;
 		using is = ostream_traits<OStream>;
-		if (!is_avail()) throw(std::runtime_error("invalid data"));
+		if (!is_valid()) throw(std::runtime_error("invalid data"));
 		is::write(out, (void*)filepath_.string<char>().c_str(), filepath_.string<char>().size() + 1);
 		is::write(out, (void*)&size_, sizeof(size_));
 	}
@@ -103,7 +104,26 @@ namespace jk::archive {
 	template<class OStream>
 	inline void file::write_body(OStream & out) const noexcept(false) {
 		using is = ostream_traits<OStream>;
-		if (!is_avail()) throw std::runtime_error("invalid data");
+		if (!is_valid()) throw std::runtime_error("invalid data");
 		is::write(out, body_, size_);
 	}
+
+	class file_view {
+		void const * body_;
+		size_t size_;
+		std::filesystem::path filepath_;
+	public:
+		file_view(const file & f) : body_{ f.get_body() }, size_{ f.size() }, filepath_{ f.get_filepath() } {}
+		file_view() : body_{ nullptr }, size_{ 0 } {}
+
+		bool is_valid() const noexcept { return body_ != nullptr && size_; }
+		void const * get_body() const noexcept { return body_; }
+		size_t size() const noexcept { return size_; }
+		
+		file_view & operator=(const file & f) {
+			body_ = f.get_body();
+			size_ = f.size();
+			filepath_ = f.get_filepath();
+		}
+	};
 }
