@@ -18,5 +18,6 @@ namespace jk {
 		void init();
 		void input(const sf::Event & e) noexcept;
 		void render();
+		const std::shared_ptr<scene> get(SCENE_LIST key) const noexcept;
 	};
 }
