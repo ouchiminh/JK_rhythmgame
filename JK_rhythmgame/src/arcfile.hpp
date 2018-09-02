@@ -28,8 +28,7 @@ namespace jk::archive {
 		file(const std::filesystem::path & filepath);
 		file(const std::string & filepath, size_t size);
 		file() noexcept;			// initialize as invalid object
-		file(const file &) = delete;
-		file(file && f);
+		file(const file & f);
 		~file();
 
 		void load_from_file(const std::filesystem::path & filepath);
@@ -58,7 +57,6 @@ namespace jk::archive {
 		void write_body(OStream & out) const noexcept(false);
 
 		bool operator==(const std::filesystem::path & p) const noexcept;
-		file & operator=(file && f);
 	};
 
 	inline void file::load_from_file(const std::filesystem::path & filepath) {

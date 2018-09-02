@@ -18,10 +18,9 @@ jk::archive::file::file(const std::string & filepath, size_t size) : body_( NULL
 
 jk::archive::file::file() noexcept : body_{ nullptr }, size_{ 0 } {}
 
-jk::archive::file::file(file && f) : body_{ f.body_ }, size_{ f.size_ }, filepath_{ f.filepath_ } {
-	f.body_ = nullptr;
-	f.size_ = 0;
-	f.filepath_.clear();
+jk::archive::file::file(const file & f) : filepath_{ f.filepath_ }, size_{ f.size_ } {
+	body_ = new std::int8_t[size_];
+	memcpy(body_, f.body_, size_);
 }
 
 jk::archive::file::~file() {
@@ -52,15 +51,4 @@ bool jk::archive::file::operator==(const std::filesystem::path & p) const noexce
 	namespace fs = std::filesystem;
 	const auto cur = fs::current_path();
 	return p == filepath_;
-}
-
-jk::archive::file & jk::archive::file::operator=(file && f) {
-	body_ = f.body_;
-	size_ = f.size_;
-	filepath_ = f.filepath_;
-
-	f.body_ = nullptr;
-	f.size_ = 0;
-	f.filepath_.clear();
-	return *this;
 }

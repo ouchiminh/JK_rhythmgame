@@ -24,8 +24,3 @@ void jk::scene_mng::render() {
 		if(scene_list_.count(cur_scene_))scene_list_.at(cur_scene_)->init(hm_, rw_);
 	}
 }
-
-const std::shared_ptr<jk::scene> jk::scene_mng::get(SCENE_LIST key) const noexcept {
-	if (scene_list_.count(key)) return scene_list_[key];
-	return std::shared_ptr<jk::scene>(nullptr);
-}

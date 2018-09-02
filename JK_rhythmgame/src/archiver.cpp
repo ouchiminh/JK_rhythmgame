@@ -61,7 +61,7 @@ inline bool jk::archive::archiver::load(std::istream & in) noexcept {
 	try {
 		init(in);
 		for (auto & i : list_) i.load_from_archive(in);
-	} catch (std::ios::failure &) { return false; }
+	} catch (std::ios::failure & e) { return false; }
 	catch (...) { return false; }
 	return true;
 }
