@@ -15,13 +15,13 @@ namespace {
 
 jk::SCENEFLAG jk::mainmenu::render_logo() {
 	jk::SCENEFLAG ret;
-	if ((ret = logo_()) == SCENEFLAG::FINISHED) cur_renderer_ = dynamic_cast<renderer*>(&bkg_);
+	if ((ret = logo_()) == SCENEFLAG::FINISHED) cur_renderer_ = &mainmenu::render_bkg;
 	return SCENEFLAG::RUNNING;
 }
 
 jk::SCENEFLAG jk::mainmenu::render_bkg() {
 	jk::SCENEFLAG ret;
-	if ((ret = bkg_()) == SCENEFLAG::FINISHED) cur_renderer_ = dynamic_cast<renderer*>(&menu_);
+	if ((ret = bkg_()) == SCENEFLAG::FINISHED) cur_renderer_ = &mainmenu::render_menu;
 	return SCENEFLAG::RUNNING;
 }
 
@@ -37,7 +37,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	logo_.init(hm, w);
 	bkg_.init(w);
 	menu_.init(hm, w);
-	cur_renderer_ = dynamic_cast<renderer*>(&logo_);
+	cur_renderer_ = &mainmenu::render_logo;
 	next_scene_ = SCENE_LIST::Main_Menu;
 }
 
@@ -48,13 +48,13 @@ bool jk::mainmenu::free_resource() noexcept {
 }
 
 jk::SCENEFLAG jk::mainmenu::render() {
-	return (*cur_renderer_.value_or(&bkg_))();
+	return (this->*cur_renderer_)();
 }
 
 jk::SCENE_LIST jk::mainmenu::get_next_scene() const noexcept { return next_scene_; }
 
 void jk::mainmenu::input(const sf::Event & e) noexcept {
-	cur_renderer_.value_or(&logo_)->input(e);
+	menu_.input(e);
 }
 
 jk::SCENEFLAG jk::logo_renderer::operator()() {
@@ -97,7 +97,7 @@ void jk::logo_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	logo_started_ = std::chrono::steady_clock::now();
 }
 
-inline void jk::logo_renderer::free_resource() noexcept {
+void jk::logo_renderer::free_resource() noexcept {
 	for (unsigned i = 0; i < LOGONUM::CNT; ++i) {
 		logo_[i] = sf::Image{};
 		logoSpr_[i] = sf::Sprite{};
@@ -176,7 +176,7 @@ void jk::menu_renderer::free_resource() noexcept {
 	did_initialized_ = false;
 }
 
-std::uint32_t jk::menu_renderer::input(const sf::Event & e) {
+std::uint32_t jk::menu_renderer::input(const sf::Event & e){
 	return ui_mng_.event_procedure(e);
 }
 

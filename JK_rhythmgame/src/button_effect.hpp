@@ -15,7 +15,7 @@ namespace jk {
 
 	class on_mouse_hover : virtual public button_effect {
 	protected:
-		virtual bool judge(const sf::Event & e, sf::Sprite &, sf::Text &, button & b) const override {
+		virtual bool judge(const sf::Event & e, sf::Sprite &, sf::Text &, button & b) const override final {
 			if (e.type != sf::Event::EventType::MouseMoved) return false;
 			sf::Vector2f p((float)e.mouseMove.x, (float)e.mouseMove.y);
 			return b.get_rect().contains(p);
@@ -33,7 +33,7 @@ namespace jk {
 
 		using T::es_;
 	protected:
-		virtual void proceed(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override {
+		virtual void proceed(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override final {
 			using namespace std::chrono;
 			mtx_->lock_shared();
 			const float d_dt = (upper_lim_ - lower_lim_) / duration_.count();
@@ -53,7 +53,7 @@ namespace jk {
 			}
 		}
 
-		virtual void finish(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override {
+		virtual void finish(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override final {
 			using namespace std::chrono;
 			mtx_->lock_shared();
 			const float d_dt = (lower_lim_ - upper_lim_) / duration_.count();

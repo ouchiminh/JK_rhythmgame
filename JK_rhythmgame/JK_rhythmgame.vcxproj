@@ -175,9 +175,10 @@
     <ClInclude Include="src\button_effect.hpp" />
     <ClInclude Include="src\effect.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
-    <ClInclude Include="src\map-select.hpp" />
+    <ClInclude Include="src\map-select-scene.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
     <ClInclude Include="src\meta-helper.hpp" />
+    <ClInclude Include="src\play-scene.hpp" />
     <ClInclude Include="src\resmng.hpp" />
     <ClInclude Include="src\scene-mng.hpp" />
     <ClInclude Include="src\scene.hpp" />
@@ -196,7 +197,6 @@
     <ClCompile Include="src\aes\src\SHA256.cpp" />
     <ClCompile Include="src\arcfile.cpp" />
     <ClCompile Include="src\archiver.cpp" />
-    <ClCompile Include="src\map-select.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
     <ClCompile Include="src\scene-mng.cpp" />
     <ClCompile Include="src\sfml-button.cpp" />

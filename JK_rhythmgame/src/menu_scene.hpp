@@ -41,7 +41,7 @@ namespace jk {
 		sf::Clock clock_;
 		bool started_;
 	public:
-		[[nodiscard]] SCENEFLAG operator() ()override;
+		[[nodiscard]] SCENEFLAG operator() () override;
 		void free_resource() noexcept {}
 		void init(sf::RenderWindow & w, sf::Time render_time = sf::seconds(1.0f));
 	};
@@ -71,7 +71,7 @@ namespace jk {
 		logo_renderer logo_;
 		bkg_renderer bkg_;
 		menu_renderer menu_;
-		std::optional<renderer*> cur_renderer_;
+		SCENEFLAG(mainmenu::*cur_renderer_)();
 
 		SCENEFLAG render_logo();
 		SCENEFLAG render_bkg();
