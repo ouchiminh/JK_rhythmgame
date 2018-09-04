@@ -1,8 +1,9 @@
 #pragma once
 #include <optional>
 #include <filesystem>
-#include "scene.hpp"
 #include "SFML/Graphics.hpp"
+#include "scene.hpp"
+#include "ui-component.hpp"
 #include "aes/aes-utl.hpp"
 #include "archiver.hpp"
 #include "arcfile.hpp"
@@ -12,6 +13,8 @@ namespace jk {
 		std::filesystem::directory_iterator di_;
 		jk::archive::archiver archiver_;
 		enc::aes_utl encoder_;
+		ui_mng components_;
+		
 	public:
 		[[nodiscard]] SCENEFLAG operator() () override;
 		std::uint32_t input(const sf::Event & e) noexcept override;
