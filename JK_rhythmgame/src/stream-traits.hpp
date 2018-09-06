@@ -45,7 +45,7 @@ namespace jk {
 			return s.gcount();
 		}
 		static std::int64_t seekg(stream_t  & s, std::int64_t pos) {
-			s.seekg(pos, std::ios::beg);
+			s.seekg(0, std::ios::beg);
 			return s.tellg();
 		}
 		static std::int64_t get_size(stream_t & s) {

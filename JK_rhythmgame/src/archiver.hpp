@@ -8,13 +8,11 @@
 namespace jk::archive {
 	class archiver {
 		std::vector<file> list_;
-		std::filesystem::path arc_name_;
 		
 		/// <summary>
 		/// discard existing data, and read archive file header / reserve list_
 		/// </summary>
 		void init(std::istream & in) noexcept(false);
-		[[nodiscard]] bool load(std::istream & in) noexcept;
 	public:
 		/// <summary>
 		/// add file to archive list.
@@ -38,11 +36,10 @@ namespace jk::archive {
 		/// <param name = "filepath">path to the file will be loaded.</param>
 		/// <returns>true:succeed</returns>
 		[[nodiscard]] bool load(const std::filesystem::path & filepath) noexcept;
+		[[nodiscard]] bool load(std::istream & in) noexcept;
 
 		[[nodiscard]] file & get(const std::filesystem::path & filepath);
 		[[nodiscard]] const file & get(const std::filesystem::path & filepath) const;
-		[[nodiscard]] const file & get(size_t idx) const;
-		[[nodiscard]] file & get(size_t idx);
 	};
 	template<class OStream>
 	inline void archiver::write(OStream & out) const {
