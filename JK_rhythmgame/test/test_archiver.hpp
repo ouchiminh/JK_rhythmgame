@@ -1,4 +1,6 @@
 #pragma once
+
+#if 0
 #include "test.hpp"
 #include "../src/archiver.hpp"
 
@@ -12,3 +14,4 @@ namespace jk::archive::test {
 		REQUIRE_TRUE(a.load(fs::path(".\\res\\graphic.arc")));
 	}
 }
+#endif

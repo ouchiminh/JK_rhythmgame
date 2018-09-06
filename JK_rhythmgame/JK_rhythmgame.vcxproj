@@ -170,8 +170,6 @@
     <ClInclude Include="src\aes\include\aes.hpp" />
     <ClInclude Include="src\aes\include\key.hpp" />
     <ClInclude Include="src\aes\include\SHA256.hpp" />
-    <ClInclude Include="src\arcfile.hpp" />
-    <ClInclude Include="src\archiver.hpp" />
     <ClInclude Include="src\button_effect.hpp" />
     <ClInclude Include="src\effect.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
@@ -188,15 +186,12 @@
     <ClInclude Include="src\timeKeeper.h" />
     <ClInclude Include="src\ui-component.hpp" />
     <ClInclude Include="test\test.hpp" />
-    <ClInclude Include="test\test_archiver.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JK_rhythmgame.cpp" />
     <ClCompile Include="src\aes\aes-utl.cpp" />
     <ClCompile Include="src\aes\src\aes.cpp" />
     <ClCompile Include="src\aes\src\SHA256.cpp" />
-    <ClCompile Include="src\arcfile.cpp" />
-    <ClCompile Include="src\archiver.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
     <ClCompile Include="src\scene-mng.cpp" />
     <ClCompile Include="src\sfml-button.cpp" />
