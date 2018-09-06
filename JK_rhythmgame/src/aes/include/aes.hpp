@@ -1,10 +1,4 @@
-﻿/**
-* aes.hpp / aes.cpp(May 2018)
-* author ou chi minh <@kkZ3kTRT>
-* THIS PROGRAM IS PROVIDED BY THE AUTHORS. USE FOR FREE.
-* BUT DO NOT INSIST THAT YOU MADE THIS.
-*/
-#ifndef AES_HPP
+﻿#ifndef AES_HPP
 #define AES_HPP
 
 #include <cstdint>

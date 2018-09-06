@@ -1,11 +1,4 @@
-﻿/**
-* aes.hpp / aes.cpp(May 2018)
-* author ou chi minh <@kkZ3kTRT>
-* THIS PROGRAM IS PROVIDED BY THE AUTHORS. USE FOR FREE.
-* BUT DO NOT INSIST THAT YOU MADE THIS.
-**/
-
-#include <random>
+﻿#include <random>
 #include <cstdlib>
 #include <memory.h>
 #include "../include/aes.hpp"

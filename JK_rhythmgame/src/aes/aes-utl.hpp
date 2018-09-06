@@ -13,9 +13,9 @@ namespace enc {
 		aes & get_encoder() noexcept;
 		const aes & get_encoder() const noexcept;
 
-		std::vector<std::uint8_t> decrypt(const std::string & filename);
+		[[nodiscard]] std::vector<std::uint8_t> decrypt(const std::string & filename);
 		template<class IStream>
-		std::vector<std::uint8_t> decrypt(IStream & in);
+		[[nodiscard]] std::vector<std::uint8_t> decrypt(IStream & in);
 		
 		template<class IStream, class OStream>
 		void encrypt(IStream & in, OStream & out);
@@ -49,8 +49,8 @@ namespace enc {
 		data = new std::uint8_t[size + 32];
 
 		in_traits::read(in, data, size);
-		hash.Push(data, size);
-		hash.Final(data + size);
+		hash.Push(static_cast<unsigned char*>(data), static_cast<u_32>(size));
+		hash.Final(static_cast<unsigned char*>(data) + size);
 		auto result = encoder_.encrypt(data, size + 32);
 
 		delete[] data;

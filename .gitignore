@@ -1,3 +1,6 @@
+#exceptable project
+arut/
+
 # Prerequisites
 *.d
 
@@ -48,4 +51,8 @@
 *.pdf
 *.html
 *.xml
+*.db-wal
+*.db-shm
+*.arc
+
 

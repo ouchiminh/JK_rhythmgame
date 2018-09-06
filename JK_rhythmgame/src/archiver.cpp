@@ -24,7 +24,6 @@ inline void jk::archive::archiver::init(std::istream & in) noexcept(false) {
 			filepath.push_back(buf);
 		} while (buf);
 		in.read((char*)(void*)&filesize, sizeof(filesize));
-		auto tmp = in.gcount();
 		list_.emplace_back(filepath, filesize);
 	}
 }

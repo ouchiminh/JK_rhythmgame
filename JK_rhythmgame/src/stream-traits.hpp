@@ -2,7 +2,9 @@
 #include <type_traits>
 #include <cstdint>
 #include <istream>
-#include "SFML/System/InputStream.hpp"
+#if __has_include("SFML/System/InputStream.hpp")
+#	include "SFML/System/InputStream.hpp"
+#endif
 #include "meta-helper.hpp"
 
 
@@ -10,6 +12,7 @@ namespace jk {
 	template<class T>
 	class istream_traits_impl {};
 
+#if __has_include ("SFML/System/InputStream.hpp")
 	template<>
 	class istream_traits_impl<sf::InputStream>{
 	public:
@@ -28,6 +31,7 @@ namespace jk {
 			return s.tell();
 		}
 	};
+#endif
 
 	template<typename CharT>
 	class istream_traits_impl<std::basic_istream<CharT>> {
@@ -57,7 +61,11 @@ namespace jk {
 
 	template<class T>
 	class istream_traits :
-		public istream_traits_impl<typename search_base<T, sf::InputStream, std::basic_istream<char>, std::basic_istream<unsigned char>>::type>
+		public istream_traits_impl<typename search_base<T, 
+#if __has_include("SFML/System/InputStream.hpp")
+		sf::InputStream,
+#endif
+		std::basic_istream<char>, std::basic_istream<unsigned char>>::type>
 	{};
 
 
