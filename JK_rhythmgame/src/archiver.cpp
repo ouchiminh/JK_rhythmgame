@@ -11,6 +11,7 @@ namespace fs = std::filesystem;
 
 inline void jk::archive::archiver::init(std::istream & in) noexcept(false) {
 	size_t filecnt;
+	size_t curpos;
 	list_.clear();
 	in.read((char*)&filecnt, sizeof(filecnt));
 	if (filecnt == 0) throw std::out_of_range("archive file is too short");
@@ -25,6 +26,11 @@ inline void jk::archive::archiver::init(std::istream & in) noexcept(false) {
 		} while (buf);
 		in.read((char*)(void*)&filesize, sizeof(filesize));
 		list_.emplace_back(filepath, filesize);
+	}
+	curpos = in.tellg();
+	for (auto & i : list_) {
+		i.register_archived_pos(curpos);
+		curpos += i.size();
 	}
 }
 
@@ -52,6 +58,7 @@ void jk::archive::archiver::write(const std::filesystem::path & filepath) const 
 
 bool jk::archive::archiver::load(const std::filesystem::path & filepath) noexcept {
 	if(!fs::exists(filepath)) return false;
+	arc_name_ = filepath;
 	std::ifstream in(filepath, std::ios::binary || std::ios::in);
 	return load(in);
 }
@@ -59,7 +66,6 @@ bool jk::archive::archiver::load(const std::filesystem::path & filepath) noexcep
 inline bool jk::archive::archiver::load(std::istream & in) noexcept {
 	try {
 		init(in);
-		for (auto & i : list_) i.load_from_archive(in);
 	} catch (std::ios::failure &) { return false; }
 	catch (...) { return false; }
 	return true;
@@ -68,7 +74,11 @@ inline bool jk::archive::archiver::load(std::istream & in) noexcept {
 jk::archive::file & jk::archive::archiver::get(const std::filesystem::path & filepath) {
 	using namespace std;
 	auto tar = find(begin(list_), end(list_), filepath);
-	if (tar != end(list_)) return *tar;
+	if (tar != end(list_)) {
+		std::ifstream in(arc_name_, std::ios::binary);
+		tar->load_from_archive(in);
+		return *tar;
+	}
 	throw std::out_of_range("no such elements in this archive file");
 }
 

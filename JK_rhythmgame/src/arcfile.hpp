@@ -15,6 +15,7 @@ namespace jk::archive {
 	class file {
 		void * body_;	// if invalid, nullptr
 		size_t size_;	// if invalid, 0
+		size_t pos_;	// used only when archived
 		std::filesystem::path filepath_;
 
 		void discard() noexcept;
@@ -26,7 +27,7 @@ namespace jk::archive {
 		/// <returns></returns>
 		file(std::filesystem::path && filepath) noexcept(false);
 		file(const std::filesystem::path & filepath);
-		file(const std::string & filepath, size_t size);
+		file(const std::string & filepath, size_t size, size_t pos = 0);
 		file() noexcept;			// initialize as invalid object
 		file(const file &) = delete;
 		file(file && f);
@@ -38,7 +39,8 @@ namespace jk::archive {
 		/// </summary>
 		/// <param name="filepath">filepath. could be an identifier</param>
 		/// <param name="filesize">filesize. this param is used when load_from_archive</param>
-		void register_archived_info(const std::filesystem::path & filepath, size_t filesize) noexcept;
+		void register_archived_info(const std::filesystem::path & filepath, size_t filesize, size_t pos = 0) noexcept;
+		void register_archived_pos(size_t pos);
 
 		/// <summary>
 		/// load file body from archive file from in's position.
@@ -78,16 +80,21 @@ namespace jk::archive {
 		} catch (std::exception & e) { throw std::runtime_error(e.what()); }
 	}
 
-	inline void file::register_archived_info(const std::filesystem::path & filepath, size_t filesize) noexcept {
+	inline void file::register_archived_info(const std::filesystem::path & filepath, size_t filesize, size_t pos) noexcept {
 		discard();
 		filepath_ = filepath;
 		size_ = filesize;
+		pos_ = pos;
 	}
+
+	inline void file::register_archived_pos(size_t pos) { pos_ = pos; }
 
 	template<class IStream>
 	inline void file::load_from_archive(IStream & in) noexcept(false) {
 		using is = jk::istream_traits<IStream>;
 		if (filepath_.empty() || size_ == 0) throw std::logic_error("invalid pre-condition.");
+		if (body_ != nullptr) return;
+		is::seekg(in, pos_);
 		body_ = new std::int8_t[size_];
 		is::read(in, body_, size_);
 	}
