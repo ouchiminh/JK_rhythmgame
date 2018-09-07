@@ -1,9 +1,8 @@
 #pragma once
 
-#if 0
 #include "test.hpp"
+#if 0
 #include "../src/archiver.hpp"
-
 namespace jk::archive::test {
 	DEFINE_TEST(test_archiver) {
 		jk::archive::archiver a;

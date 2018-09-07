@@ -2,6 +2,7 @@
 #include <shared_mutex>
 #include <type_traits>
 #include <chrono>
+#include <optional>
 #include "effect.hpp"
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics.hpp"
@@ -20,6 +21,42 @@ namespace jk {
 			sf::Vector2f p((float)e.mouseMove.x, (float)e.mouseMove.y);
 			return b.get_rect().contains(p);
 		}
+	};
+
+	template<class T>
+	class change_color_effect : virtual public T {
+	public:
+		enum Target : int { BKG = 1, TXT = 1 << 1 };
+	private:
+		static_assert(std::is_base_of_v<button_effect, T>);
+		std::shared_mutex *mtx_;
+		sf::Color dest_color_;
+		std::optional<sf::Color> original_color_[2];
+		Target tar_;
+		using T::es_;
+	protected:
+		virtual void proceed(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override final {
+			std::lock_guard<decltype(*mtx_)>(*mtx_);
+			if (!original_color_[0].has_value()) {
+				original_color_[0] = s.getColor();
+				original_color_[1] = t.getColor();
+			}
+			if (tar_ & Target::BKG) s.setColor(dest_color_);
+			if (tar_ & Target::TXT) t.setColor(dest_color_);
+		}
+		virtual void finish(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override final {
+			std::lock_guard<decltype(*mtx_)>(*mtx_);
+			if (tar_ & Target::BKG) s.setColor(original_color_[0].value_or(sf::Color(255,255,255,0)));
+			if (tar_ & Target::TXT) t.setColor(original_color_[1].value_or(sf::Color(255,255,255,0)));
+		}
+	public:
+		
+		change_color_effect(sf::Color && to, std::shared_mutex * mtx, Target tar = Target::TXT) :
+			dest_color_{ to }, mtx_{ mtx }, tar_{ tar }
+		{}
+		change_color_effect(const sf::Color & to, std::shared_mutex * mtx, Target tar = Target::TXT) :
+			dest_color_{ to }, mtx_{ mtx }, tar_{ tar }
+		{}
 	};
 
 	template<class T>

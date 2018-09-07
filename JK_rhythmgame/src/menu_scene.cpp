@@ -59,13 +59,13 @@ void jk::mainmenu::input(const sf::Event & e) noexcept {
 
 jk::SCENEFLAG jk::logo_renderer::operator()() {
 	using namespace std::chrono;
-	unsigned render_target = 0;
+	unsigned render_idx = 0;
 	auto current_pod = logo_started_;
 	auto current_time = steady_clock::now();
 	if (current_time > logo_time * 2 + logo_started_) {
 		return SCENEFLAG::FINISHED;
 	} else if (current_time > logo_time + logo_started_) {
-		render_target++;
+		render_idx++;
 		current_pod = logo_started_ + logo_time;
 	}
 	auto alpha = current_time < current_pod + fade_time ?
@@ -74,9 +74,9 @@ jk::SCENEFLAG jk::logo_renderer::operator()() {
 		gradual_change((std::uint8_t)255, (std::uint8_t)0,
 		(double)fade_time.count(), (double)(current_time - (current_pod + fade_time + disp_time)).count());
 
-	logoSpr_[render_target].setColor(sf::Color{ 255,255,255,alpha });
+	logoSpr_[render_idx].setColor(sf::Color{ 255,255,255,alpha });
 	w_->clear(bkg_color);
-	w_->draw(logoSpr_[render_target], sf::BlendAlpha);
+	w_->draw(logoSpr_[render_idx], sf::BlendAlpha);
 	w_->display();
 	return SCENEFLAG::RUNNING;
 }
