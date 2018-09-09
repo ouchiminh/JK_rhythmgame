@@ -1,4 +1,5 @@
 #pragma once
+#include <stack>
 #include <map>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
@@ -8,7 +9,7 @@ namespace jk {
 
 	class scene_mng {
 		std::map<SCENE_LIST, std::shared_ptr<scene>> scene_list_;
-		SCENE_LIST cur_scene_;
+		std::stack<SCENE_LIST> cur_scene_;		// should be stack;
 
 		const HMODULE hm_;
 		sf::RenderWindow & rw_;

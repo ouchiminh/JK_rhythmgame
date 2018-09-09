@@ -9,6 +9,7 @@
 #include <optional>
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics.hpp"
+#include "event-handlers.hpp"
 #include "sfml-button.hpp"
 #include "button_effect.hpp"
 #include "scene.hpp"
@@ -56,6 +57,7 @@ namespace jk {
 
 		bool did_initialized_;
 		SCENEFLAG flag_;
+
 	public:
 		menu_renderer();
 
@@ -76,11 +78,18 @@ namespace jk {
 		SCENEFLAG render_logo();
 		SCENEFLAG render_bkg();
 		SCENEFLAG render_menu();
+		
+		std::int32_t on_key_down(const sf::Event & e);
 
 		SCENE_LIST next_scene_;
+		bool did_init_;
+	public:
+		event_handlers<> handlers_;
 	protected:
 		void finish() override;
 	public:
+		mainmenu() : did_init_{ false } {}
+
 		void init(HMODULE hm, sf::RenderWindow & w) override;
 		virtual bool free_resource() noexcept override;
 

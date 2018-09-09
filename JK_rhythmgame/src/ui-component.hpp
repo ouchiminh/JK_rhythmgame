@@ -6,21 +6,21 @@
 #include "SFML/Graphics.hpp"
 
 namespace jk {
-	enum FALL_THROUGH : std::uint16_t {
+	enum FALLTHROUGH : std::uint16_t {
 		NO_FALLTHROUGH, GO_FALLTHROUGH
 	};
 
 	union result_t {
 		std::uint64_t all;
 		std::uint32_t each[2];	// [0]:fall_through		[1]:unique retvalue
-		std::uint16_t mini[4];	// [0]:fall_through		[1]:did process?(true,false)	[2],[3]:unique retvalue
+		std::uint16_t mini[4] = {1,0,0,0};	// [0]:fall_through		[1]:did process?(true,false)	[2],[3]:unique retvalue
 
 		void processed(bool f = true) noexcept { mini[1] = f; }
-		void fallthrough(FALL_THROUGH f = NO_FALLTHROUGH) noexcept { mini[0] = f; }
+		void fallthrough(FALLTHROUGH f = NO_FALLTHROUGH) noexcept { mini[0] = f; }
 		void set_retv(uint32_t v = 0) noexcept { each[1] = v; }
 
 		uint32_t get_retv() const noexcept { return each[1]; }
-		FALL_THROUGH get_fallthrough() const noexcept { return static_cast<FALL_THROUGH>(mini[0]); }
+		FALLTHROUGH get_fallthrough() const noexcept { return static_cast<FALLTHROUGH>(mini[0]); }
 		bool get_is_processed() const noexcept { return mini[1] ? true : false; }
 	};
 

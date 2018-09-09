@@ -27,33 +27,52 @@ jk::SCENEFLAG jk::mainmenu::render_bkg() {
 
 jk::SCENEFLAG jk::mainmenu::render_menu() {
 	jk::SCENEFLAG ret{ menu_() };
-	if(ret == jk::SCENEFLAG::FINISHED) next_scene_ = jk::SCENE_LIST::Map_Select;
+	if(ret == jk::SCENEFLAG::FINISHED) next_scene_ = jk::SCENE_LIST::Game_Play;
 	return ret;
 }
 
-void jk::mainmenu::finish() {}
+std::int32_t jk::mainmenu::on_key_down(const sf::Event & e) {
+	if (e.key.code != sf::Keyboard::Key::Escape) return 0;
+	next_scene_ = jk::SCENE_LIST::Exit;
+	return 0;
+}
+
+void jk::mainmenu::finish() {
+	did_init_ = false;
+}
 
 void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
+	if (did_init_) return;
+	handlers_ << 
+		std::make_pair<sf::Event::EventType, event_handler_t<>>(
+			sf::Event::EventType::KeyPressed,
+			[&](const sf::Event & e) { return on_key_down(e); }
+		);
+
 	logo_.init(hm, w);
 	bkg_.init(w);
 	menu_.init(hm, w);
 	cur_renderer_ = &mainmenu::render_logo;
 	next_scene_ = SCENE_LIST::Main_Menu;
+	did_init_ = true;
 }
 
 bool jk::mainmenu::free_resource() noexcept {
+	finish();
 	logo_.free_resource();
 	menu_.free_resource();
 	return true;
 }
 
 jk::SCENEFLAG jk::mainmenu::render() {
+	if (next_scene_ != SCENE_LIST::Main_Menu) return SCENEFLAG::FINISHED;
 	return (this->*cur_renderer_)();
 }
 
 jk::SCENE_LIST jk::mainmenu::get_next_scene() const noexcept { return next_scene_; }
 
 void jk::mainmenu::input(const sf::Event & e) noexcept {
+	if(handlers_(e).get_fallthrough() == jk::FALLTHROUGH::NO_FALLTHROUGH) return;
 	menu_.input(e);
 }
 
@@ -127,11 +146,14 @@ void jk::bkg_renderer::init(sf::RenderWindow & w, sf::Time render_time) {
 jk::menu_renderer::menu_renderer() : did_initialized_{ false }, flag_{ SCENEFLAG::NOTYET } {}
 
 jk::SCENEFLAG jk::menu_renderer::operator()() {
-	std::shared_lock<std::shared_mutex> lg(mtx_);
 	if (flag_ == jk::SCENEFLAG::NOTYET) flag_ = jk::SCENEFLAG::RUNNING;
 	w_->clear(bkg_color);
 	w_->draw(bkg_);
+	
+	mtx_.lock_shared();
 	ui_mng_.draw(*w_);
+	mtx_.unlock_shared();
+
 	w_->display();
 	return flag_;
 }

@@ -3,6 +3,7 @@
 #include <functional>
 #include <map>
 #include "SFML/Window/Event.hpp"
+#include "ui-component.hpp"
 
 namespace jk {
 	//	error:exception
@@ -26,12 +27,14 @@ namespace jk {
 		result_t operator () (const sf::Event & e, Args ...args) {
 			std::uint32_t ret{ 0 };
 			result_t did{ 0 };
+			did.fallthrough(jk::FALLTHROUGH::GO_FALLTHROUGH);
 			if (handlers_.count(e.type)) {
 				auto r = handlers_.equal_range(e.type);
 				std::uint32_t buf;
 				std::for_each(r.first, r.second, [&](auto & a) { ret = (buf = a.second(e, args...)) ? buf : ret; });
 				did.processed();
 				did.set_retv(ret);
+				did.fallthrough();
 				return did;
 			}
 			did.processed(false);

@@ -14,7 +14,7 @@ namespace jk {
 	};
 
 	enum class SCENE_LIST : std::intptr_t {
-		Main_Menu, Map_Select
+		Null = 0, Exit, Main_Menu, Game_Play, Credit, Cnt
 	};
 
 	class renderer {

@@ -36,7 +36,7 @@ namespace jk {
 		using T::es_;
 	protected:
 		virtual void proceed(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override final {
-			std::lock_guard<decltype(*mtx_)>(*mtx_);
+			std::lock_guard<decltype(*mtx_)> l(*mtx_);
 			if (!original_color_[0].has_value()) {
 				original_color_[0] = s.getColor();
 				original_color_[1] = t.getColor();
@@ -45,9 +45,10 @@ namespace jk {
 			if (tar_ & Target::TXT) t.setColor(dest_color_);
 		}
 		virtual void finish(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) noexcept override final {
-			std::lock_guard<decltype(*mtx_)>(*mtx_);
+			std::lock_guard<decltype(*mtx_)> l(*mtx_);
 			if (tar_ & Target::BKG) s.setColor(original_color_[0].value_or(sf::Color(255,255,255,0)));
 			if (tar_ & Target::TXT) t.setColor(original_color_[1].value_or(sf::Color(255,255,255,0)));
+			es_ = EFFECT_STATE::NOT_WORKING;
 		}
 	public:
 		
