@@ -5,37 +5,45 @@
 
 namespace jk {
 	enum ADJUSTFLAG {
-		NOCHANGE, LEFT = 1 << 1, RIGHT = 1 << 2, HCENTER = 1 << 3, VCENTER = 1 << 4, TOP = 1 << 5, BTM = 1 << 6, CENTER = HCENTER | VCENTER
-	};
-	template<class T>
-	inline void adjust_pos(T & t, const sf::RenderTarget & rt, ADJUSTFLAG af) {
+		NOCHANGE, LEFT = 1, RIGHT = 1 << 1, HCENTER = 1 << 2, VCENTER = 1 << 3, TOP = 1 << 4, BTM = 1 << 5, CENTER = VCENTER | HCENTER
+	};	
+	constexpr ADJUSTFLAG operator | (ADJUSTFLAG a, ADJUSTFLAG b) {
+		return static_cast<ADJUSTFLAG>(static_cast<int>(a) | static_cast<int>(b));
+	}
+	template<class T, typename CoordElm>
+	inline void adjust_pos(T & t, const sf::Vector2<CoordElm> & screen, ADJUSTFLAG af) {
 		static_assert(std::is_base_of_v<sf::Transformable, T>, "class T must be derived from sf::Transformable.");
 		auto mvdpos = t.getPosition();
 		const auto boundsbox = t.getGlobalBounds();
-		switch (af & 0b1110) {
+		switch (af & 0b111) {
 		case ADJUSTFLAG::LEFT:
 			mvdpos.x = 0;
 			break;
 		case ADJUSTFLAG::RIGHT:
-			mvdpos.x = rt.getSize().x - boundsbox.width;
+			mvdpos.x = screen.x - boundsbox.width;
 			break;
 		case ADJUSTFLAG::HCENTER:
-			mvdpos.x = (rt.getSize().x - boundsbox.width) / 2;
+			mvdpos.x = (screen.x - boundsbox.width) / 2;
 			break;
 		}
-		switch (af & 0b1110000) {
+		switch (af & 0b111000) {
 		case ADJUSTFLAG::TOP:
 			mvdpos.y = 0;
 			break;
 		case ADJUSTFLAG::BTM:
-			mvdpos.y = rt.getSize().y - boundsbox.height;
+			mvdpos.y = screen.y - boundsbox.height;
 			break;
 		case ADJUSTFLAG::VCENTER:
-			mvdpos.y = (rt.getSize().y - boundsbox.height) / 2;
+			mvdpos.y = (screen.y - boundsbox.height) / 2;
 			break;
 		}
 		t.setPosition(mvdpos);
 	}
+	template<class T>
+	inline void adjust_pos(T & t, const sf::RenderTarget & rt, ADJUSTFLAG af) {
+		adjust_pos(t, rt.getSize(), af);
+	}
+
 	template<typename T, typename T2>
 	constexpr T gradual_change(T begin, T end, T2 duration, T2 current) {
 		auto min_width = (end - begin) / duration;

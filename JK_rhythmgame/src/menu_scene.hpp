@@ -51,7 +51,7 @@ namespace jk {
 		std::shared_mutex mtx_;
 		sf::Texture bkg_tx_;
 		sf::Sprite bkg_;
-		sf::Font f;
+		sf::Font f_;
 		ui_mng ui_mng_;
 		sf::RenderWindow * w_;
 

@@ -21,6 +21,15 @@ sf::FloatRect jk::button::get_rect() const noexcept {
 	return bkg_.getGlobalBounds();
 }
 
+void jk::button::set_text(const sf::Text & t) {
+	title_ = t;
+}
+
+void jk::button::set_bkg(const sf::Texture t) {
+	texture_ = t;
+	bkg_.setTexture(texture_);
+}
+
 jk::result_t jk::button::event_procedure(const sf::Event & e) {
 	return handlers_(e, bkg_, title_, *this);
 }

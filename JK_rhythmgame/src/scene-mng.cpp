@@ -1,10 +1,13 @@
 #include "scene-mng.hpp"
+#include "exit-scene.hpp"
 #include "menu_scene.hpp"
 jk::scene_mng::scene_mng(HMODULE hm, sf::RenderWindow & w) : hm_{ hm }, rw_{ w } 
 {}
 
 void jk::scene_mng::init() {
-	scene_list_.insert_or_assign(SCENE_LIST::Main_Menu, std::make_shared<mainmenu>());
+	scene_list_.insert_or_assign(SCENE_LIST::Main_Menu, std::make_shared<jk::mainmenu>());
+	scene_list_.insert_or_assign(SCENE_LIST::Exit, std::make_shared<jk::exit_scene>());
+	cur_scene_.push(SCENE_LIST::Exit);
 	cur_scene_.push(SCENE_LIST::Main_Menu);
 	scene_list_[SCENE_LIST::Main_Menu]->init(hm_, rw_);
 }
@@ -18,10 +21,13 @@ void jk::scene_mng::input(const sf::Event & e) noexcept {
 
 void jk::scene_mng::render() {
 	if (!scene_list_.count(cur_scene_.top())) return;
-	const auto endflag = scene_list_.at(cur_scene_.top())->render();
+	jk::SCENEFLAG endflag;
+	try {
+		 endflag = scene_list_.at(cur_scene_.top())->render();
+	} catch (...) {}
 	if (endflag == SCENEFLAG::FINISHED) {
 		const auto scene_buf = scene_list_.at(cur_scene_.top())->get_next_scene();
-		scene_buf == static_cast<SCENE_LIST>(0i64) ?
+		scene_buf == SCENE_LIST::Null ?
 			cur_scene_.pop() :
 			cur_scene_.push(scene_buf);
 		if(scene_list_.count(cur_scene_.top()))scene_list_.at(cur_scene_.top())->init(hm_, rw_);

@@ -9,10 +9,6 @@
 #include "sfmlUtl.hpp"
 #include "sfml-button.hpp"
 
-namespace {
-	const sf::Color bkg_color = sf::Color(0x0);
-}
-
 jk::SCENEFLAG jk::mainmenu::render_logo() {
 	jk::SCENEFLAG ret;
 	if ((ret = logo_()) == SCENEFLAG::FINISHED) cur_renderer_ = &mainmenu::render_bkg;
@@ -168,16 +164,16 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	sf::Text button_title;
 	event_handler_t<sf::Sprite&, sf::Text&, button&> eh;
 	eh = ee;
-	f.loadFromFile(".\\res\\fonts\\meiryo.ttc");
+	f_.loadFromFile(".\\res\\fonts\\meiryo.ttc");
 	{
-		button_title.setFont(f);
+		button_title.setFont(f_);
 		button_title.setString("Game Start");
 		jk::adjust_pos(button_title, w, jk::ADJUSTFLAG::HCENTER);
 		auto pos = button_title.getPosition();
 		pos.y = w.getSize().y * 0.8f;
 		button_title.setCharacterSize(static_cast<unsigned>(w.getSize().y * 0.04));
 		button_title.setPosition(pos);
-		button_title.setFillColor(sf::Color(0xFF, 0xA0, 0x00));
+		button_title.setFillColor(theme_color);
 	}
 	ui_mng_.create<jk::button>(button_title)->handlers_ <<
 		std::make_pair(sf::Event::EventType::MouseButtonPressed, [&](const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
@@ -193,7 +189,7 @@ void jk::menu_renderer::free_resource() noexcept {
 	std::lock_guard<std::shared_mutex> lg(mtx_);
 	bkg_tx_ = sf::Texture{};
 	bkg_ = sf::Sprite{};
-	f = sf::Font{};
+	f_ = sf::Font{};
 	ui_mng_.get_list().clear();
 	did_initialized_ = false;
 }

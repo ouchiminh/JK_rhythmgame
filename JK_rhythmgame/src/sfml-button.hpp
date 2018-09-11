@@ -24,5 +24,8 @@ namespace jk {
 		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;
 		result_t event_procedure(const sf::Event & e) override;
 		sf::FloatRect get_rect() const noexcept override;
+
+		void set_text(const sf::Text & t);
+		void set_bkg(const sf::Texture t);
 	};
 }

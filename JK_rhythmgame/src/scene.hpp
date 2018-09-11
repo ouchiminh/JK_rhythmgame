@@ -9,6 +9,12 @@
 #include <Windows.h>
 
 namespace jk {
+	inline namespace color {
+		const sf::Color bkg_color	= sf::Color(0x0);
+		const sf::Color str_color	= sf::Color(238, 238, 238, 1);
+		const sf::Color theme_color	= sf::Color(0xFF, 0xA0, 0x00);
+	}
+
 	enum SCENEFLAG{
 		NOTYET, RUNNING, FINISHED
 	};
