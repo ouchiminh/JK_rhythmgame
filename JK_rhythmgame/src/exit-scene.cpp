@@ -8,6 +8,7 @@ inline std::int32_t jk::exit_scene::on_mouse_click(const sf::Event & e, sf::Spri
 	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)))
 		return 0;
 	flag_ = SCENEFLAG::FINISHED;
+	return 0;
 }
 
 std::int32_t jk::exit_scene::on_mouse_click_yes(const sf::Event & e, sf::Sprite &, sf::Text &, jk::button & b) {
@@ -22,24 +23,29 @@ void jk::exit_scene::finish() {}
 void jk::exit_scene::init_ui() {
 	using namespace std::literals::string_literals;
 	jk::change_color_effect<jk::on_mouse_hover> e(jk::color::theme_color, &mtx_);
-	
-	sf::Text button_title[2] = { sf::Text(sf::String("yes"), f_), sf::Text(sf::String("no"), f_) };
+
+	sf::Text button_title[2] = { sf::Text(sf::String("      Yes"), f_), sf::Text(sf::String("No      "), f_) };
 	for (auto i = 0; i < 2; i++) {
 		auto screen = w_->getSize();
-		screen.x /= 2 ;
+		screen.x /= 2;
 		button_title[i].setFillColor(jk::color::str_color);
 		jk::adjust_pos(button_title[i], w_->getSize(), jk::ADJUSTFLAG::VCENTER | (!i ? jk::ADJUSTFLAG::LEFT : jk::ADJUSTFLAG::RIGHT));
+
+		auto & evh = ui_mng_.create<jk::button>(button_title[i])->handlers_;
+		if (!i) evh << std::make_pair(sf::Event::EventType::MouseButtonPressed, [this](const auto &e, auto &s, auto &t, auto &b) {return on_mouse_click_yes(e, s, t, b); });
+		else evh << std::make_pair(sf::Event::EventType::MouseButtonPressed, [this](const auto &e, auto &s, auto &t, auto &b) {return on_mouse_click(e, s, t, b); });
 	}
-	for (auto i = 0; i < 2; i++) ui_mng_.create<jk::button>(button_title[i]);
 }
 
 void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
+	flag_ = jk::SCENEFLAG::RUNNING;
 	if (w_) return;
 	w_ = &w;
-	f_.loadFromFile(".\\res\\fonts\\meiryo.ttc");
+	f_.loadFromFile(".\\res\\fonts\\arial.ttf");
 	verification_message_.setFont(f_);
-	verification_message_.setString("exit?");
+	verification_message_.setString("Are you sure you want to exit?");
 	verification_message_.setFillColor(jk::color::str_color);
+	verification_message_.setCharacterSize(60);
 	jk::adjust_pos(verification_message_, *w_, jk::ADJUSTFLAG::TOP | jk::ADJUSTFLAG::HCENTER);
 	init_ui();
 }

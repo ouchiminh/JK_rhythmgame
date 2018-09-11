@@ -38,6 +38,8 @@ void jk::mainmenu::finish() {
 }
 
 void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
+	cur_renderer_ = &mainmenu::render_logo;
+	next_scene_ = SCENE_LIST::Main_Menu;
 	if (did_init_) return;
 	handlers_ << 
 		std::make_pair<sf::Event::EventType, event_handler_t<>>(
@@ -48,8 +50,6 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	logo_.init(hm, w);
 	bkg_.init(w);
 	menu_.init(hm, w);
-	cur_renderer_ = &mainmenu::render_logo;
-	next_scene_ = SCENE_LIST::Main_Menu;
 	did_init_ = true;
 }
 
