@@ -22,9 +22,8 @@ void jk::exit_scene::finish() {}
 
 void jk::exit_scene::init_ui() {
 	using namespace std::literals::string_literals;
-	jk::change_color_effect<jk::on_mouse_hover> e(jk::color::theme_color, &mtx_);
-
-	sf::Text button_title[2] = { sf::Text(sf::String("      Yes"), f_), sf::Text(sf::String("No      "), f_) };
+	jk::change_color_effect<jk::on_mouse_hover> effect(jk::color::theme_color, &mtx_);
+	sf::Text button_title[2] = { sf::Text(sf::String("         Yes"), f_), sf::Text(sf::String("No         "), f_) };
 	for (auto i = 0; i < 2; i++) {
 		auto screen = w_->getSize();
 		screen.x /= 2;
@@ -32,12 +31,14 @@ void jk::exit_scene::init_ui() {
 		jk::adjust_pos(button_title[i], w_->getSize(), jk::ADJUSTFLAG::VCENTER | (!i ? jk::ADJUSTFLAG::LEFT : jk::ADJUSTFLAG::RIGHT));
 
 		auto & evh = ui_mng_.create<jk::button>(button_title[i])->handlers_;
+		evh << std::make_pair(sf::Event::EventType::MouseMoved, (effect));
 		if (!i) evh << std::make_pair(sf::Event::EventType::MouseButtonPressed, [this](const auto &e, auto &s, auto &t, auto &b) {return on_mouse_click_yes(e, s, t, b); });
 		else evh << std::make_pair(sf::Event::EventType::MouseButtonPressed, [this](const auto &e, auto &s, auto &t, auto &b) {return on_mouse_click(e, s, t, b); });
 	}
 }
 
 void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
+	std::lock_guard<decltype(mtx_)> l(mtx_);
 	flag_ = jk::SCENEFLAG::RUNNING;
 	if (w_) return;
 	w_ = &w;
@@ -51,6 +52,7 @@ void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
 }
 
 bool jk::exit_scene::free_resource() noexcept {
+	std::lock_guard<decltype(mtx_)> l(mtx_);
 	finish();
 	ui_mng_.get_list().clear();
 	f_ = sf::Font();
@@ -62,7 +64,11 @@ bool jk::exit_scene::free_resource() noexcept {
 jk::SCENEFLAG jk::exit_scene::render() {
 	w_->clear(jk::color::bkg_color);
 	w_->draw(verification_message_);
+
+	mtx_.lock_shared();
 	ui_mng_.draw(*w_);
+	mtx_.unlock_shared();
+
 	w_->display();
 	return flag_;
 }
