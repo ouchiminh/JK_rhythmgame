@@ -11,7 +11,7 @@ namespace jk {
 		return static_cast<ADJUSTFLAG>(static_cast<int>(a) | static_cast<int>(b));
 	}
 	template<class T, typename CoordElm>
-	inline void adjust_pos(T & t, const sf::Vector2<CoordElm> & screen, ADJUSTFLAG af) {
+	inline void adjust_pos(T & t, const sf::Vector2<CoordElm> & screen, ADJUSTFLAG af, float offsetx = 0.0f, float offsety = 0.0f) {
 		static_assert(std::is_base_of_v<sf::Transformable, T>, "class T must be derived from sf::Transformable.");
 		auto mvdpos = t.getPosition();
 		const auto boundsbox = t.getGlobalBounds();
@@ -26,6 +26,7 @@ namespace jk {
 			mvdpos.x = (screen.x - boundsbox.width) / 2;
 			break;
 		}
+		mvdpos.x += offsetx;
 		switch (af & 0b111000) {
 		case ADJUSTFLAG::TOP:
 			mvdpos.y = 0;
@@ -37,11 +38,12 @@ namespace jk {
 			mvdpos.y = (screen.y - boundsbox.height) / 2;
 			break;
 		}
+		mvdpos.y += offsety;
 		t.setPosition(mvdpos);
 	}
 	template<class T>
-	inline void adjust_pos(T & t, const sf::RenderTarget & rt, ADJUSTFLAG af) {
-		adjust_pos(t, rt.getSize(), af);
+	inline void adjust_pos(T & t, const sf::RenderTarget & rt, ADJUSTFLAG af, float offsetx = 0.0f, float offsety = 0.0f) {
+		adjust_pos(t, rt.getSize(), af, offsetx, offsety);
 	}
 
 	template<typename T, typename T2>

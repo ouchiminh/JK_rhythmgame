@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include <shared_mutex>
 #include <type_traits>
 #include <chrono>
@@ -14,10 +15,22 @@
 namespace jk {
 	using button_effect = basic_effect<const sf::Event &, sf::Sprite &, sf::Text &, button &>;
 
+	class on_mouse_button_pressed : virtual public button_effect {
+		sf::Mouse::Button target_button_;
+	protected:
+		virtual bool judge(const sf::Event & e, sf::Sprite &, sf::Text &, button & b) const override final {
+			assert(e.type == sf::Event::EventType::MouseButtonPressed);
+			return e.mouseButton.button == target_button_ &&
+				b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y));
+		}
+	protected:
+		on_mouse_button_pressed(sf::Mouse::Button target_button) noexcept : target_button_{ target_button } {};
+	};
+
 	class on_mouse_hover : virtual public button_effect {
 	protected:
 		virtual bool judge(const sf::Event & e, sf::Sprite &, sf::Text &, button & b) const override final {
-			if (e.type != sf::Event::EventType::MouseMoved) return false;
+			assert(e.type == sf::Event::EventType::MouseMoved);
 			sf::Vector2f p((float)e.mouseMove.x, (float)e.mouseMove.y);
 			return b.get_rect().contains(p);
 		}

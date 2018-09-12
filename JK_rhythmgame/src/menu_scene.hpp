@@ -49,6 +49,8 @@ namespace jk {
 
 	class menu_renderer : public renderer{
 		std::shared_mutex mtx_;
+		sf::Clock clock_;
+		sf::Shader frag_;
 		sf::Texture bkg_tx_;
 		sf::Sprite bkg_;
 		sf::Font f_;
@@ -56,7 +58,7 @@ namespace jk {
 		sf::RenderWindow * w_;
 
 		bool did_initialized_;
-		SCENEFLAG flag_;
+		SCENEFLAG scene_flag_;
 
 	public:
 		menu_renderer();

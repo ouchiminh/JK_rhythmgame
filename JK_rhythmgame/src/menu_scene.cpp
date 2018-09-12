@@ -38,7 +38,6 @@ void jk::mainmenu::finish() {
 }
 
 void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
-	cur_renderer_ = &mainmenu::render_logo;
 	next_scene_ = SCENE_LIST::Main_Menu;
 	if (did_init_) return;
 	handlers_ << 
@@ -47,6 +46,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 			[&](const sf::Event & e) { return on_key_down(e); }
 		);
 
+	cur_renderer_ = &mainmenu::render_logo;
 	logo_.init(hm, w);
 	bkg_.init(w);
 	menu_.init(hm, w);
@@ -139,19 +139,28 @@ void jk::bkg_renderer::init(sf::RenderWindow & w, sf::Time render_time) {
 }
 
 
-jk::menu_renderer::menu_renderer() : did_initialized_{ false }, flag_{ SCENEFLAG::NOTYET } {}
+jk::menu_renderer::menu_renderer() : did_initialized_{ false }, scene_flag_{ SCENEFLAG::NOTYET } {}
 
 jk::SCENEFLAG jk::menu_renderer::operator()() {
-	if (flag_ == jk::SCENEFLAG::NOTYET) flag_ = jk::SCENEFLAG::RUNNING;
+	using namespace std::literals::string_literals;
+	if (scene_flag_ != jk::SCENEFLAG::RUNNING) {
+		clock_.restart();
+		scene_flag_ = jk::SCENEFLAG::RUNNING;
+	}
+	sf::RectangleShape frame(sf::Vector2f((float)w_->getSize().x, (float)w_->getSize().y));
+	frame.setFillColor(bkg_color);
 	w_->clear(bkg_color);
+	frag_.setUniform("t"s, clock_.getElapsedTime().asSeconds());
+	frag_.setUniform("r"s, sf::Glsl::Vec2((float)w_->getSize().x, (float)w_->getSize().y));
 	w_->draw(bkg_);
+	w_->draw(frame, &frag_);
 	
 	mtx_.lock_shared();
 	ui_mng_.draw(*w_);
 	mtx_.unlock_shared();
 
 	w_->display();
-	return flag_;
+	return scene_flag_;
 }
 
 void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
@@ -164,7 +173,7 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	sf::Text button_title;
 	event_handler_t<sf::Sprite&, sf::Text&, button&> eh;
 	eh = ee;
-	f_.loadFromFile(".\\res\\fonts\\meiryo.ttc");
+	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
 	{
 		button_title.setFont(f_);
 		button_title.setString("Game Start");
@@ -180,9 +189,12 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 			return on_button_click(e, s, t, b);
 		}) << 
 		std::make_pair(sf::Event::EventType::MouseMoved, eh);
+
+	frag_.loadFromFile(".\\res\\shader\\mainmenu_bkg.frag", sf::Shader::Type::Fragment);
+	
 	w_ = &w;
 	did_initialized_ = true;
-	flag_ = jk::SCENEFLAG::NOTYET;
+	scene_flag_ = jk::SCENEFLAG::NOTYET;
 }
 
 void jk::menu_renderer::free_resource() noexcept {
@@ -200,10 +212,10 @@ std::uint32_t jk::menu_renderer::input(const sf::Event & e){
 
 std::int32_t jk::menu_renderer::on_button_click(const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {
 	std::lock_guard<std::shared_mutex> lg(mtx_);
-	if (flag_ != jk::SCENEFLAG::RUNNING ||
+	if (scene_flag_ != jk::SCENEFLAG::RUNNING ||
 		!b.get_rect().contains(sf::Vector2f{ (float)e.mouseButton.x, (float)e.mouseButton.y }) ||
 		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;
-	flag_ = FINISHED;
+	scene_flag_ = FINISHED;
 	return 0;
 }

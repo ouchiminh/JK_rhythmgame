@@ -1,5 +1,8 @@
-#exceptable project
+#exceptable folder
 arut/
+x64/
+JK_rhythmgame/doc/
+JK_rhythmgame/x64/
 
 # Prerequisites
 *.d
@@ -54,5 +57,3 @@ arut/
 *.db-wal
 *.db-shm
 *.arc
-
-

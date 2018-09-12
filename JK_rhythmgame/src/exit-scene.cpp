@@ -23,12 +23,12 @@ void jk::exit_scene::finish() {}
 void jk::exit_scene::init_ui() {
 	using namespace std::literals::string_literals;
 	jk::change_color_effect<jk::on_mouse_hover> effect(jk::color::theme_color, &mtx_);
-	sf::Text button_title[2] = { sf::Text(sf::String("         Yes"), f_), sf::Text(sf::String("No         "), f_) };
+	sf::Text button_title[2] = { sf::Text(sf::String("Yes"), f_, 50), sf::Text(sf::String("No"), f_, 50) };
 	for (auto i = 0; i < 2; i++) {
 		auto screen = w_->getSize();
 		screen.x /= 2;
 		button_title[i].setFillColor(jk::color::str_color);
-		jk::adjust_pos(button_title[i], w_->getSize(), jk::ADJUSTFLAG::VCENTER | (!i ? jk::ADJUSTFLAG::LEFT : jk::ADJUSTFLAG::RIGHT));
+		jk::adjust_pos(button_title[i], *w_, jk::ADJUSTFLAG::VCENTER | (!i ? jk::ADJUSTFLAG::LEFT : jk::ADJUSTFLAG::RIGHT), w_->getSize().x * (!i?0.3f:-0.3f));
 
 		auto & evh = ui_mng_.create<jk::button>(button_title[i])->handlers_;
 		evh << std::make_pair(sf::Event::EventType::MouseMoved, (effect));
@@ -44,10 +44,10 @@ void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
 	w_ = &w;
 	f_.loadFromFile(".\\res\\fonts\\arial.ttf");
 	verification_message_.setFont(f_);
-	verification_message_.setString("Are you sure you want to exit?");
+	verification_message_.setString(L"Are you sure you want to exit?");
 	verification_message_.setFillColor(jk::color::str_color);
-	verification_message_.setCharacterSize(60);
-	jk::adjust_pos(verification_message_, *w_, jk::ADJUSTFLAG::TOP | jk::ADJUSTFLAG::HCENTER);
+	verification_message_.setCharacterSize(80);
+	jk::adjust_pos(verification_message_, *w_, jk::ADJUSTFLAG::TOP | jk::ADJUSTFLAG::HCENTER, 0, static_cast<float>(w_->getSize().y * 0.2f));
 	init_ui();
 }
 
