@@ -10,12 +10,12 @@
 
 namespace jk {
 	class map_select_renderer : public renderer {
-		std::filesystem::directory_iterator di_;
 		jk::archive::archiver archiver_;
 		enc::aes_utl encoder_;
 		ui_mng components_;
 		
 	public:
+		void init(const std::filesystem::path & dir = ".\\beatmap\\");
 		[[nodiscard]] SCENEFLAG operator() () override;
 		std::uint32_t input(const sf::Event & e) noexcept override;
 		void free_resource() noexcept override;

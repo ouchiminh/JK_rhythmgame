@@ -18,6 +18,10 @@ namespace jk::test {
 	};
 
 }
+#define LOG(str)	do{\
+	r << name_ << std::string("'s log: ") << std::string(str);\
+}while(false)
+
 #define FAILED_LOG(expr, test_name, additional_msg) do{\
 	using namespace std::string_literals;\
 	r << test_name << "failed. "s << "\""s << #expr ## s << "\""s << std::string(additional_msg);\
@@ -43,6 +47,22 @@ namespace jk::test {
 		FAILED_LOG(expr, name_, e.what());\
 	}\
 }while(false)
+
+#define CHECK_NOTHROW(expr) do{\
+	using namespace std::string_literals;\
+	try{\
+		expr;\
+	} catch (std::exception & e) { FAILED_LOG(expr, name_, e.what()); }\
+	catch(const std::string & str){ FAILED_LOG(expr, name_, str); }\
+	catch(...){FAILED_LOG(expr, name_, "something happened");}\
+} while(false)
+
+#define CHECK_THROW(expr) do{\
+	try{\
+		expr;\
+		FAILED_LOG(expr, name_, "exception are not thrown.");\
+	} catch(...){}\
+} while(false)
 
 #define DEFINE_TEST(test_name) \
 class test_name : public jk::test::test_base{\

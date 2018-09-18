@@ -5,14 +5,16 @@
 #include "sfmlUtl.hpp"
 
 inline std::int32_t jk::exit_scene::on_mouse_click(const sf::Event & e, sf::Sprite &, sf::Text &, jk::button & b) {
-	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)))
+	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)) ||
+		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;
 	flag_ = SCENEFLAG::FINISHED;
 	return 0;
 }
 
 std::int32_t jk::exit_scene::on_mouse_click_yes(const sf::Event & e, sf::Sprite &, sf::Text &, jk::button & b) {
-	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)))
+	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)) ||
+		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;
 	w_->close();
 	return 0;
@@ -42,7 +44,7 @@ void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
 	flag_ = jk::SCENEFLAG::RUNNING;
 	if (w_) return;
 	w_ = &w;
-	f_.loadFromFile(".\\res\\fonts\\arial.ttf");
+	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
 	verification_message_.setFont(f_);
 	verification_message_.setString(L"Are you sure you want to exit?");
 	verification_message_.setFillColor(jk::color::str_color);

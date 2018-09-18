@@ -34,7 +34,7 @@ void jk::scene_mng::render() {
 	}
 }
 
-const std::shared_ptr<jk::scene> jk::scene_mng::get(SCENE_LIST key) const noexcept {
+const std::weak_ptr<jk::scene> jk::scene_mng::get(SCENE_LIST key) const noexcept {
 	if (scene_list_.count(key)) return scene_list_.at(key);
-	return std::shared_ptr<jk::scene>(nullptr);
+	return std::weak_ptr<jk::scene>();
 }

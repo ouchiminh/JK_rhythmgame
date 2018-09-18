@@ -25,7 +25,7 @@ void jk::button::set_text(const sf::Text & t) {
 	title_ = t;
 }
 
-void jk::button::set_bkg(const sf::Texture t) {
+void jk::button::set_bkg(const sf::Texture & t) {
 	texture_ = t;
 	bkg_.setTexture(texture_);
 }

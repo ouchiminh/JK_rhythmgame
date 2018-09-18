@@ -1,0 +1,8 @@
+﻿{
+  "Data": {
+    "music": {
+      "name": "template.mp3"
+    },
+    "map_list": [ "any_name.map", "difference.map" ]
+  }
+}

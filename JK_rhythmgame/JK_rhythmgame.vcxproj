@@ -112,8 +112,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\lib;D:\Users\Root\Documents\lib\boost_1_68_0\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -157,8 +157,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Users\Root\Documents\lib\SFML-2.5.0-windows-vc15-64-bit\SFML-2.5.0\lib;D:\Users\Root\Documents\lib\boost_1_68_0\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
@@ -171,14 +171,15 @@
     <ClInclude Include="src\aes\include\aes.hpp" />
     <ClInclude Include="src\aes\include\key.hpp" />
     <ClInclude Include="src\aes\include\SHA256.hpp" />
+    <ClInclude Include="src\beatmap-directory.hpp" />
+    <ClInclude Include="src\beatmap.hpp" />
     <ClInclude Include="src\button_effect.hpp" />
     <ClInclude Include="src\effect.hpp" />
     <ClInclude Include="src\event-handlers.hpp" />
     <ClInclude Include="src\exit-scene.hpp" />
-    <ClInclude Include="src\map-select-scene.hpp" />
+    <ClInclude Include="src\map-select-renderer.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
     <ClInclude Include="src\meta-helper.hpp" />
-    <ClInclude Include="src\play-scene.hpp" />
     <ClInclude Include="src\resmng.hpp" />
     <ClInclude Include="src\scene-mng.hpp" />
     <ClInclude Include="src\scene.hpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="src\stream-traits.hpp" />
     <ClInclude Include="src\timeKeeper.h" />
     <ClInclude Include="src\ui-component.hpp" />
+    <ClInclude Include="test\test-beatmap_directory.hpp" />
     <ClInclude Include="test\test.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +196,8 @@
     <ClCompile Include="src\aes\aes-utl.cpp" />
     <ClCompile Include="src\aes\src\aes.cpp" />
     <ClCompile Include="src\aes\src\SHA256.cpp" />
+    <ClCompile Include="src\beatmap-directory.cpp" />
+    <ClCompile Include="src\beatmap.cpp" />
     <ClCompile Include="src\exit-scene.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
     <ClCompile Include="src\scene-mng.cpp" />

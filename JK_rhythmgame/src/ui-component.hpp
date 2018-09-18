@@ -54,7 +54,7 @@ namespace jk {
 	template<class T, typename ...Arg>
 	inline std::shared_ptr<T> ui_mng::create(Arg ...args) {
 		static_assert(std::is_base_of_v<ui_component, T>, "type T is not drived from jk::ui_component.");
-		auto r{ std::make_shared<T>(args...) };
+		auto r{ std::shared_ptr<T>(new T(args...)) };
 		ui_list_.push_front(r);
 		return r;
 	}
