@@ -24,7 +24,7 @@ namespace jk::test {
 
 #define FAILED_LOG(expr, test_name, additional_msg) do{\
 	using namespace std::string_literals;\
-	r << test_name << "failed. "s << "\""s << #expr ## s << "\""s << std::string(additional_msg);\
+	r << test_name << " failed. "s << "\""s << #expr ## s << "\" "s << std::string(additional_msg);\
 }while(false)
 
 #define REQUIRE_TRUE(expr) do{\
@@ -63,6 +63,9 @@ namespace jk::test {
 		FAILED_LOG(expr, name_, "exception are not thrown.");\
 	} catch(...){}\
 } while(false)
+
+#define REQUIRE_EQUAL(expr, value) REQUIRE_TRUE((expr) == (value))
+#define CHECK_EQUAL(expr, value) CHECK_TRUE((expr) == (value))
 
 #define DEFINE_TEST(test_name) \
 class test_name : public jk::test::test_base{\

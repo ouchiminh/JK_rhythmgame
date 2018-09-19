@@ -108,6 +108,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,6 +152,7 @@
       <DebugInformationFormat>None</DebugInformationFormat>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,6 +182,7 @@
     <ClInclude Include="src\map-select-renderer.hpp" />
     <ClInclude Include="src\menu_scene.hpp" />
     <ClInclude Include="src\meta-helper.hpp" />
+    <ClInclude Include="src\notes.hpp" />
     <ClInclude Include="src\resmng.hpp" />
     <ClInclude Include="src\scene-mng.hpp" />
     <ClInclude Include="src\scene.hpp" />
@@ -188,6 +191,7 @@
     <ClInclude Include="src\stream-traits.hpp" />
     <ClInclude Include="src\timeKeeper.h" />
     <ClInclude Include="src\ui-component.hpp" />
+    <ClInclude Include="test\test-aes_utl.hpp" />
     <ClInclude Include="test\test-beatmap_directory.hpp" />
     <ClInclude Include="test\test.hpp" />
   </ItemGroup>
@@ -200,6 +204,7 @@
     <ClCompile Include="src\beatmap.cpp" />
     <ClCompile Include="src\exit-scene.cpp" />
     <ClCompile Include="src\menu_scene.cpp" />
+    <ClCompile Include="src\notes.cpp" />
     <ClCompile Include="src\scene-mng.cpp" />
     <ClCompile Include="src\sfml-button.cpp" />
     <ClCompile Include="src\sfmlUtl.cpp" />

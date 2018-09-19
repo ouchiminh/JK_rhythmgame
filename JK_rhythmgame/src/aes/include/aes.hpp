@@ -38,7 +38,7 @@ namespace enc {
 
 	template<size_t size>
 	enc::block<size> & enc::block<size>::operator=(const void * data) {
-		memcpy(bytes, data, 16);
+		memcpy(bytes, data, size);
 		return *this;
 	}
 
@@ -259,6 +259,7 @@ namespace enc {
 			decryptBlock<mode>(&result.at(i));
 		}
 		auto delCnt = result.back();
+		if (delCnt > result.size()) throw std::runtime_error("corrupted data");
 		for (unsigned i = 0; i < delCnt; i++) result.pop_back();
 		return result;
 	}
@@ -279,6 +280,7 @@ namespace enc {
 		for (size_t i = 0; i < size; i+=16) {
 			in.read((char*)&b.bytes, sizeof(b.bytes));
 			decryptBlock<mode>(b.bytes);
+			if (i == size - 16 && static_cast<int>(16 - b.bytes[15]) < 0) throw std::runtime_error("corrupted data");
 			out.write((char*)b.bytes, (i == size - 16) ? 16 - b.bytes[15] : 16);
 		}
 	}

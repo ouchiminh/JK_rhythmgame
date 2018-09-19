@@ -2,6 +2,10 @@
 #include <stdexcept>
 #include "aes-utl.hpp"
 
+enc::aes_utl::aes_utl(aes && encoder) : encoder_{encoder} {}
+
+enc::aes_utl::aes_utl(const aes & encoder) : encoder_{encoder} {}
+
 void enc::aes_utl::set_encoder(aes && encoder) {
 	encoder_ = std::move(encoder);
 }

@@ -9,6 +9,10 @@ namespace enc {
 	class aes_utl {
 		aes encoder_;
 	public:
+		aes_utl() = default;
+		aes_utl(aes && encoder);
+		aes_utl(const aes & encoder);
+
 		void set_encoder(aes && encoder);
 		aes & get_encoder() noexcept;
 		const aes & get_encoder() const noexcept;
@@ -16,6 +20,8 @@ namespace enc {
 		[[nodiscard]] std::vector<std::uint8_t> decrypt(const std::string & filename);
 		template<class IStream>
 		[[nodiscard]] std::vector<std::uint8_t> decrypt(IStream & in);
+		template<class IStream, class OStream>
+		void decrypt(IStream & in, OStream & out);
 		
 		template<class IStream, class OStream>
 		void encrypt(IStream & in, OStream & out);
@@ -35,9 +41,17 @@ namespace enc {
 		orgb = result.data() + (result.size() - 32);
 		hash.Push(result.data(), (u_32)result.size() - 32);
 		hash.Final((unsigned char*)(void*)newb.bytes);
+
+		for (int i = 0; i < 32; i++) result.pop_back();
 		
 		if (orgb == newb) return std::forward<std::vector<std::uint8_t>>(result);
 		throw std::runtime_error("hash incorrenct. data may be corrupted.");
+	}
+
+	template<class IStream, class OStream>
+	inline void aes_utl::decrypt(IStream & in, OStream & out) {
+		std::vector<std::uint8_t> result = decrypt(in);
+		jk::ostream_traits<OStream>::write(out, result.data(), result.size() * sizeof(decltype(result)::value_type));
 	}
 
 	template<class IStream, class OStream>
