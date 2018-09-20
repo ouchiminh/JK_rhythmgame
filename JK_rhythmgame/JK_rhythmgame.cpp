@@ -27,7 +27,7 @@ int WINAPI WinMain(
 #	endif
 #endif
 	auto mode = sf::VideoMode::getDesktopMode();
-	//mode.height += 1;
+	mode.height += 1;
 	sf::RenderWindow window(mode, "orange game", sf::Style::None);
 	jk::scene_mng scenes{ hInstance, window };
 	timeKeeper fps(std::chrono::microseconds(1'000'000) / 30);

@@ -13,8 +13,8 @@ namespace jk {
 		beatmap_directory() = default;
 		beatmap_directory(std::filesystem::path const & path) noexcept(false);
 		beatmap_directory(std::filesystem::path && path) noexcept(false);
-		void set_directory(std::filesystem::path && path) noexcept(false);
 
+		void set_directory(std::filesystem::path && path) noexcept(false);
 		/// <summary>
 		/// scan concrete beatmap directory ./beatmap/[beatmap name]
 		/// </summary>

@@ -57,3 +57,10 @@ JK_rhythmgame/x64/
 *.db-wal
 *.db-shm
 *.arc
+*.sln
+*.log
+*.aps
+*.vcxproj
+*.filters
+*.user
+*.smproj

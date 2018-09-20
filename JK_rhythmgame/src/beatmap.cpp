@@ -17,7 +17,7 @@ void jk::beatmap::fill_data(std::string & line) {
 		float timing = std::stof(*beg++);
 		unsigned lane = std::stoul(*beg);
 		if (lane > MAX_LANE_CNT) throw;
-		for (unsigned i = lane + 1 - notes_.size(); i > 0; i--)
+		for (unsigned i = lane + 1 - static_cast<unsigned>(notes_.size()); i > 0; i--)
 			notes_.emplace_back();
 		notes_.at(lane).emplace_back(timing, lane);
 	} catch(...){}

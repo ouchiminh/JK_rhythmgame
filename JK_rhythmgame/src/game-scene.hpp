@@ -1,6 +1,6 @@
 #pragma once
 #include "scene.hpp"
-#include "map-select-scene.hpp"
+#include "map-select-renderer.hpp"
 #include "SFML/Graphics.hpp"
 
 namespace jk {

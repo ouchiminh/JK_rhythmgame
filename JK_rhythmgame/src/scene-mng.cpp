@@ -7,7 +7,6 @@ jk::scene_mng::scene_mng(HMODULE hm, sf::RenderWindow & w) : hm_{ hm }, rw_{ w }
 void jk::scene_mng::init() {
 	scene_list_.insert_or_assign(SCENE_LIST::Main_Menu, std::make_shared<jk::mainmenu>());
 	scene_list_.insert_or_assign(SCENE_LIST::Exit, std::make_shared<jk::exit_scene>());
-	cur_scene_.push(SCENE_LIST::Exit);
 	cur_scene_.push(SCENE_LIST::Main_Menu);
 	scene_list_[SCENE_LIST::Main_Menu]->init(hm_, rw_);
 }

@@ -33,9 +33,7 @@ std::int32_t jk::mainmenu::on_key_down(const sf::Event & e) {
 	return 0;
 }
 
-void jk::mainmenu::finish() {
-	did_init_ = false;
-}
+void jk::mainmenu::finish() {}
 
 void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	next_scene_ = SCENE_LIST::Main_Menu;
@@ -57,6 +55,7 @@ bool jk::mainmenu::free_resource() noexcept {
 	finish();
 	logo_.free_resource();
 	menu_.free_resource();
+	did_init_ = false;
 	return true;
 }
 
@@ -98,6 +97,9 @@ jk::SCENEFLAG jk::logo_renderer::operator()() {
 
 void jk::logo_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	const HRSRC hres[2]{ FindResource(hm, MAKEINTRESOURCE(IDB_SFMLLOGO), TEXT("PNG")), FindResource(hm, MAKEINTRESOURCE(IDB_ORANGELOGO), TEXT("PNG")) };
+	w_ = &w;
+	logo_started_ = std::chrono::steady_clock::now();
+	if (is_init) return;
 	for (unsigned i = 0; i < LOGONUM::CNT; i++) {
 		auto res{ LockResource(LoadResource(hm, hres[i])) };
 		if (!res) throw std::runtime_error("cannot find resource");
@@ -108,8 +110,7 @@ void jk::logo_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 		logoSpr_[i].setTexture(tx_[i]);
 		jk::adjust_pos(logoSpr_[i], w, ADJUSTFLAG::CENTER);
 	}
-	w_ = &w;
-	logo_started_ = std::chrono::steady_clock::now();
+	is_init = true;
 }
 
 void jk::logo_renderer::free_resource() noexcept {
@@ -119,6 +120,7 @@ void jk::logo_renderer::free_resource() noexcept {
 		tx_[i] = sf::Texture{};
 		w_ = nullptr;
 	}
+	is_init = false;
 	return;
 }
 
@@ -143,10 +145,7 @@ jk::menu_renderer::menu_renderer() : did_initialized_{ false }, scene_flag_{ SCE
 
 jk::SCENEFLAG jk::menu_renderer::operator()() {
 	using namespace std::literals::string_literals;
-	if (scene_flag_ != jk::SCENEFLAG::RUNNING) {
-		clock_.restart();
-		scene_flag_ = jk::SCENEFLAG::RUNNING;
-	}
+	if (scene_flag_ == SCENEFLAG::NOTYET) scene_flag_ = SCENEFLAG::RUNNING;
 	sf::RectangleShape frame(sf::Vector2f((float)w_->getSize().x, (float)w_->getSize().y));
 	frame.setFillColor(bkg_color);
 	w_->clear(bkg_color);
@@ -166,9 +165,11 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	using namespace std::placeholders;
 	std::lock_guard<std::shared_mutex> lg(mtx_);
-
 	expand_effect<on_mouse_hover> ee{mtx_};
 	
+	w_ = &w;
+	scene_flag_ = jk::SCENEFLAG::NOTYET;
+
 	if (did_initialized_) return;
 	sf::Text button_title;
 	event_handler_t<sf::Sprite&, sf::Text&, button&> eh;
@@ -191,10 +192,7 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 		std::make_pair(sf::Event::EventType::MouseMoved, eh);
 
 	frag_.loadFromFile(".\\res\\shader\\mainmenu_bkg.frag", sf::Shader::Type::Fragment);
-	
-	w_ = &w;
 	did_initialized_ = true;
-	scene_flag_ = jk::SCENEFLAG::NOTYET;
 }
 
 void jk::menu_renderer::free_resource() noexcept {

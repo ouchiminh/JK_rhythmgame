@@ -12,7 +12,12 @@ namespace jk::test {
 	public:
 		virtual void operator()() = 0;
 		inline static void test() {
-			for (auto & i : test_list_) (*i)();
+			try {
+				for (auto & i : test_list_) (*i)();
+			} catch (...) {
+				using namespace util::LogLiterals;
+				r << "detected unhandlede exception"_lf;
+			}
 		}
 		~test_base() = default;
 	};

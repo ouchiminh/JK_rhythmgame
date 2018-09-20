@@ -25,6 +25,7 @@ namespace jk {
 		static constexpr myduration logo_time = fade_time + disp_time + fade_time;
 
 		enum LOGONUM : unsigned { SFML, MIKAN, CNT };
+		bool is_init = false;
 		sf::Image logo_[CNT];
 		sf::Sprite logoSpr_[CNT];
 		sf::Texture tx_[CNT];
