@@ -14,9 +14,12 @@ namespace jk::test {
 	public:
 		virtual void operator()() = 0;
 		inline static void test() {
+			using namespace std::string_literals;
 			for (auto & i : test_list_) {
 				try { (*i)(); }
-				catch (...) {
+				catch (std::exception & e) {
+					r << util::FatalLog<char>("detected unhandled exception! : "s + std::string(e.what()));
+				} catch (...) {
 					r << util::FatalLog<char>(i->name_ + " failed. unhandled exception!");
 				}
 			}
@@ -77,7 +80,7 @@ namespace jk::test {
 #define DEFINE_TEST(test_name) \
 class test_name : public jk::test::test_base{\
 public:\
-	test_name() : test_base(#test_name); {test_list_.push_back(this);}\
+	test_name() : test_base(#test_name) {test_list_.push_back(this);}\
 	static void init(){\
 		test_list_.push_back(new test_name);\
 	}\

@@ -18,6 +18,6 @@ namespace jk {
 		std::uint32_t input(const sf::Event & e) noexcept override;
 		void free_resource() noexcept override;
 
-		[[nodiscard]] jk::beatmap get_selected() const;
+		[[nodiscard]] std::optional<jk::beatmap> get_selected() const;
 	};
 }
