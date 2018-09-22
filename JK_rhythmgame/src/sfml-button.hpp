@@ -26,7 +26,19 @@ namespace jk {
 		result_t event_procedure(const sf::Event & e) override;
 		sf::FloatRect get_rect() const noexcept override;
 
+		/// <summary>
+		/// bkg_が有効ならばbkg_を基準にtitle_の位置も動かします。
+		/// </summary>
+		/// <param name="pos">動かしたい位置です。</param>
+		void set_position(sf::Vector2f pos) noexcept(noexcept(std::declval<sf::Transformable>().setPosition(sf::Vector2f())));
+
 		void set_text(const sf::Text & t);
 		void set_bkg(const sf::Texture & t);
+
+		sf::Sprite & get_bkg() noexcept;
+		sf::Text & get_title() noexcept;
+
+		sf::Sprite const & get_bkg() const noexcept;
+		sf::Text const & get_title() const noexcept;
 	};
 }
