@@ -64,3 +64,9 @@ JK_rhythmgame/x64/
 *.filters
 *.user
 *.smproj
+JK_rhythmgame/jk_game.smproj
+*.smproj
+*.vcxproj
+*.config
+JK_rhythmgame/jk_game.smproj
+JK_rhythmgame/JK_rhythmgame.vcxproj

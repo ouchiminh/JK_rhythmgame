@@ -7,16 +7,18 @@ namespace jk::test {
 
 	class test_base {
 	protected:
+		const std::string name_;
 		inline static std::list<test_base*> test_list_;
 		inline static util::record<char> r;
+		test_base(std::string && name) : name_{name} {}
 	public:
 		virtual void operator()() = 0;
 		inline static void test() {
-			try {
-				for (auto & i : test_list_) (*i)();
-			} catch (...) {
-				using namespace util::LogLiterals;
-				r << "detected unhandlede exception"_lf;
+			for (auto & i : test_list_) {
+				try { (*i)(); }
+				catch (...) {
+					r << util::FatalLog<char>(i->name_ + " failed. unhandled exception!");
+				}
 			}
 		}
 		~test_base() = default;
@@ -74,15 +76,14 @@ namespace jk::test {
 
 #define DEFINE_TEST(test_name) \
 class test_name : public jk::test::test_base{\
-	const std::string name_ = #test_name;\
 public:\
-	test_name(){test_list_.push_back(this);}\
+	test_name() : test_base(#test_name); {test_list_.push_back(this);}\
 	static void init(){\
 		test_list_.push_back(new test_name);\
 	}\
-	void operator()() noexcept override;\
+	void operator()() override;\
 };\
 namespace {\
 	test_name test_name ## _instance;\
 }\
-inline void test_name::operator()() noexcept
+inline void test_name::operator()()

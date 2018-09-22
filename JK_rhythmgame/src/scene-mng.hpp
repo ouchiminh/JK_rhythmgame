@@ -9,7 +9,7 @@ namespace jk {
 
 	class scene_mng {
 		std::map<SCENE_LIST, std::shared_ptr<scene>> scene_list_;
-		std::stack<SCENE_LIST> cur_scene_;		// should be stack;
+		std::stack<SCENE_LIST> cur_scene_;
 
 		const HMODULE hm_;
 		sf::RenderWindow & rw_;

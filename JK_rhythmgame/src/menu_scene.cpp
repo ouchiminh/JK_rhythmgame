@@ -163,7 +163,6 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 }
 
 void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
-	using namespace std::placeholders;
 	std::lock_guard<std::shared_mutex> lg(mtx_);
 	expand_effect<on_mouse_hover> ee{mtx_};
 	

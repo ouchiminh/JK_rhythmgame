@@ -26,16 +26,12 @@ namespace jk {
 
 	class ui_component : public sf::Drawable, public std::enable_shared_from_this<ui_component> {
 	protected:
-		bool focused_;
-	protected:
-		ui_component() : focused_{ false } {}
+		ui_component() = default;
 		virtual ~ui_component() = default;
 
 	public:
 		virtual void draw(sf::RenderTarget &, sf::RenderStates) const override = 0;
 		virtual result_t event_procedure(const sf::Event & e) { return result_t(); }
-		bool is_focused() const noexcept { return focused_; }
-		inline void set_focus(bool b) noexcept { focused_ = b; }
 		virtual sf::FloatRect get_rect() const noexcept = 0;
 	};
 

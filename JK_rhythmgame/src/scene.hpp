@@ -10,7 +10,7 @@
 
 namespace jk {
 	inline namespace color {
-		const sf::Color bkg_color	= sf::Color(0x0);
+		const sf::Color bkg_color	= sf::Color(0);
 		const sf::Color str_color	= sf::Color(238, 238, 238);
 		const sf::Color theme_color	= sf::Color(0xFF, 0xA0, 0x00);
 	}
@@ -19,8 +19,8 @@ namespace jk {
 		NOTYET, RUNNING, FINISHED
 	};
 
-	enum class SCENE_LIST : std::intptr_t {
-		Null = 0, Exit, Main_Menu, Game_Play, Credit, Cnt
+	enum SCENE_LIST : std::intptr_t {
+		Null = 0, Exit, Main_Menu, Game_Play 
 	};
 
 	class renderer {
