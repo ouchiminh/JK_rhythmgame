@@ -23,7 +23,6 @@ std::int32_t jk::exit_scene::on_mouse_click_yes(const sf::Event & e, sf::Sprite 
 void jk::exit_scene::finish() {}
 
 void jk::exit_scene::init_ui() {
-	using namespace std::literals::string_literals;
 	jk::change_color_effect<jk::on_mouse_hover> effect(jk::color::theme_color, &mtx_);
 	sf::Text button_title[2] = { sf::Text(sf::String("Yes"), f_, 50), sf::Text(sf::String("No"), f_, 50) };
 	for (auto i = 0; i < 2; i++) {
@@ -33,7 +32,7 @@ void jk::exit_scene::init_ui() {
 		jk::adjust_pos(button_title[i], *w_, jk::ADJUSTFLAG::VCENTER | (!i ? jk::ADJUSTFLAG::LEFT : jk::ADJUSTFLAG::RIGHT), w_->getSize().x * (!i?0.3f:-0.3f));
 
 		auto & evh = ui_mng_.create<jk::button>(button_title[i])->handlers_;
-		evh << std::make_pair(sf::Event::EventType::MouseMoved, (effect));
+		evh << std::make_pair(sf::Event::EventType::MouseMoved, effect);
 		if (!i) evh << std::make_pair(sf::Event::EventType::MouseButtonPressed, [this](const auto &e, auto &s, auto &t, auto &b) {return on_mouse_click_yes(e, s, t, b); });
 		else evh << std::make_pair(sf::Event::EventType::MouseButtonPressed, [this](const auto &e, auto &s, auto &t, auto &b) {return on_mouse_click(e, s, t, b); });
 	}
