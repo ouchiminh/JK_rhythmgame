@@ -4,8 +4,13 @@ void jk::game_scene::change_renderer() {
 	if (cur_renderer_ == &map_select_) status_ = SCENEFLAG::FINISHED;
 }
 
+void jk::game_scene::finish() {
+	status_ = jk::SCENEFLAG::FINISHED;
+}
+
 void jk::game_scene::init(HMODULE hm, sf::RenderWindow & w) {
 	cur_renderer_ = &map_select_;
+	status_ = jk::SCENEFLAG::NOTYET;
 }
 
 bool jk::game_scene::free_resource() noexcept {
@@ -14,8 +19,9 @@ bool jk::game_scene::free_resource() noexcept {
 }
 
 jk::SCENEFLAG jk::game_scene::render() {
-	if (!cur_renderer_) return SCENEFLAG::FINISHED;
-	if(cur_renderer_->operator() == SCENEFLAG::FINISHED) change_renderer();
+	if (!cur_renderer_) return finish(), SCENEFLAG::FINISHED;
+	if((*cur_renderer_)() == SCENEFLAG::FINISHED) change_renderer();
+	if (status_ == jk::SCENEFLAG::NOTYET) status_ = jk::SCENEFLAG::RUNNING;
 
 	return status_;
 }

@@ -30,8 +30,10 @@ namespace jk {
 		
 		/// <summary>
 		/// <para>this method locks beatmap file in order to load contents safely.</para>
+		/// this function is thread safe, and declared as noexcept func because std::thread terminate process when throw.
 		/// </summary>
-		void load();
+		/// <param name="ep">pointer to the exception.</param>
+		void load(std::exception_ptr & ep) noexcept;
 		void free() noexcept;
 
 		unsigned get_lane_cnt() const noexcept;

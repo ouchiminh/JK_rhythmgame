@@ -19,7 +19,7 @@ void jk::beatmap::fill_data(std::string & line) {
 		if (lane > MAX_LANE_CNT) throw;
 		for (unsigned i = lane + 1 - static_cast<unsigned>(notes_.size()); i > 0; i--)
 			notes_.emplace_back();
-		notes_.at(lane).emplace_back(timing, lane);
+		notes_.at(lane).emplace_back(timing, lane, music_);
 	} catch(...){}
 }
 
@@ -34,8 +34,13 @@ void jk::beatmap::set(std::filesystem::path const & path, std::shared_ptr<sf::Mu
 
 void jk::beatmap::set(std::filesystem::path && path, std::shared_ptr<sf::Music> m) { set(path, m); }
 
-void jk::beatmap::load() {
-	if (!std::filesystem::exists(map_location_)) return;
+void jk::beatmap::load(std::exception_ptr & ep) noexcept {
+	if (!std::filesystem::exists(map_location_)) {
+		try {
+			throw std::filesystem::filesystem_error(std::string("no such file:" + map_location_.generic_string()),
+				std::make_error_code(std::errc::no_such_file_or_directory));
+		} catch (...) { ep = std::current_exception(); }
+	}
 	std::ifstream ifs(map_location_);
 	std::stringstream data;
 	std::string line;
@@ -48,7 +53,7 @@ void jk::beatmap::load() {
 		encoder.decrypt(ifs, data);
 	} catch (...) { 
 		jk::beatmap::free();
-		throw;
+		ep = std::current_exception();
 	}
 
 	data.seekg(0, std::ios::beg);
@@ -56,6 +61,7 @@ void jk::beatmap::load() {
 		std::getline(data, line);
 		fill_data(line);
 	}
+	fl.unlock();
 }
 
 void jk::beatmap::free() noexcept {
