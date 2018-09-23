@@ -1,9 +1,30 @@
 #include "game-scene.hpp"
 
-namespace {
-	template<class T>
-	int get_renderer_idx(T*) noexcept { return -1; }
+void jk::game_scene::change_renderer() {
+	if (cur_renderer_ == &map_select_) status_ = SCENEFLAG::FINISHED;
+}
 
-	template<>
-	int get_renderer_idx<jk::map_select_renderer>(jk::map_select_renderer*) noexcept { return 0; }
+void jk::game_scene::init(HMODULE hm, sf::RenderWindow & w) {
+	cur_renderer_ = &map_select_;
+}
+
+bool jk::game_scene::free_resource() noexcept {
+	map_select_.free_resource();
+	return true;
+}
+
+jk::SCENEFLAG jk::game_scene::render() {
+	if (!cur_renderer_) return SCENEFLAG::FINISHED;
+	if(cur_renderer_->operator() == SCENEFLAG::FINISHED) change_renderer();
+
+	return status_;
+}
+
+jk::SCENE_LIST jk::game_scene::get_next_scene() const noexcept {
+	return next_scene_;
+}
+
+void jk::game_scene::input(const sf::Event & e) noexcept {
+	if (cur_renderer_) cur_renderer_->input(e);
+	return;
 }

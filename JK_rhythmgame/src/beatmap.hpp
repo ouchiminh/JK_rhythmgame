@@ -31,7 +31,7 @@ namespace jk {
 		/// <summary>
 		/// <para>this method locks beatmap file in order to load contents safely.</para>
 		/// </summary>
-		void load() noexcept;
+		void load();
 		void free() noexcept;
 
 		unsigned get_lane_cnt() const noexcept;

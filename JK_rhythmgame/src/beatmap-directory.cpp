@@ -21,7 +21,7 @@ void jk::beatmap_directory::set_directory(std::filesystem::path const & path) no
 	ptree pt;
 	auto m = std::make_shared<sf::Music>();
 	auto cfg_file = path / "config.json";
-	if(!std::filesystem::exists(cfg_file)) throw "file does not exist.";
+	if (!std::filesystem::exists(cfg_file)) throw std::filesystem::filesystem_error("no such file", cfg_file, std::make_error_code(std::errc::no_such_file_or_directory));
 	read_json(cfg_file.string(), pt);
 	beatmap_list_.clear();
 	// read music file name.

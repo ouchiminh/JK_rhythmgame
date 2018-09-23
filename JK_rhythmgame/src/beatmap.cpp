@@ -34,8 +34,7 @@ void jk::beatmap::set(std::filesystem::path const & path, std::shared_ptr<sf::Mu
 
 void jk::beatmap::set(std::filesystem::path && path, std::shared_ptr<sf::Music> m) { set(path, m); }
 
-void jk::beatmap::load() noexcept {
-	using namespace std::string_literals;
+void jk::beatmap::load() {
 	if (!std::filesystem::exists(map_location_)) return;
 	std::ifstream ifs(map_location_);
 	std::stringstream data;
@@ -49,7 +48,7 @@ void jk::beatmap::load() noexcept {
 		encoder.decrypt(ifs, data);
 	} catch (...) { 
 		jk::beatmap::free();
-		return; 
+		throw;
 	}
 
 	data.seekg(0, std::ios::beg);
