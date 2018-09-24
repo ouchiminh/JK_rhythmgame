@@ -50,10 +50,17 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 	jk::beatmap::free();
 	try {
 		fl.lock();
+	} catch (...) {
+		ep = std::current_exception();
+		return;
+	}
+
+	try {
 		encoder.decrypt(ifs, data);
 	} catch (...) { 
-		jk::beatmap::free();
 		ep = std::current_exception();
+		fl.unlock();
+		return;
 	}
 
 	data.seekg(0, std::ios::beg);
