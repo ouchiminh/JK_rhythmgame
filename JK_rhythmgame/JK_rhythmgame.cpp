@@ -14,6 +14,7 @@
 #include "test/test-aes_utl.hpp"
 #endif
 
+// ai First CommitTest
 int WINAPI WinMain(
 	HINSTANCE hInstance,      // 現在のインスタンスのハンドル
 	HINSTANCE hPrevInstance,  // 以前のインスタンスのハンドル
