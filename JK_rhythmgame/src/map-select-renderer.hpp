@@ -15,7 +15,9 @@ namespace jk {
 		enc::aes_utl encoder_;
 		sf::RenderWindow* window_;
 		ui_mng components_;
-		std::vector<button> musicButtons_;						
+		// commented by ouchiminh
+		// buttonはstd::enable_shared_from_thisを継承しているのでテンプレート引数変えました。
+		std::vector<std::shared_ptr<button>> musicButtons_;						
 		std::vector<std::filesystem::path> musicPaths_;		//musicButton_と同時に操作しなければならない
 				
 	public:
