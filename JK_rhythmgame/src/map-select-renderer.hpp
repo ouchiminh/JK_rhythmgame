@@ -10,13 +10,16 @@
 #include "sfml-button.hpp"
 
 namespace jk {
+
 	class map_select_renderer : public renderer {
 		enc::aes_utl encoder_;
+		sf::RenderWindow* window_;
 		ui_mng components_;
-		std::list<button> buttons_;
-		
+		std::vector<button> musicButtons_;						
+		std::vector<std::filesystem::path> musicPaths_;		//musicButton_Ç∆ìØéûÇ…ëÄçÏÇµÇ»ÇØÇÍÇŒÇ»ÇÁÇ»Ç¢
+				
 	public:
-		void init();
+		void init(sf::RenderWindow* window);
 		[[nodiscard]] SCENEFLAG operator() () override;
 		std::uint32_t input(const sf::Event & e) noexcept override;
 		void free_resource() noexcept override;
@@ -25,6 +28,7 @@ namespace jk {
 	
 	private:
 		void AddButton(jk::beatmap_directory& bd);
-		const sf::Text MakeMusicName(const jk::beatmap& b) const;
+		const sf::Text MakeButtonName(const jk::beatmap& b) const;
+		void InitButtonPos();
 	};
 }
