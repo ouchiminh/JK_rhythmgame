@@ -19,7 +19,6 @@ namespace jk {
 		/// scan concrete beatmap directory ./beatmap/[beatmap name]
 		/// </summary>
 		/// <param name="path">path to the concrete beatmap directory. this directory should include "config.json"</param>
-		/// <returns></returns>
 		void set_directory(std::filesystem::path const & path) noexcept(false);
 
 		void clear() noexcept;
