@@ -12,6 +12,9 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 			bd.set_directory(p);				
 		}catch (fs::filesystem_error & e) {
 			std::cout << e.what() << std::endl;
+			// Be advised. This code falls `catch` block through,
+			// and execute `AddButton(bd)` however `bd` is not correct.
+			// `continue` is recommended.
 		}
 		AddButton(bd);
 	}

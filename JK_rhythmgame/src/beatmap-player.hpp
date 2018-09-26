@@ -7,7 +7,7 @@
 
 namespace jk {
 	
-	class beatmap_player : public ui_component{
+	class beatmap_player final : public ui_component{
 		beatmap b_;
 		sf::Time notes_visible_duration_;
 		event_handlers<beatmap &> handlers_;
