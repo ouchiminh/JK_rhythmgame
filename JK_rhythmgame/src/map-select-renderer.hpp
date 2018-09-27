@@ -18,7 +18,8 @@ namespace jk {
 		// commented by ouchiminh
 		// buttonはstd::enable_shared_from_thisを継承しているのでテンプレート引数変えました。
 		std::vector<std::shared_ptr<button>> musicButtons_;						
-		std::vector<std::filesystem::path> musicPaths_;		//musicButton_と同時に操作しなければならない
+		std::vector<std::filesystem::path> mapPaths_;		//musicButton_と同時に操作しなければならない
+		std::vector<std::shared_ptr<button>>::iterator musicButtonsItr_;
 				
 	public:
 		void init(sf::RenderWindow* window);
