@@ -37,7 +37,7 @@ namespace jk {
 		void free() noexcept;
 
 		unsigned get_lane_cnt() const noexcept;
-
+	public:
 		std::weak_ptr<sf::Music> get_music() const noexcept;
 		std::filesystem::path const & get_path() const noexcept;
 

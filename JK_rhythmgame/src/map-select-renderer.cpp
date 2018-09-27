@@ -47,10 +47,13 @@ void jk::map_select_renderer::InitButtonPos() {
 }
 
 std::optional<jk::beatmap> jk::map_select_renderer::get_selected() const {
-	auto index = musicButtonsItr_  - musicButtons_.begin();
+	auto index = musicButtonsItr_  - musicButtons_.begin();		//今イテレータが指している場所のインデックスを取得
 	auto selectPath = mapPaths_[index];
 	beatmap_directory dir(selectPath);
 
 	return dir.GetFirstBeatmapList();
 }
 
+jk::SCENEFLAG jk::map_select_renderer::operator() () {
+	components_.draw(*window_);
+}
