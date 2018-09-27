@@ -48,12 +48,17 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 	boost::interprocess::file_lock fl(map_location_.generic_string().c_str());
 
 	jk::beatmap::free();
+
 	try {
 		fl.lock();
 		encoder.decrypt(ifs, data);
-	} catch (...) { 
-		jk::beatmap::free();
+	} catch (boost::interprocess::interprocess_exception &) {
 		ep = std::current_exception();
+		return;
+	} catch (...) { 
+		ep = std::current_exception();
+		fl.unlock();
+		return;
 	}
 
 	data.seekg(0, std::ios::beg);
