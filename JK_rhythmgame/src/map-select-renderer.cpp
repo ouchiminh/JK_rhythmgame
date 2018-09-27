@@ -7,7 +7,7 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	
 	window_ = window;
 	for (const auto &p : fs::directory_iterator(".\\beatmap\\"))	{
-		jk:beatmap_directory bd;
+		jk::beatmap_directory bd;
 		try {
 			bd.set_directory(p);				
 		}catch (fs::filesystem_error & e) {
@@ -23,7 +23,7 @@ void jk::map_select_renderer::AddButton(jk::beatmap_directory& bd) {
 		// jk::ui_componentから派生するクラスはjk::ui_mng::createで生成されなければならない。
 		// 実はui_mng内でshared_ptrを保持しているため、別で配列を作る必要はないが、ほかのコードの修正が少なく済むように既に定義してある変数は消していない。
 		musicButtons_.push_back(components_.create<jk::button>(MakeButtonName(b)));
-		musicPaths_.emplace_back(b.get_path());
+		mapPaths_.emplace_back(b.get_path());
 	}
 }
 
@@ -42,7 +42,15 @@ void jk::map_select_renderer::InitButtonPos() {
 		// commented by ouchiminh
 		// エラーをなくすためにmusicButtons_のテンプレート引数を変更したため、このコードも変更した。
 		button->set_position({ size.x * pivotRe.x, size.y * pivotRe.y});
-		pivotRe += {3.0, 0.0};		//計算してない
+		pivotRe += {0.f, 0.040f};	
 	}
+}
+
+std::optional<jk::beatmap> jk::map_select_renderer::get_selected() const {
+	auto index = musicButtonsItr_  - musicButtons_.begin();
+	auto selectPath = mapPaths_[index];
+	beatmap_directory dir(selectPath);
+
+	return dir.GetFirstBeatmapList();
 }
 
