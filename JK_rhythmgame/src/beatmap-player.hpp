@@ -13,14 +13,17 @@ namespace jk {
 		//		<keycode,			lane	>
 		std::map<sf::Keyboard::Key, unsigned> keymap_;
 
+		// DO NOT FORGET UPDATE VERSION WHEN MODIFY THIS CLASS
+		static inline constexpr int version = 0;
+
 	public:
 		lane_key_map() noexcept;
-		lane_key_map(std::filesystem::path config_file);
-		void set_default() noexcept;
-		void load_config(std::filesystem::path config_file);
+		lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt);
+		void set_default(unsigned lane_cnt = 4) noexcept;
+
+		// if failed, set default and returns false
+		bool load_config(std::filesystem::path && config_file, unsigned lane_cnt) noexcept;
 		[[nodiscard]] std::optional<unsigned> get_lane(sf::Keyboard::Key key) const noexcept;
-		void change_or_add_key(sf::Keyboard::Key key, unsigned lane);
-		void add_key(sf::Keyboard::Key key, unsigned lane);
 	};
 	
 	class beatmap_player : public ui_component {
