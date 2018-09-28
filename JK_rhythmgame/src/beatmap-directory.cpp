@@ -28,6 +28,7 @@ void jk::beatmap_directory::set_directory(std::filesystem::path const & path) no
 			std::make_error_code(std::errc::no_such_file_or_directory));
 
 	read_json(cfg_file.string(), pt);
+	if (version != pt.get<unsigned>("version", 0)) throw std::runtime_error("this file is not compatible with this version");
 	beatmap_list_.clear();
 	// read music file name.
 	if (auto music_name = pt.get_optional<std::string>("Data.music.name"))

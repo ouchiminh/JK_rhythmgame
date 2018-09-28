@@ -1,11 +1,16 @@
 #pragma once
 #include <list>
 #include <filesystem>
+#include <utility>
 #include "beatmap.hpp"
 
 namespace jk {
 	class beatmap_directory {
 		std::list<beatmap> beatmap_list_;
+
+		// DO NOT FORGET UPDATE VERSION WHEN MODIFIED.
+		static constexpr unsigned version = 0;
+
 	public:
 		using iterator = std::list<beatmap>::iterator;
 		using const_iterator = std::list<beatmap>::const_iterator;
