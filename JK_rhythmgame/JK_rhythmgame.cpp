@@ -12,6 +12,7 @@
 #ifdef _DEBUG
 #include "test/test-beatmap_directory.hpp"
 #include "test/test-aes_utl.hpp"
+#include "test/test-lane_key_map.hpp"
 #endif
 
 int WINAPI WinMain(

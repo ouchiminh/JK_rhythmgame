@@ -4,10 +4,6 @@
 #include "boost/foreach.hpp"
 #include "beatmap-player.hpp"
 
-jk::lane_key_map::lane_key_map() noexcept {
-	set_default();
-}
-
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
 
 void jk::lane_key_map::set_default(unsigned lane_cnt) noexcept {
@@ -32,14 +28,14 @@ bool jk::lane_key_map::load_config(std::filesystem::path && config_file, unsigne
 	keymap_.clear();
 	try {
 		boost::property_tree::read_json(config_file.generic_string(), pt);
-		if (pt.get<int>("version") == version) throw std::runtime_error("this config file is not compatible with this version.");
+		if (pt.get<int>("version") != version) throw std::runtime_error("this config file is not compatible with this version.");
 
 		unsigned lane = 0;
 		auto keys = pt.get<std::string>("Data." + std::to_string(lane_cnt));
 		for (auto const & i : keys) {
 			if (i == ' ') keymap_.emplace(sf::Keyboard::Key::Space, lane++);
-			else if (i > 'A' || i < 'Z') keymap_.emplace(static_cast<sf::Keyboard::Key>(i - 'A'), lane++);
-			throw std::out_of_range("keys must be A-Z or space");
+			else if (i >= 'A' && i <= 'Z') keymap_.emplace(static_cast<sf::Keyboard::Key>(i - 'A'), lane++);
+			else throw std::out_of_range("keys must be A-Z or space");
 		}
 	} catch (...) {
 		set_default(lane_cnt);

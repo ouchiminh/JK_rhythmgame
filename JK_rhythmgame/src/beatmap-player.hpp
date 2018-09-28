@@ -17,9 +17,9 @@ namespace jk {
 		static inline constexpr int version = 0;
 
 	public:
-		lane_key_map() noexcept;
+		lane_key_map() = default;
 		lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt);
-		void set_default(unsigned lane_cnt = 4) noexcept;
+		void set_default(unsigned lane_cnt) noexcept;
 
 		// if failed, set default and returns false
 		bool load_config(std::filesystem::path && config_file, unsigned lane_cnt) noexcept;
