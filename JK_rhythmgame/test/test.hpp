@@ -29,12 +29,16 @@ namespace jk::test {
 
 }
 #define LOG(str)	do{\
-	r << name_ << std::string("'s log: ") << std::string(str);\
+	auto outstr = name_ + "'s log: " + std::string(str);\
+	r << outstr;\
+	OutputDebugStringA(outstr.c_str());\
 }while(false)
 
 #define FAILED_LOG(expr, test_name, additional_msg) do{\
 	using namespace std::string_literals;\
-	r << test_name << " failed. "s << "\""s << #expr ## s << "\" "s << std::string(additional_msg);\
+	auto outstr = test_name + " failed. "s + "\""s + #expr ## s + "\" "s + std::string(additional_msg);\
+	r << outstr;\
+	OutputDebugStringA(outstr.c_str());\
 }while(false)
 
 #define REQUIRE_TRUE(expr) do{\
@@ -46,6 +50,7 @@ namespace jk::test {
 		}\
 	} catch (std::exception & e) {\
 		FAILED_LOG(expr, name_, e.what());\
+		return;\
 	}\
 }while(false)
 

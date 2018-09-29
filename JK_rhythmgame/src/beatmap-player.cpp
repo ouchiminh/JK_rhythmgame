@@ -56,7 +56,7 @@ jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) : b_{ 
 }
 
 jk::result_t jk::beatmap_player::event_procedure(const sf::Event & e) {
-	return handlers_(e, b_);
+	return handlers_(e);
 }
 
 void jk::beatmap_player::update() {
