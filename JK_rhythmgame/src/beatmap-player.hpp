@@ -26,17 +26,26 @@ namespace jk {
 		[[nodiscard]] std::optional<unsigned> get_lane(sf::Keyboard::Key key) const noexcept;
 	};
 	
-	class beatmap_player : public ui_component {
+	class beatmap_player : public ui_component, public sf::Transformable {
 		beatmap b_;
+		lane_key_map lkm_;
 		sf::Time notes_visible_duration_;
-		event_handlers<beatmap &> handlers_;
+		event_handlers<> handlers_;
+
+		sf::RenderTexture screen_;
+		sf::Sprite spr_;
 
 	private:
-		beatmap_player(beatmap && b);
+		beatmap_player(beatmap && b, sf::Vector2i resolution);
+
+		std::uint32_t on_keydown(const sf::Event & e) noexcept;
+		void draw_notes();
+		void lightup_lane();
+		void draw_gage();
 	public:
 		result_t event_procedure(const sf::Event & e) override;
-		void draw(sf::RenderTarget &, sf::RenderStates) const override;
-		sf::FloatRect get_rect() const noexcept override;
-
+		void update();
+		void draw(sf::RenderTarget &, sf::RenderStates = sf::RenderStates::Default) const override;
+		[[deprecated]] sf::FloatRect get_rect() const noexcept override;
 	};
 }

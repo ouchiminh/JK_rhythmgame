@@ -2,6 +2,7 @@
 #include <utility>
 #include "boost/property_tree/json_parser.hpp"
 #include "boost/foreach.hpp"
+#include "SFML/Audio.hpp"
 #include "beatmap-player.hpp"
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
@@ -49,15 +50,23 @@ std::optional<unsigned> jk::lane_key_map::get_lane(sf::Keyboard::Key key) const 
 	return std::nullopt;
 }
 
-jk::beatmap_player::beatmap_player(beatmap && b) : b_{ std::move(b) } {}
+jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) : b_{ std::move(b) } {
+	lkm_.load_config("keycfg.json", b_.get_lane_cnt());
+	spr_.setTexture(screen_.getTexture());
+}
 
 jk::result_t jk::beatmap_player::event_procedure(const sf::Event & e) {
-	return result_t();
+	return handlers_(e, b_);
 }
 
-void jk::beatmap_player::draw(sf::RenderTarget &, sf::RenderStates) const {}
-
-sf::FloatRect jk::beatmap_player::get_rect() const noexcept {
-	return sf::FloatRect();
+void jk::beatmap_player::update() {
+	spr_.setTexture(screen_.getTexture());
+	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
 }
 
+void jk::beatmap_player::draw(sf::RenderTarget & rt, sf::RenderStates rs) const {
+	rs.transform *= getTransform();
+	rt.draw(spr_, rs);
+}
+
+sf::FloatRect jk::beatmap_player::get_rect() const noexcept { return spr_.getGlobalBounds(); }

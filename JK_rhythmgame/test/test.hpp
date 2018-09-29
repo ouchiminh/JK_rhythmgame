@@ -18,7 +18,7 @@ namespace jk::test {
 			for (auto & i : test_list_) {
 				try { (*i)(); }
 				catch (std::exception & e) {
-					r << util::FatalLog<char>("detected unhandled exception! : "s + std::string(e.what()));
+					r << util::FatalLog<char>(i->name_ + "detected unhandled exception! : "s + std::string(e.what()));
 				} catch (...) {
 					r << util::FatalLog<char>(i->name_ + " failed. unhandled exception!");
 				}
@@ -81,9 +81,6 @@ namespace jk::test {
 class test_name : public jk::test::test_base{\
 public:\
 	test_name() : test_base(#test_name) {test_list_.push_back(this);}\
-	static void init(){\
-		test_list_.push_back(new test_name);\
-	}\
 	void operator()() override;\
 };\
 namespace {\

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <optional>
 #include "SFML/Audio.hpp"
 #include "aes/aes-utl.hpp"
 
@@ -12,8 +13,11 @@ namespace jk {
 		/// <summary>
 		/// When user hit the note, call this function.
 		/// </summary>
-		/// <returns>timing accuracy between 0 & 1.0</returns>
-		float hit();
+		/// <returns>
+		/// @ 0.0 ~ 1.0	: sccessed. timing is good. 
+		/// @ nullopt	: timing is not good.
+		/// </returns>
+		std::optional<float> hit();
 		
 	};
 }

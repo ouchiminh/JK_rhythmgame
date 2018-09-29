@@ -41,7 +41,9 @@ namespace jk {
 		std::weak_ptr<sf::Music> get_music() const noexcept;
 		std::filesystem::path const & get_path() const noexcept;
 
-		const std::vector<std::deque<note>> & get_notes() const noexcept;
+		[[deprecated]][[nodiscard]] const std::vector<std::deque<note>> & get_notes() const noexcept;
+		[[nodiscard]] note & get_current_note(unsigned lane);
+		void forward_note(unsigned lane);
 
 		bool operator!() const noexcept;
 	};
