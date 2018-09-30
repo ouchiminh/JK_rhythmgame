@@ -1,9 +1,11 @@
 #include <string>
 #include <utility>
+#include <algorithm>
 #include "boost/property_tree/json_parser.hpp"
 #include "boost/foreach.hpp"
 #include "SFML/Audio.hpp"
 #include "beatmap-player.hpp"
+#include "sfmlUtl.hpp"
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
 
@@ -50,17 +52,22 @@ std::optional<unsigned> jk::lane_key_map::get_lane(sf::Keyboard::Key key) const 
 	return std::nullopt;
 }
 
-jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) : b_{ std::move(b) } {
-	lkm_.load_config("keycfg.json", b_.get_lane_cnt());
-	spr_.setTexture(screen_.getTexture());
+std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const noexcept {
+	auto result = std::find_if(std::begin(keymap_), std::end(keymap_), [lane](auto val) {return val.second == lane});
+	if (result == std::end(keymap_)) return std::nullopt;
+	return result->first;
 }
 
-jk::result_t jk::beatmap_player::event_procedure(const sf::Event & e) {
-	return handlers_(e);
+jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) :
+	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
+{
+	lkm_.load_config("keycfg.json", b_.get_lane_cnt());
+	screen_.create(static_cast<int>(resolution.x * 80.0f / 128), resolution.y);
+	spr_.setTexture(screen_.getTexture());
+	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
 }
 
 void jk::beatmap_player::update() {
-	spr_.setTexture(screen_.getTexture());
 	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
 }
 

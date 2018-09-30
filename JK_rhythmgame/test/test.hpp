@@ -2,6 +2,7 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include <WinBase.h>
 #include "log/record.hpp"
 namespace jk::test {
 
@@ -83,7 +84,7 @@ namespace jk::test {
 #define CHECK_EQUAL(expr, value) CHECK_TRUE((expr) == (value))
 
 #define DEFINE_TEST(test_name) \
-class test_name : public jk::test::test_base{\
+class test_name : public ::jk::test::test_base{\
 public:\
 	test_name() : test_base(#test_name) {test_list_.push_back(this);}\
 	void operator()() override;\

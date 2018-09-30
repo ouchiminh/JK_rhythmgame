@@ -62,9 +62,12 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		fill_data(line);
 	}
 	fl.unlock();
+
+	for (unsigned i = 0; i < notes_.size(); i++) notes_itr_.push_back(notes_.at(i).begin());
 }
 
 void jk::beatmap::free() noexcept {
+	notes_itr_.clear();
 	notes_.clear();
 }
 
@@ -82,6 +85,14 @@ std::filesystem::path const & jk::beatmap::get_path() const noexcept {
 
 const std::vector<std::deque<jk::note>>& jk::beatmap::get_notes() const noexcept {
 	return notes_;
+}
+
+jk::note & jk::beatmap::get_current_note(unsigned lane) {
+	return *notes_itr_.at(lane);
+}
+
+void jk::beatmap::forward_note(unsigned lane) {
+	notes_itr_.at(lane)++;
 }
 
 bool jk::beatmap::operator!() const noexcept {

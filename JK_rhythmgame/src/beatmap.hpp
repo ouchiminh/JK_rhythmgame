@@ -16,6 +16,7 @@ namespace jk {
 		std::filesystem::path map_location_;
 
 		std::vector<std::deque<note>> notes_;
+		std::vector<std::deque<note>::iterator> notes_itr_;
 
 		void fill_data(std::string & line);
 	public:
