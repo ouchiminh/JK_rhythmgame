@@ -13,6 +13,7 @@
 #include "test/test-beatmap_directory.hpp"
 #include "test/test-aes_utl.hpp"
 #include "test/test-lane_key_map.hpp"
+#include "test/test-color.hpp"
 #endif
 
 int WINAPI WinMain(

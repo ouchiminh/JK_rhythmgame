@@ -1,8 +1,11 @@
 #include <string>
 #include <utility>
+#include <algorithm>
 #include "boost/property_tree/json_parser.hpp"
 #include "boost/foreach.hpp"
+#include "SFML/Audio.hpp"
 #include "beatmap-player.hpp"
+#include "sfmlUtl.hpp"
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
 
@@ -21,6 +24,22 @@ void jk::lane_key_map::set_default(unsigned lane_cnt) noexcept {
 	// レーン数が奇数の場合スペースキーを追加するため、lane_cntを超えない最大の偶数回で処理を止める。
 	for (unsigned i = 0; i < lane_cnt - (lane_cnt & 1); i++) keymap_.emplace(candidate[i], i);
 	if (lane_cnt % 2) keymap_.emplace(center, lane_cnt);
+}
+
+jk::lane_key_map::iterator jk::lane_key_map::begin() {
+	return keymap_.begin();
+}
+
+jk::lane_key_map::iterator jk::lane_key_map::end() {
+	return keymap_.end();
+}
+
+jk::lane_key_map::const_iterator jk::lane_key_map::cbegin() const {
+	return keymap_.cbegin();
+}
+
+jk::lane_key_map::const_iterator jk::lane_key_map::cend() const {
+	return keymap_.cend();
 }
 
 bool jk::lane_key_map::load_config(std::filesystem::path && config_file, unsigned lane_cnt) noexcept {
@@ -49,15 +68,35 @@ std::optional<unsigned> jk::lane_key_map::get_lane(sf::Keyboard::Key key) const 
 	return std::nullopt;
 }
 
-jk::beatmap_player::beatmap_player(beatmap && b) : b_{ std::move(b) } {}
-
-jk::result_t jk::beatmap_player::event_procedure(const sf::Event & e) {
-	return result_t();
+std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const noexcept {
+	auto result = std::find_if(std::begin(keymap_), std::end(keymap_), [lane](auto val) { return val.second == lane; });
+	if (result == std::end(keymap_)) return std::nullopt;
+	return result->first;
 }
 
-void jk::beatmap_player::draw(sf::RenderTarget &, sf::RenderStates) const {}
-
-sf::FloatRect jk::beatmap_player::get_rect() const noexcept {
-	return sf::FloatRect();
+jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) :
+	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
+{
+	lkm_.load_config(".\\setteing\\keycfg.json", b_.get_lane_cnt());
+	screen_.create(static_cast<int>(resolution.x * 80.0f / 128), resolution.y);
+	spr_.setTexture(screen_.getTexture());
+	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
 }
 
+void jk::beatmap_player::lightup_lane() {
+	// get pushed key
+	for (auto const & i : lkm_) {
+		if(sf::Keyboard::isKeyPressed(i.first));
+	}
+}
+
+void jk::beatmap_player::update() {
+	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
+}
+
+void jk::beatmap_player::draw(sf::RenderTarget & rt, sf::RenderStates rs) const {
+	rs.transform *= getTransform();
+	rt.draw(spr_, rs);
+}
+
+sf::FloatRect jk::beatmap_player::get_rect() const noexcept { return spr_.getGlobalBounds(); }

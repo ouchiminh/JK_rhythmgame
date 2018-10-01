@@ -2,6 +2,7 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include <WinBase.h>
 #include "log/record.hpp"
 namespace jk::test {
 
@@ -18,7 +19,7 @@ namespace jk::test {
 			for (auto & i : test_list_) {
 				try { (*i)(); }
 				catch (std::exception & e) {
-					r << util::FatalLog<char>("detected unhandled exception! : "s + std::string(e.what()));
+					r << util::FatalLog<char>(i->name_ + "detected unhandled exception! : "s + std::string(e.what()));
 				} catch (...) {
 					r << util::FatalLog<char>(i->name_ + " failed. unhandled exception!");
 				}
@@ -29,12 +30,16 @@ namespace jk::test {
 
 }
 #define LOG(str)	do{\
-	r << name_ << std::string("'s log: ") << std::string(str);\
+	auto outstr = name_ + "'s log: " + std::string(str);\
+	r << outstr;\
+	OutputDebugStringA(outstr.c_str());\
 }while(false)
 
 #define FAILED_LOG(expr, test_name, additional_msg) do{\
 	using namespace std::string_literals;\
-	r << test_name << " failed. "s << "\""s << #expr ## s << "\" "s << std::string(additional_msg);\
+	auto outstr = test_name + " failed. "s + "\""s + #expr ## s + "\" "s + std::string(additional_msg);\
+	r << outstr;\
+	OutputDebugStringA(outstr.c_str());\
 }while(false)
 
 #define REQUIRE_TRUE(expr) do{\
@@ -46,6 +51,7 @@ namespace jk::test {
 		}\
 	} catch (std::exception & e) {\
 		FAILED_LOG(expr, name_, e.what());\
+		return;\
 	}\
 }while(false)
 
@@ -78,12 +84,9 @@ namespace jk::test {
 #define CHECK_EQUAL(expr, value) CHECK_TRUE((expr) == (value))
 
 #define DEFINE_TEST(test_name) \
-class test_name : public jk::test::test_base{\
+class test_name : public ::jk::test::test_base{\
 public:\
 	test_name() : test_base(#test_name) {test_list_.push_back(this);}\
-	static void init(){\
-		test_list_.push_back(new test_name);\
-	}\
 	void operator()() override;\
 };\
 namespace {\
