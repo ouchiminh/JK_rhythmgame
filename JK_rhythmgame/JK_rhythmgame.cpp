@@ -14,6 +14,7 @@
 #include "test/test-aes_utl.hpp"
 #include "test/test-lane_key_map.hpp"
 #include "test/test-color.hpp"
+#include "test/test-map_select_renderer.hpp"
 #endif
 
 int WINAPI WinMain(
