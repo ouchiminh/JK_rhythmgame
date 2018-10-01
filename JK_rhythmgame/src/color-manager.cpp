@@ -21,7 +21,6 @@ void jk::color::color_mng::reload() {
 		cfg_tree.clear();
 		throw std::runtime_error("this file is not compatible with this version");
 	}
-	status = true;
 }
 
 std::optional<sf::Color> jk::color::color_mng::get(std::string const & key) {
