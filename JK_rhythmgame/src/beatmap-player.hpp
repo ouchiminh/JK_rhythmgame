@@ -34,7 +34,6 @@ namespace jk {
 		[[nodiscard]] std::optional<sf::Keyboard::Key> get_key(unsigned lane) const noexcept;
 	};
 	
-	class beatmap_player final : public ui_component{
 	class beatmap_player : public ui_component, public sf::Transformable {
 		beatmap b_;
 		lane_key_map lkm_;
