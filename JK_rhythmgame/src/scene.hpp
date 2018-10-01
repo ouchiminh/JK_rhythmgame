@@ -10,9 +10,9 @@
 
 namespace jk {
 	inline namespace color {
-		const sf::Color bkg_color	= sf::Color(0);
-		const sf::Color str_color	= sf::Color(238, 238, 238);
-		const sf::Color theme_color	= sf::Color(0xFF, 0xA0, 0x00);
+		 const inline sf::Color bkg_color	= sf::Color(0);
+		 const inline sf::Color str_color	= sf::Color(238, 238, 238);
+		 const inline sf::Color theme_color	= sf::Color(0xFF, 0xA0, 0x00);
 	}
 
 	enum SCENEFLAG{

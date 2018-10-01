@@ -31,7 +31,7 @@ namespace jk {
 		
 		/// <summary>
 		/// <para>this method locks beatmap file in order to load contents safely.</para>
-		/// this function is thread safe, and declared as noexcept func because std::thread terminate process when throw.
+		/// This method is assumed to work with multithreading, but you should not access this class in the meantime.
 		/// </summary>
 		/// <param name="ep">pointer to the exception.</param>
 		void load(std::exception_ptr & ep) noexcept;

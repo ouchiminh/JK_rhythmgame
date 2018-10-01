@@ -21,6 +21,13 @@ namespace jk {
 		lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt);
 		void set_default(unsigned lane_cnt) noexcept;
 
+		using iterator = std::map<sf::Keyboard::Key, unsigned>::iterator;
+		using const_iterator = std::map<sf::Keyboard::Key, unsigned>::const_iterator;
+		iterator begin();
+		iterator end();
+
+		const_iterator cbegin() const;
+		const_iterator cend() const;
 		// if failed, set default and returns false
 		bool load_config(std::filesystem::path && config_file, unsigned lane_cnt) noexcept;
 		[[nodiscard]] std::optional<unsigned> get_lane(sf::Keyboard::Key key) const noexcept;
