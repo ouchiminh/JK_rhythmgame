@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "SFML/Graphics.hpp"
 #include "src/scene-mng.hpp"
+#include "src/color-manager.hpp"
 #include "src/timeKeeper.h"
 
 #define ONLY_TEST
@@ -33,6 +34,7 @@ int WINAPI WinMain(
 	sf::RenderWindow window(mode, "orange game", sf::Style::None);
 	jk::scene_mng scenes{ hInstance, window };
 	timeKeeper fps(std::chrono::microseconds(1'000'000) / 30);
+	jk::color::color_mng::set(".\\setting\\color.json");
 	scenes.init();
 
 	sf::Event event;

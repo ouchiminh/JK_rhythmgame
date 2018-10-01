@@ -9,7 +9,7 @@ std::uint32_t jk::ui_mng::event_procedure(const sf::Event & e) {
 }
 
 void jk::ui_mng::draw(sf::RenderWindow & rt, sf::RenderStates rs) const {
-	for (auto & i : ui_list_) rt.draw(*i, rs);
+	for (auto const & i : ui_list_) rt.draw(*i, rs);
 }
 
 std::list<std::shared_ptr<ui_component>> & jk::ui_mng::get_list() noexcept {

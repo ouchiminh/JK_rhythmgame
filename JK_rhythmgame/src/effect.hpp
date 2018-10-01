@@ -18,7 +18,7 @@ namespace jk {
 	template<class ...Args>
 	class basic_effect {
 	protected:
-		std::atomic<EFFECT_STATE> es_;
+		volatile std::atomic<EFFECT_STATE> es_;
 		std::thread thread_;
 
 		virtual bool judge(Args ...args) const = 0;
@@ -28,22 +28,24 @@ namespace jk {
 		std::uint32_t operator()(Args ...args) {
 			auto flag = judge(args...);
 			if (flag && EFFECT_STATE::WORKING != es_) {
-				es_ = EFFECT_STATE::WORKING;
+				es_ = EFFECT_STATE::NOT_WORKING;
 				if (thread_.joinable()) thread_.join();
-				thread_ = std::thread([&]() { proceed(args...); });
+				es_ = EFFECT_STATE::WORKING;
+				thread_ = std::thread([this, &args...]() { this->proceed(args...); });
 
 			}
 			else if (!flag && EFFECT_STATE::WORKING == es_) {
-				es_ = EFFECT_STATE::FINISHING;
+				es_ = EFFECT_STATE::NOT_WORKING;
 				if (thread_.joinable()) thread_.join();
-				thread_ = std::thread([&]() { finish(args...); });
+				es_ = EFFECT_STATE::FINISHING;
+				thread_ = std::thread([this, &args...]() { this->finish(args...); });
 			}
 			return 0;
 		}
 
 		virtual ~basic_effect() {
 			es_ = EFFECT_STATE::NOT_WORKING;
-			if (thread_.joinable())thread_.join();
+			if (thread_.joinable())thread_.detach();
 		}
 		basic_effect(const basic_effect<Args...> & obj) :
 			es_{obj.es_.load()}
