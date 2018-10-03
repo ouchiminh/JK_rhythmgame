@@ -86,7 +86,11 @@ jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) :
 void jk::beatmap_player::lightup_lane() {
 	// get pushed key
 	for (auto const & i : lkm_) {
-		if(sf::Keyboard::isKeyPressed(i.first));
+		if (sf::Keyboard::isKeyPressed(i.first)) {
+			// TODO:notes_‚É–â‚¢‡‚í‚¹
+			// TODO:ƒŒ[ƒ“Œõ‚ç‚¹‚é
+
+		}
 	}
 }
 

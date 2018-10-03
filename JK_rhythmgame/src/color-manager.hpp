@@ -14,7 +14,7 @@ namespace jk {
 
 			inline static std::shared_mutex mtx;
 			inline static std::filesystem::path cfg_file_path;
-			inline static boost::property_tree::ptree cfg_tree;
+			static boost::property_tree::ptree cfg_tree;
 		public:
 			static void set(std::filesystem::path && cfg_file);
 			static void set(std::filesystem::path const & cfg_file);

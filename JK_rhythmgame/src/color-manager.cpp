@@ -1,6 +1,9 @@
 #include "color-manager.hpp"
 #include "boost/property_tree/json_parser.hpp"
 
+
+boost::property_tree::ptree jk::color::color_mng::cfg_tree;
+
 void jk::color::color_mng::set(std::filesystem::path && cfg_file) { set(cfg_file); }
 
 void jk::color::color_mng::set(std::filesystem::path const & cfg_file) {
@@ -13,6 +16,7 @@ void jk::color::color_mng::set(std::filesystem::path const & cfg_file) {
 void jk::color::color_mng::reload() {
 	using namespace boost::property_tree;
 	std::lock_guard<decltype(mtx)> lg(mtx);
+	cfg_tree.clear();
 	read_json(cfg_file_path.generic_string(), cfg_tree);
 
 	// verify version

@@ -39,8 +39,8 @@ namespace jk {
 
 		unsigned get_lane_cnt() const noexcept;
 
-		std::weak_ptr<sf::Music> get_music() const noexcept;
-		std::filesystem::path const & get_path() const noexcept;
+		[[nodiscard]] std::weak_ptr<sf::Music> get_music() const noexcept;
+		[[nodiscard]] std::filesystem::path const & get_path() const noexcept;
 
 		[[deprecated]][[nodiscard]] const std::vector<std::deque<note>> & get_notes() const noexcept;
 		[[nodiscard]] note & get_current_note(unsigned lane);

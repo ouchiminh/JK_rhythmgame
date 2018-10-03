@@ -10,12 +10,11 @@
 #include "src/timeKeeper.h"
 
 #define ONLY_TEST
-#ifdef _DEBUG
+#include "test/test.hpp"
 #include "test/test-beatmap_directory.hpp"
 #include "test/test-aes_utl.hpp"
 #include "test/test-lane_key_map.hpp"
 #include "test/test-color.hpp"
-#endif
 
 int WINAPI WinMain(
 	HINSTANCE hInstance,      // 現在のインスタンスのハンドル
@@ -23,12 +22,8 @@ int WINAPI WinMain(
 	LPSTR lpCmdLine,          // コマンドライン
 	int nCmdShow              // 表示状態
 ){
-#ifdef _DEBUG
 	jk::test::test_base::test();
-#	ifdef ONLY_TEST
-	return 0;
-#	endif
-#endif
+#ifndef ONLY_TEST
 	auto mode = sf::VideoMode::getDesktopMode();
 	mode.height += 1;
 	sf::RenderWindow window(mode, "orange game", sf::Style::None);
@@ -47,5 +42,6 @@ int WINAPI WinMain(
 		if (!window.hasFocus()) fps.sleep();
 		scenes.render();
 	}
+#endif
 	return 0;
 }
