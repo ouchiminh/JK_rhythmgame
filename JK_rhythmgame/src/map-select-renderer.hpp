@@ -20,6 +20,9 @@ namespace jk {
 		std::vector<std::shared_ptr<button>> musicButtons_;						
 		std::vector<std::filesystem::path> mapPaths_;		//musicButton_Ç∆ìØéûÇ…ëÄçÏÇµÇ»ÇØÇÍÇŒÇ»ÇÁÇ»Ç¢
 		std::vector<std::shared_ptr<button>>::iterator musicButtonsItr_;
+		std::vector<beatmap_directory>  beatDirectories_;
+
+		static const sf::Vector2f MAINBUTTON_MARGIN;		//ã»ëIëÉ{É^ÉìÇÃmargin
 				
 	public:
 		void init(sf::RenderWindow* window);
@@ -30,8 +33,8 @@ namespace jk {
 		[[nodiscard]] std::optional<jk::beatmap> get_selected() const;
 	
 	private:
-		void AddButton(jk::beatmap_directory& bd);
-		const sf::Text MakeButtonName(const jk::beatmap& b) const;
-		void InitButtonPos();
+		void addButton(jk::beatmap_directory& bd);
+		const sf::Text makeButtonName(const jk::beatmap& b) const;
+		void initButtonPos();
 	};
 }
