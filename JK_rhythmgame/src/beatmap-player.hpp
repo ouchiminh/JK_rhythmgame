@@ -9,6 +9,20 @@
 
 namespace jk {
 
+	template<class Type>
+	struct sum {
+		Type total_ = 0;
+		unsigned count_ = 0;
+		sum() = default;
+		Type operator+=(Type value) { return count_++, total_ += value; }
+		Type operator+=(std::optional<Type> value) {
+			if (!value) return total_;
+			return count_++, total_ += value.value();
+		}
+		template<class ResultType>
+		ResultType avg() { return static_cast<ResultType>(total_) / static_cast<ResultType>(count_); }
+	};
+
 	class lane_key_map {
 		//		<keycode,			lane	>
 		std::map<sf::Keyboard::Key, unsigned> keymap_;
@@ -38,10 +52,13 @@ namespace jk {
 		beatmap b_;
 		lane_key_map lkm_;
 		sf::Time notes_visible_duration_;
+		sum<float> sum_;
 
 		sf::RenderTexture screen_;
 		sf::Sprite spr_;
+		sf::Shader lane_light_;
 
+		std::vector<sf::RectangleShape> hit_lines_;
 	private:
 		beatmap_player(beatmap && b, sf::Vector2i resolution);
 
@@ -53,7 +70,7 @@ namespace jk {
 		// result_t event_procedure(const sf::Event & e) override;
 
 		void update();
-		void draw(sf::RenderTarget &, sf::RenderStates = sf::RenderStates::Default) const override;
+		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;
 		[[deprecated]] sf::FloatRect get_rect() const noexcept override;
 	};
 }

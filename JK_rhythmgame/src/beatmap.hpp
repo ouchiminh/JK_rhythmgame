@@ -37,7 +37,7 @@ namespace jk {
 		void load(std::exception_ptr & ep) noexcept;
 		void free() noexcept;
 
-		unsigned get_lane_cnt() const noexcept;
+		[[nodiscard]] unsigned get_lane_cnt() const noexcept;
 
 		[[nodiscard]] std::weak_ptr<sf::Music> get_music() const noexcept;
 		[[nodiscard]] std::filesystem::path const & get_path() const noexcept;
@@ -46,6 +46,6 @@ namespace jk {
 		[[nodiscard]] note & get_current_note(unsigned lane);
 		void forward_note(unsigned lane);
 
-		bool operator!() const noexcept;
+		[[nodiscard]] bool operator!() const noexcept;
 	};
 }

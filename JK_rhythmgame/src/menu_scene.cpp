@@ -152,7 +152,6 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(bkg_color));
 	frag_.setUniform("t"s, clock_.getElapsedTime().asSeconds());
 	frag_.setUniform("r"s, sf::Glsl::Vec2((float)w_->getSize().x, (float)w_->getSize().y));
-	w_->draw(bkg_);
 	w_->draw(frame, &frag_);
 	
 	mtx_.lock_shared();
@@ -197,8 +196,6 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 
 void jk::menu_renderer::free_resource() noexcept {
 	std::lock_guard<std::shared_mutex> lg(mtx_);
-	bkg_tx_ = sf::Texture{};
-	bkg_ = sf::Sprite{};
 	f_ = sf::Font{};
 	ui_mng_.get_list().clear();
 	did_initialized_ = false;

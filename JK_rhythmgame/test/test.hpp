@@ -80,6 +80,15 @@ namespace jk::test {
 	} catch(...){}\
 } while(false)
 
+#define CHECK_SPECIFIC_EXCEPTION(expr, exception_type) do{\
+	try{\
+		expr; \
+	} catch(exception_type){}\
+	catch(...){\
+		FAILED_LOG(expr, name_, "unexcepted exception was thrown");\
+	}\
+}while(false)\
+
 #define REQUIRE_EQUAL(expr, value) REQUIRE_TRUE((expr) == (value))
 #define CHECK_EQUAL(expr, value) CHECK_TRUE((expr) == (value))
 

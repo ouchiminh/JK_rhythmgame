@@ -69,4 +69,9 @@ namespace jk {
 		auto new_pos{ shift_ceter_pos<Type>(target.getGlobalBounds(), dest) };
 		target.setPosition(new_pos);
 	}
+
+	template<class Type>
+	[[nodiscard]] sf::Vector2<Type> normalize_coord(sf::Vector2<Type> point, sf::Vector2<Type> size) {
+		return (point * static_cast<Type>(2) - size) / std::min(size.x, size.y);
+	}
 }

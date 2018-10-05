@@ -5,7 +5,35 @@
 #include "boost/foreach.hpp"
 #include "SFML/Audio.hpp"
 #include "beatmap-player.hpp"
+#include "color-manager.hpp"
+#include "scene.hpp"
 #include "sfmlUtl.hpp"
+
+namespace {
+	[[nodiscard]] constexpr unsigned calc_lane_center_xcoord(unsigned lane, unsigned total_lane, unsigned component_res) {
+		auto lane_width = component_res / static_cast<float>(total_lane);
+		return static_cast<unsigned>(lane_width * lane + lane_width / 2.0);
+	}
+	[[nodiscard]] constexpr unsigned calc_lane_left_xcoord(unsigned lane, unsigned total_lane, unsigned component_res) {
+		auto lane_width = component_res / static_cast<float>(total_lane);
+		return static_cast<unsigned>(lane_width * lane);
+	}
+}
+
+
+namespace {
+	// these coord values is on DISPLAY. not on ui_component
+
+	constexpr std::pair<double, double> GAGE_COORD = { 24 / 128.0, 2/72.0 };
+	constexpr std::pair<double, double> GAGE_SIZE = { (32 + 16 * 3) / 128.0, 6.0 };
+
+	constexpr std::pair<double, double> LANE_COORD = { 24 / 128.0, (GAGE_COORD.second + GAGE_SIZE.second + 3) / 72.0 };
+	constexpr std::pair<double, double> LANE_SIZE = { 80 / 128.0,(51 + 7) / 72.0 };
+	constexpr double LANE_HIT_LEVEL = LANE_COORD.first + (51 / 72.0);
+
+	constexpr std::pair<double, double> COMBO_DISP_COORD = { (LANE_COORD.first + LANE_SIZE.first + 4) / 128.0, 36 / 72.0 };
+	constexpr std::pair<double, double> COMBO_DISP_SIZE = { 10 / 128.0, 8 / 72.0 };
+}
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
 
@@ -81,21 +109,47 @@ jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) :
 	screen_.create(static_cast<int>(resolution.x * 80.0f / 128), resolution.y);
 	spr_.setTexture(screen_.getTexture());
 	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
+
+	lane_light_.loadFromFile(".\\res\\shader\\lane_lightup.frag", sf::Shader::Type::Fragment);
+	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
+		hit_lines_.emplace_back(sf::Vector2f{ static_cast<float>(LANE_SIZE.first * screen_.getSize().x / b_.get_lane_cnt()), 1.0f });
+		hit_lines_.back().setPosition(sf::Vector2f
+									  {
+										  static_cast<float>(calc_lane_left_xcoord(i, b_.get_lane_cnt(), screen_.getSize().x)),
+										  static_cast<float>(LANE_HIT_LEVEL * screen_.getSize().y)
+									  });
+	}
 }
 
 void jk::beatmap_player::lightup_lane() {
 	// get pushed key
 	for (auto const & i : lkm_) {
 		if (sf::Keyboard::isKeyPressed(i.first)) {
-			// TODO:notes_Ç…ñ‚Ç¢çáÇÌÇπ
 			// TODO:ÉåÅ[ÉìåıÇÁÇπÇÈ
+			auto light = jk::normalize_coord(
+				sf::Vector2u{
+					calc_lane_center_xcoord(i.second, b_.get_lane_cnt(), screen_.getSize().x),
+					static_cast<unsigned>(LANE_HIT_LEVEL * screen_.getSize().y)
+				},
+				screen_.getSize()
+			);
+			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
 
+			// TODO:notes_Ç…ñ‚Ç¢çáÇÌÇπ
+			auto score = b_.get_current_note(i.second).hit();
+			if (score) {
+				sum_ += score;
+				b_.forward_note(i.second);
+			}
+		} else {
+			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
 		}
 	}
 }
 
 void jk::beatmap_player::update() {
 	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
+	lightup_lane();
 }
 
 void jk::beatmap_player::draw(sf::RenderTarget & rt, sf::RenderStates rs) const {

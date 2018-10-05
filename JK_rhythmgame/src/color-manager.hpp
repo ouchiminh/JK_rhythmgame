@@ -21,10 +21,10 @@ namespace jk {
 
 			static void reload();
 
-			static std::optional<sf::Color> get(std::string const & key);
-			static std::optional<sf::Color> get(std::string && key);
+			[[nodiscard]] static std::optional<sf::Color> get(std::string const & key);
+			[[nodiscard]] static std::optional<sf::Color> get(std::string && key);
 		};
 
-		sf::Color convert(std::string_view color_str);
+		[[nodiscard]] sf::Color convert(std::string_view color_str);
 	}
 }
