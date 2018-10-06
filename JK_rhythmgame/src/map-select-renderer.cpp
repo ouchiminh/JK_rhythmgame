@@ -73,7 +73,43 @@ jk::SCENEFLAG jk::map_select_renderer::operator() () {
 
 std::uint32_t jk::map_select_renderer::input(const sf::Event & e) noexcept
 {
-	return 1; 
+	if (e.type == sf::Event::KeyPressed) {
+		switch (e.key.code) {
+		case sf::Keyboard::Up:
+			(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//今選択中のボタンを非選択に変更
+			
+			if (musicButtonsItr_ == musicButtons_.begin()) {
+				musicButtonsItr_ = musicButtons_.end();
+			}else {
+				--musicButtonsItr_;
+			}
+			(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//今選択中のボタンを選択に変更
+			break;
+
+		case sf::Keyboard::Down:
+			(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//今選択中のボタンを非選択に変更
+			if (musicButtonsItr_ == musicButtons_.end()) {
+				musicButtonsItr_ = musicButtons_.begin();
+			}
+			else {
+				++musicButtonsItr_;
+			}
+			(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//今選択中のボタンを選択に変更
+			break;
+
+		case sf::Keyboard::Enter:
+			(*musicButtonsItr_)->setState(musicButtonState::CLICKED);				//今選択中のボタンをクリック状態に変更
+			sceneflag_ = FINISHED;
+			break;
+		
+		case sf::Keyboard::Escape:
+			sceneflag_ = FINISHED;
+			break;
+		}	
+	}
+
+	return components_.event_procedure(e);
 }
 
-void jk::map_select_renderer::free_resource() noexcept{}
+void jk::map_select_renderer::free_resource() noexcept
+{}
