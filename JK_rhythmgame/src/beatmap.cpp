@@ -7,7 +7,7 @@
 #include "beatmap.hpp"
 
 namespace {
-	constexpr char password[]{ "sonouchi kangaeru" };
+	constexpr char password[]{ "sonouchi_kangaeru" };
 }
 
 void jk::beatmap::fill_data(std::string & line) {

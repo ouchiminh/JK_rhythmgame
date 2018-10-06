@@ -49,6 +49,8 @@ namespace jk {
 	};
 	
 	class beatmap_player : public ui_component, public sf::Transformable {
+		friend ui_mng;
+
 		beatmap b_;
 		lane_key_map lkm_;
 		sf::Time notes_visible_duration_;
@@ -56,11 +58,10 @@ namespace jk {
 
 		sf::RenderTexture screen_;
 		sf::Sprite spr_;
-		sf::Shader lane_light_;
 
 		std::vector<sf::RectangleShape> hit_lines_;
 	private:
-		beatmap_player(beatmap && b, sf::Vector2i resolution);
+		beatmap_player(const beatmap & b, sf::Vector2i resolution);
 
 		void draw_notes();
 		void draw_gage();

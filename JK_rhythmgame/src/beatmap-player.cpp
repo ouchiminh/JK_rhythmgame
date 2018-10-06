@@ -102,7 +102,7 @@ std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const 
 	return result->first;
 }
 
-jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) :
+jk::beatmap_player::beatmap_player(const beatmap & b, sf::Vector2i resolution) :
 	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
 {
 	lkm_.load_config(".\\setteing\\keycfg.json", b_.get_lane_cnt());
@@ -110,7 +110,6 @@ jk::beatmap_player::beatmap_player(beatmap && b, sf::Vector2i resolution) :
 	spr_.setTexture(screen_.getTexture());
 	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
 
-	lane_light_.loadFromFile(".\\res\\shader\\lane_lightup.frag", sf::Shader::Type::Fragment);
 	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
 		hit_lines_.emplace_back(sf::Vector2f{ static_cast<float>(LANE_SIZE.first * screen_.getSize().x / b_.get_lane_cnt()), 1.0f });
 		hit_lines_.back().setPosition(sf::Vector2f
@@ -126,13 +125,6 @@ void jk::beatmap_player::lightup_lane() {
 	for (auto const & i : lkm_) {
 		if (sf::Keyboard::isKeyPressed(i.first)) {
 			// TODO:ÉåÅ[ÉìåıÇÁÇπÇÈ
-			auto light = jk::normalize_coord(
-				sf::Vector2u{
-					calc_lane_center_xcoord(i.second, b_.get_lane_cnt(), screen_.getSize().x),
-					static_cast<unsigned>(LANE_HIT_LEVEL * screen_.getSize().y)
-				},
-				screen_.getSize()
-			);
 			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
 
 			// TODO:notes_Ç…ñ‚Ç¢çáÇÌÇπ
@@ -149,7 +141,11 @@ void jk::beatmap_player::lightup_lane() {
 
 void jk::beatmap_player::update() {
 	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
+	screen_.clear();
 	lightup_lane();
+
+	screen_.display();
+	spr_.setTexture(screen_.getTexture());
 }
 
 void jk::beatmap_player::draw(sf::RenderTarget & rt, sf::RenderStates rs) const {

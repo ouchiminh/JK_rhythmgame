@@ -30,7 +30,7 @@ namespace jk {
 		void set(std::filesystem::path && path, std::shared_ptr<sf::Music> m);
 		
 		/// <summary>
-		/// <para>this method locks beatmap file in order to load contents safely.</para>
+		/// <para>This method locks beatmap file in order to load contents safely.</para>
 		/// This method is assumed to work with multithreading, but you should not access this class in the meantime.
 		/// </summary>
 		/// <param name="ep">pointer to the exception.</param>

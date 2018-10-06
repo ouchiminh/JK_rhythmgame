@@ -39,7 +39,7 @@ void draw_circle(float progress, vec2 p){
 	float cur_angle = -sign(p.y) * acos(p.x / length(p)) + PI; 
 	float color_scale = step(cur_angle, to_rad(progress));
 	
-	gl_FragColor += vec4(step(0.9, .1 / abs((length(p) - (radius * 0.8)))) * color_scale * base_color, 1.0);
+	gl_FragColor = gl_Color + vec4(step(0.9, .1 / abs((length(p) - (radius * 0.8)))) * color_scale * base_color, 1.0);
 }
 
 void main(void){
