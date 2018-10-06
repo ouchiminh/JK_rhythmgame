@@ -19,7 +19,7 @@ namespace jk {
 		// buttonはstd::enable_shared_from_thisを継承しているのでテンプレート引数変えました。
 		std::vector<std::shared_ptr<musicButton>> musicButtons_;						
 		std::vector<std::shared_ptr<musicButton>>::iterator musicButtonsItr_;
-		std::vector<beatmap_directory>  beatDirectories_;
+		std::vector<std::shared_ptr<beatmap_directory>>  beatDirectories_;
 
 		static const sf::Vector2f MAINBUTTON_MARGIN;		//曲選択ボタンのmargin
 		jk::SCENEFLAG sceneflag_;
@@ -33,7 +33,8 @@ namespace jk {
 		[[nodiscard]] std::optional<jk::beatmap> get_selected() const;
 	
 	private:
-		void addButton(jk::beatmap_directory& bd);
+		void addButton(std::shared_ptr<beatmap_directory> bd);
+		void makeButton();
 		const sf::Text makeButtonName(const jk::beatmap& b) const;
 		void initButtonPos();
 		
