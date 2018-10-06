@@ -15,18 +15,25 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 			std::cerr << e.what() << std::endl;
 		}
 	}
-	for (auto &bd : beatDirectories_) {
-		addButton(bd);
-	}
+	
+	makeButton();
+
 	sceneflag_ = RUNNING;
 }
 
-void jk::map_select_renderer::addButton(jk::beatmap_directory& bd) {
-	for (const auto& b : bd) {
+void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> bd) {
+	for (const auto b : *bd) {
 		// commented by ouchiminh
 		// jk::ui_componentから派生するクラスはjk::ui_mng::createで生成されなければならない。
 		// 実はui_mng内でshared_ptrを保持しているため、別で配列を作る必要はないが、ほかのコードの修正が少なく済むように既に定義してある変数は消していない。
-		musicButtons_.push_back(components_.create<jk::musicButton>(makeButtonName(b)));
+		musicButtons_.push_back(components_.create<jk::musicButton>(b,makeButtonName(b)));
+	}
+}
+
+void jk::map_select_renderer::makeButton()
+{
+	for (auto bd : beatDirectories_) {
+		addButton(bd);
 	}
 }
 
@@ -51,7 +58,7 @@ void jk::map_select_renderer::initButtonPos() {
 
 std::optional<jk::beatmap> jk::map_select_renderer::get_selected() const {
 	auto wPtr = (*musicButtonsItr_)->get_beatmap();
-	std::shared_ptr<jk::beatmap> sPtr = wPtr.lock();
+	auto sPtr = wPtr.lock();
 	return *sPtr;
 }
 
