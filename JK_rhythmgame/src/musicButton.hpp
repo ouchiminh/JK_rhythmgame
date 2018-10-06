@@ -8,15 +8,17 @@ namespace jk {
 		friend ui_mng;
 
 	private:
-		std::weak_ptr<beatmap> beatmap_;
+		// beatmap_directoryでbeatmapが生成されるときに、
+		// make_sharedされていないのでshared_ptrで管理できない。(もしすると終了時に二重解放)
+		beatmap* beatmap_ = nullptr;
 
 	public:
 		musicButton() noexcept = default;
-		musicButton(std::shared_ptr<beatmap> beatmap, const sf::Text & t, const sf::Texture & bkg);
-		musicButton(std::shared_ptr<beatmap> beatmap, const sf::Text & t, std::string_view bkg_filename);
-		musicButton(std::shared_ptr<beatmap> beatmap, const sf::Text & t);
+		musicButton(beatmap * beatmap, const sf::Text & t, const sf::Texture & bkg);
+		musicButton(beatmap * beatmap, const sf::Text & t, std::string_view bkg_filename);
+		musicButton(beatmap * beatmap, const sf::Text & t);
 
-		std::weak_ptr<beatmap> get_beatmap() const;
+		beatmap* get_beatmap() const;
 
 	};
 }
