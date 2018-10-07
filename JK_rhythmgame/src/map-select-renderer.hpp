@@ -18,13 +18,16 @@ namespace jk {
 		sf::Font f_;
 		// commented by ouchiminh
 		// buttonはstd::enable_shared_from_thisを継承しているのでテンプレート引数変えました。
-		std::vector<std::shared_ptr<musicButton>> musicButtons_;
-		std::vector<std::shared_ptr<musicButton>>::iterator musicButtonsItr_;
-		std::vector<std::shared_ptr<beatmap_directory>>  beatDirectories_;
+		std::vector<std::shared_ptr<musicButton>> musicButtons_;				//譜面選択ボタン
+		std::vector<std::shared_ptr<musicButton>>::iterator musicButtonsItr_;	//譜面選択ボタンコンテナのイテレータ
+		std::vector<std::shared_ptr<beatmap_directory>>  beatDirectories_;		//読み込んだbeatmap_directoryを保持しておくコンテナ
+		std::shared_ptr<button> backTitleButton_;
+
 
 		static const sf::Vector2f MAINBUTTON_MARGIN;		//曲選択ボタンのmargin
-		jk::SCENEFLAG sceneflag_;
+		static const sf::Vector2f BACKBUTTON_POS;			//戻るボタンの位置
 
+		jk::SCENEFLAG sceneflag_;
 		event_handlers<> handlers_;
 				
 	public:
@@ -42,10 +45,14 @@ namespace jk {
 		void initButtonPos();
 		std::uint32_t on_key_down(const sf::Event &e);	//キーボード入力イベント
 
+		//backTitleButtonクリックイベント
+		std::uint32_t backTitleButton_pressed(const sf::Event &e, sf::Sprite &s, sf::Text& t, jk::button& b);
+
 		void buttonSelect_up();
 		void buttonSelect_down();
 		void executeClicked();
 		void backTitle();
+
 		
 	};
 }

@@ -4,17 +4,12 @@
 #include <iostream>
 
 const sf::Vector2f jk::map_select_renderer::MAINBUTTON_MARGIN = { 0.f, 0.040f };
+const sf::Vector2f jk::map_select_renderer::BACKBUTTON_POS = { 0.063f, 0.097f };
 
 void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	//変数初期化
 	window_ = window;
 
-	//イベント登録
-	handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
-		sf::Event::EventType::KeyPressed,
-		[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
-	);
-	
 	namespace fs = std::filesystem;	
 	for (const auto &p : fs::directory_iterator(".\\beatmap\\"))	{
 		try {
@@ -28,6 +23,18 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	makeButton();
 	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
 
+
+	//イベントハンドラ登録
+	handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
+		sf::Event::EventType::KeyPressed,
+		[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
+	);
+
+	/*この辺怪しい*/
+	(backTitleButton_->handlers_) << std::make_pair(
+		sf::Event::EventType::MouseButtonPressed,
+		this->backTitleButton_pressed());
+
 	musicButtonsItr_ = std::begin(musicButtons_);
 	sceneflag_ = RUNNING;
 }
@@ -38,6 +45,12 @@ void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> b
 		// jk::ui_componentから派生するクラスはjk::ui_mng::createで生成されなければならない。
 		// 実はui_mng内でshared_ptrを保持しているため、別で配列を作る必要はないが、ほかのコードの修正が少なく済むように既に定義してある変数は消していない。
 		musicButtons_.push_back(components_.create<jk::musicButton>(&b,makeButtonName(b)));
+	}
+	//backTitleButtonの設定
+	{
+		sf::Text backTitleName("Back", f_);
+		backTitleButton_ = components_.create<jk::button>(backTitleName);
+		backTitleButton_->set_position(BACKBUTTON_POS);
 	}
 }
 
@@ -92,6 +105,17 @@ std::uint32_t jk::map_select_renderer::on_key_down(const sf::Event & e)
 		backTitle();
 		break;
 	}
+	return 0;
+}
+
+std::uint32_t jk::map_select_renderer::backTitleButton_pressed(const sf::Event & e, sf::Sprite & s, sf::Text & t, jk::button & b)
+{
+	if (!b.get_rect().contains(sf::Vector2f{ (float)e.mouseButton.x, (float)e.mouseButton.y }) ||
+		 e.mouseButton.button != sf::Mouse::Button::Left)
+		return 0;
+
+	backTitle();
+
 	return 0;
 }
 
