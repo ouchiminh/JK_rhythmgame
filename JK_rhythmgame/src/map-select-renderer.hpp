@@ -16,14 +16,16 @@ namespace jk {
 		ui_mng components_;
 		sf::Font f_;
 		// commented by ouchiminh
-		// button‚Ístd::enable_shared_from_this‚ğŒp³‚µ‚Ä‚¢‚é‚Ì‚Åƒeƒ“ƒvƒŒ[ƒgˆø”•Ï‚¦‚Ü‚µ‚½B
+		// buttonï¿½ï¿½std::enable_shared_from_thisï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ì‚Åƒeï¿½ï¿½ï¿½vï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Ï‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B
 		std::vector<std::shared_ptr<musicButton>> musicButtons_;
 		std::vector<std::shared_ptr<musicButton>>::iterator musicButtonsItr_;
 		std::vector<std::shared_ptr<beatmap_directory>>  beatDirectories_;
 
-		static const sf::Vector2f MAINBUTTON_MARGIN;		//‹È‘I‘ğƒ{ƒ^ƒ“‚Ìmargin
+		static const sf::Vector2f MAINBUTTON_MARGIN;		//ï¿½È‘Iï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½margin
 		jk::SCENEFLAG sceneflag_;
 
+		event_handlers<> handlers_;
+				
 	public:
 		void init(sf::RenderWindow* window);
 		[[nodiscard]] SCENEFLAG operator() () override;
@@ -37,6 +39,12 @@ namespace jk {
 		void makeButton();
 		const sf::Text makeButtonName(const jk::beatmap& b) const;
 		void initButtonPos();
+		std::uint32_t on_key_down(const sf::Event &e);	//ï¿½Lï¿½[ï¿½{ï¿½[ï¿½hï¿½ï¿½ï¿½ÍƒCï¿½xï¿½ï¿½ï¿½g
+
+		void buttonSelect_up();
+		void buttonSelect_down();
+		void executeClicked();
+		void backTitle();
 		
 	};
 }
