@@ -32,6 +32,6 @@ namespace jk::test {
 
 		decoder.get_encoder().setKey(enc::makeKey("password"));
 
-		CHECK_THROW(decoder.decrypt(out));
+		CHECK_SPECIFIC_EXCEPTION(decoder.decrypt(out), std::runtime_error &);
 	}
 }

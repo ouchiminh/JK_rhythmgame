@@ -5,11 +5,13 @@
 
 namespace jk {
 	enum ADJUSTFLAG {
-		NOCHANGE, LEFT = 1, RIGHT = 1 << 1, HCENTER = 1 << 2, VCENTER = 1 << 3, TOP = 1 << 4, BTM = 1 << 5, CENTER = VCENTER | HCENTER
+		NOCHANGE, LEFT = 1, RIGHT = 1 << 1, HCENTER = 1 << 2,
+		VCENTER = 1 << 3, TOP = 1 << 4, BTM = 1 << 5, CENTER = VCENTER | HCENTER
 	};	
 	constexpr ADJUSTFLAG operator | (ADJUSTFLAG a, ADJUSTFLAG b) {
 		return static_cast<ADJUSTFLAG>(static_cast<int>(a) | static_cast<int>(b));
 	}
+	
 	template<class T, typename CoordElm>
 	inline void adjust_pos(T & t, const sf::Vector2<CoordElm> & screen, ADJUSTFLAG af, float offsetx = 0.0f, float offsety = 0.0f) {
 		static_assert(std::is_base_of_v<sf::Transformable, T>, "class T must be derived from sf::Transformable.");
@@ -66,5 +68,10 @@ namespace jk {
 	inline void set_center_pos(T & target, const sf::Vector2<Type> & dest) {
 		auto new_pos{ shift_ceter_pos<Type>(target.getGlobalBounds(), dest) };
 		target.setPosition(new_pos);
+	}
+
+	template<class Type>
+	[[nodiscard]] sf::Vector2<Type> normalize_coord(sf::Vector2<Type> point, sf::Vector2<Type> size) {
+		return (point * static_cast<Type>(2) - size) / std::min(size.x, size.y);
 	}
 }

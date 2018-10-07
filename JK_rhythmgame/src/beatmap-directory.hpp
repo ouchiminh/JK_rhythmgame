@@ -28,6 +28,8 @@ namespace jk {
 
 		void clear() noexcept;
 
+		beatmap GetFirstBeatmapList() const;
+
 		iterator begin();
 		iterator end();
 		const_iterator cbegin() const;

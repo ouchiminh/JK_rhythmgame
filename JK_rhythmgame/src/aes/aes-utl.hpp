@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <cstdint>
 #include "include/aes.hpp"
@@ -38,6 +38,8 @@ namespace enc {
 		in_traits::read(in, data, size);
 		auto result = encoder_.decrypt(data, size);
 		delete[] data;
+		// hashの分も考えてデータが短ければ例外投げて終わろう。
+		if (result.size() <= 32) throw std::runtime_error("invalid length");
 		orgb = result.data() + (result.size() - 32);
 		hash.Push(result.data(), (u_32)result.size() - 32);
 		hash.Final((unsigned char*)(void*)newb.bytes);

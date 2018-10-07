@@ -1,9 +1,9 @@
-/**
-SHA256�����߂�N���X�C�y�т���𗘗p�����v���O����
-�A���S���Y����
+﻿/**
+SHA256を求めるクラス，及びそれを利用したプログラム
+アルゴリズムは
 FIP180-2(http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf)
-���Q�l�ɂ��Ă��������D
-�\�[�X�R�[�h���̃R�����g��FIP180-2���ł̕��͂̃R�s�[���唼�ł�^^;
+を参考にしてください．
+ソースコード中のコメントはFIP180-2内での文章のコピーが大半です^^;
 
 @date 2005-11-20
 @auther Naoki_I
@@ -63,24 +63,24 @@ int main(int argc, char**argv) {
 	FILE*fp;
 
 	if ((argc == 3) && (!strcmp(argv[1], "-s"))) {
-		//./sha256 -s hogehoge �̌`���Ŏ��s�D
-		//�e�L�X�g(hogehoge)����n�b�V�������߂�
+		//./sha256 -s hogehoge の形式で実行．
+		//テキスト(hogehoge)からハッシュを求める
 		sha256.Push((unsigned char*)argv[2], strlen(argv[2]));
 	} else {
 		unsigned char Buf[BUF_SIZE];
 
 		if (argc<2) {
-			//�W�����͂���n�b�V�������߂�
+			//標準入力からハッシュを求める
 			fp = stdin;
 			while (fgets((char*)Buf, BUF_SIZE, fp))
 				sha256.Push(Buf, strlen((char*)Buf));
 		} else if (fp = fopen(argv[1], "rb")) {
-			//�t�@�C������n�b�V�������߂�
+			//ファイルからハッシュを求める
 			int ret;
 			while (ret = fread(Buf, 1, BUF_SIZE, fp))
 				sha256.Push(Buf, ret);
 		} else {
-			//�R�}���h���C���������s��
+			//コマンドライン引数が不正
 			fputs("usage: ./a.out [-s] [file]\n", stderr);
 			return 1;
 		}
@@ -167,8 +167,8 @@ push_top:
 	m_WIndex = t_4;
 
 
-	//t_4==64�̎��C���ł�1�u���b�N���̃��b�Z�[�W���R�s�[����Ă���̂�
-	//�ꎞ�I�ȃn�b�V�������߂�
+	//t_4==64の時，すでに1ブロック分のメッセージがコピーされているので
+	//一時的なハッシュを求める
 	if (t_4 == 64) {
 		for (int t = 16; t<64; t++) {
 			W[t] = S_1_256(W[t - 2]) + W[t - 7] + S_0_256(W[t - 15]) + W[t - 16];
@@ -181,9 +181,9 @@ push_top:
 		if (MesIndex<Len) {
 			pMes += MesIndex;
 			Len -= MesIndex;
-			///////����ȏ���goto��/////////
-			//�ċA�Ăяo���̈Ӗ��͖����̂ŃW�����v���܂��D
-			//���[�v�̓l�X�g���[���Ȃ�̂Ō��ł�
+			///////こんな所にgotoが/////////
+			//再帰呼び出しの意味は無いのでジャンプします．
+			//ループはネストが深くなるので嫌です
 			goto push_top;
 		}
 	} else
@@ -191,25 +191,25 @@ push_top:
 }
 
 void SHA256::Final(unsigned char* pHash) {
-	//���b�Z�[�W�̏I���̃r�b�g�𗧂Ă�
+	//メッセージの終わりのビットを立てる
 	W[m_WIndex++ / 4] |= 0x80000000 >> ((m_WIndex % 4) * 8);
 	while (m_WIndex % 4)
 		m_WIndex++;
 
 	if (m_WIndex>56) {
-		//���b�Z�[�W�̒������R�s�[����]�T�������̂�
-		//���̃u���b�N�����
+		//メッセージの長さをコピーする余裕が無いので
+		//次のブロックを作る
 		int t;
 		for (t = 16; t<64; t++)
 			W[t] = S_1_256(W[t - 2]) + W[t - 7] + S_0_256(W[t - 15]) + W[t - 16];
 		CalcIntermediateHash();
 		m_WIndex = 0;
 	}
-	//�c��̃u���b�N��0�Ŗ��߂�
+	//残りのブロックを0で埋める
 	int t;
 	for (t = m_WIndex / 4; t<14; t++)
 		W[t] = 0;
-	//���b�Z�[�W�̃T�C�Y
+	//メッセージのサイズ
 	W[14] = U64_HIGH(m_MesLen);
 	W[15] = U64_LOW(m_MesLen);
 	for (t = 16; t<64; t++)

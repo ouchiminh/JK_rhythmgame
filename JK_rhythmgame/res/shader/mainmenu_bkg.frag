@@ -23,5 +23,5 @@ void main(void){
     	wave(p, dest, i / PI + .2, i, linec[int(i)], 0.2, cos(t) / 1.0 + 3.0 + i);
     
 
-    gl_FragColor += vec4(dest, t/5.0);
+    gl_FragColor = gl_Color + vec4(dest, t/5.0);
 }

@@ -16,6 +16,7 @@ namespace jk {
 		std::filesystem::path map_location_;
 
 		std::vector<std::deque<note>> notes_;
+		std::vector<std::deque<note>::iterator> notes_itr_;
 
 		void fill_data(std::string & line);
 	public:
@@ -29,20 +30,22 @@ namespace jk {
 		void set(std::filesystem::path && path, std::shared_ptr<sf::Music> m);
 		
 		/// <summary>
-		/// <para>this method locks beatmap file in order to load contents safely.</para>
-		/// this function is thread safe, and declared as noexcept func because std::thread terminate process when throw.
+		/// <para>This method locks beatmap file in order to load contents safely.</para>
+		/// This method is assumed to work with multithreading, but you should not access this class in the meantime.
 		/// </summary>
 		/// <param name="ep">pointer to the exception.</param>
 		void load(std::exception_ptr & ep) noexcept;
 		void free() noexcept;
 
-		unsigned get_lane_cnt() const noexcept;
+		[[nodiscard]] unsigned get_lane_cnt() const noexcept;
 
-		std::weak_ptr<sf::Music> get_music() const noexcept;
-		std::filesystem::path const & get_path() const noexcept;
+		[[nodiscard]] std::weak_ptr<sf::Music> get_music() const noexcept;
+		[[nodiscard]] std::filesystem::path const & get_path() const noexcept;
 
-		const std::vector<std::deque<note>> & get_notes() const noexcept;
+		[[deprecated]][[nodiscard]] const std::vector<std::deque<note>> & get_notes() const noexcept;
+		[[nodiscard]] note & get_current_note(unsigned lane);
+		void forward_note(unsigned lane);
 
-		bool operator!() const noexcept;
+		[[nodiscard]] bool operator!() const noexcept;
 	};
 }
