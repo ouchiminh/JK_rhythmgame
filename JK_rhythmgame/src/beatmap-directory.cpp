@@ -57,3 +57,7 @@ jk::beatmap_directory::const_iterator jk::beatmap_directory::cbegin() const {
 jk::beatmap_directory::const_iterator jk::beatmap_directory::cend() const {
 	return beatmap_list_.cend();
 }
+
+jk::beatmap jk::beatmap_directory::GetFirstBeatmapList() const {
+	return *(beatmap_list_.begin());
+}

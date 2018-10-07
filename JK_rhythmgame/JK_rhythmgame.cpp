@@ -16,6 +16,7 @@
 #include "test/test-lane_key_map.hpp"
 #include "test/test-color.hpp"
 #include "test/test-beatmap-player.hpp"
+#include "test/test-map_select_renderer.hpp"
 
 int WINAPI WinMain(
 	HINSTANCE hInstance,      // 現在のインスタンスのハンドル
