@@ -7,13 +7,20 @@ const sf::Vector2f jk::map_select_renderer::MAINBUTTON_MARGIN = { 0.f, 0.040f };
 const sf::Vector2f jk::map_select_renderer::BACKBUTTON_POS = { 0.063f, 0.097f };
 
 void jk::map_select_renderer::init(sf::RenderWindow* window) {
-	//•Ï”‰Šú‰»
+	//å¤‰æ•°åˆæœŸåŒ–
+	musicButtonsItr_ = std::end(musicButtons_);
 	window_ = window;
 
+	//ã‚¤ãƒ™ãƒ³ãƒˆç™»éŒ²
+	handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
+		sf::Event::EventType::KeyPressed,
+		[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
+	);
+	
 	namespace fs = std::filesystem;	
 	for (const auto &p : fs::directory_iterator(".\\beatmap\\"))	{
 		try {
-			// ‚±‚Ìvector‚Ìƒf[ƒ^Œ^‚Íshared_ptr<>‚È‚Ì‚ÅA‚à‚µA’¼Ú\’z‚·‚é‚Æ‚·‚ê‚Îshared_ptr‚ğ\’z‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢B
+			// ã“ã®vectorã®ãƒ‡ãƒ¼ã‚¿å‹ã¯shared_ptr<>ãªã®ã§ã€ã‚‚ã—ã€ç›´æ¥æ§‹ç¯‰ã™ã‚‹ã¨ã™ã‚Œã°shared_ptrã‚’æ§‹ç¯‰ã—ãªã„ã¨ã„ã‘ãªã„ã€‚
 			beatDirectories_.push_back(std::make_shared<jk::beatmap_directory>(p.path()));		
 		}catch (fs::filesystem_error & e) {
 			std::cerr << e.what() << std::endl;
@@ -24,7 +31,7 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
 
 
-	//ƒCƒxƒ“ƒgƒnƒ“ƒhƒ‰“o˜^
+	//ã‚¤ãƒ™ãƒ³ãƒˆãƒãƒ³ãƒ‰ãƒ©ç™»éŒ²
 	{
 		handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
 			sf::Event::EventType::KeyPressed,
@@ -43,11 +50,11 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> bd) {
 	for (auto & b : *bd) {
 		// commented by ouchiminh
-		// jk::ui_component‚©‚ç”h¶‚·‚éƒNƒ‰ƒX‚Íjk::ui_mng::create‚Å¶¬‚³‚ê‚È‚¯‚ê‚Î‚È‚ç‚È‚¢B
-		// À‚Íui_mng“à‚Åshared_ptr‚ğ•Û‚µ‚Ä‚¢‚é‚½‚ßA•Ê‚Å”z—ñ‚ğì‚é•K—v‚Í‚È‚¢‚ªA‚Ù‚©‚ÌƒR[ƒh‚ÌC³‚ª­‚È‚­Ï‚Ş‚æ‚¤‚ÉŠù‚É’è‹`‚µ‚Ä‚ ‚é•Ï”‚ÍÁ‚µ‚Ä‚¢‚È‚¢B
+		// jk::ui_componentã‹ã‚‰æ´¾ç”Ÿã™ã‚‹ã‚¯ãƒ©ã‚¹ã¯jk::ui_mng::createã§ç”Ÿæˆã•ã‚Œãªã‘ã‚Œã°ãªã‚‰ãªã„ã€‚
+		// å®Ÿã¯ui_mngå†…ã§shared_ptrã‚’ä¿æŒã—ã¦ã„ã‚‹ãŸã‚ã€åˆ¥ã§é…åˆ—ã‚’ä½œã‚‹å¿…è¦ã¯ãªã„ãŒã€ã»ã‹ã®ã‚³ãƒ¼ãƒ‰ã®ä¿®æ­£ãŒå°‘ãªãæ¸ˆã‚€ã‚ˆã†ã«æ—¢ã«å®šç¾©ã—ã¦ã‚ã‚‹å¤‰æ•°ã¯æ¶ˆã—ã¦ã„ãªã„ã€‚
 		musicButtons_.push_back(components_.create<jk::musicButton>(&b,makeButtonName(b)));
 	}
-	//backTitleButton‚Ìİ’è
+	//backTitleButtonã®è¨­å®š
 	{
 		sf::Text backTitleName("Back", f_);
 		backTitleButton_ = components_.create<jk::button>(backTitleName);
@@ -75,11 +82,11 @@ const sf::Text jk::map_select_renderer::makeButtonName(const jk::beatmap& b) con
 }
 
 void jk::map_select_renderer::initButtonPos() {
-	sf::Vector2f pivotRe = { 0.578f, 0.216f};		//‘Š‘ÎˆÊ’u(ƒ{ƒ^ƒ“¶ã‚ğƒsƒ{ƒbƒgƒ|ƒCƒ“ƒg‚Æ‘z’è)
+	sf::Vector2f pivotRe = { 0.578f, 0.216f};		//ç›¸å¯¾ä½ç½®(ãƒœã‚¿ãƒ³å·¦ä¸Šã‚’ãƒ”ãƒœãƒƒãƒˆãƒã‚¤ãƒ³ãƒˆã¨æƒ³å®š)
 	auto size = window_->getSize();
 	for (auto button : this->musicButtons_) {
 		// commented by ouchiminh
-		// ƒGƒ‰[‚ğ‚È‚­‚·‚½‚ß‚ÉmusicButtons_‚Ìƒeƒ“ƒvƒŒ[ƒgˆø”‚ğ•ÏX‚µ‚½‚½‚ßA‚±‚ÌƒR[ƒh‚à•ÏX‚µ‚½B
+		// ã‚¨ãƒ©ãƒ¼ã‚’ãªãã™ãŸã‚ã«musicButtons_ã®ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆå¼•æ•°ã‚’å¤‰æ›´ã—ãŸãŸã‚ã€ã“ã®ã‚³ãƒ¼ãƒ‰ã‚‚å¤‰æ›´ã—ãŸã€‚
 		button->set_position({ size.x * pivotRe.x, size.y * pivotRe.y});
 		pivotRe += MAINBUTTON_MARGIN;	
 	}
@@ -128,9 +135,9 @@ void jk::map_select_renderer::buttonSelect_up()
 		return;
 	}
 	else {
-		(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//¡‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚ğ”ñ‘I‘ğ‚É•ÏX
+		(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//ä»Šé¸æŠä¸­ã®ãƒœã‚¿ãƒ³ã‚’éé¸æŠã«å¤‰æ›´
 		--musicButtonsItr_;
-		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//‘I‘ğæ‚ğ•ÏX
+		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//é¸æŠå…ˆã‚’å¤‰æ›´
 	}
 
 }
@@ -141,23 +148,21 @@ void jk::map_select_renderer::buttonSelect_down()
 		return;
 	}
 	else {
-		(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//¡‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚ğ”ñ‘I‘ğ‚É•ÏX
+		(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//ä»Šé¸æŠä¸­ã®ãƒœã‚¿ãƒ³ã‚’éé¸æŠã«å¤‰æ›´
 		++musicButtonsItr_;
-		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//‘I‘ğæ‚ğ•ÏX
+		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//é¸æŠå…ˆã‚’å¤‰æ›´
 	}
-
-
 }
 
 void jk::map_select_renderer::executeClicked()
 {
-	(*musicButtonsItr_)->setState(musicButtonState::CLICKED);				//¡‘I‘ğ’†‚Ìƒ{ƒ^ƒ“‚ğƒNƒŠƒbƒNó‘Ô‚É•ÏX
-	sceneflag_ = FINISHED;					//I—¹ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+	(*musicButtonsItr_)->setState(musicButtonState::CLICKED);				//ä»Šé¸æŠä¸­ã®ãƒœã‚¿ãƒ³ã‚’ã‚¯ãƒªãƒƒã‚¯çŠ¶æ…‹ã«å¤‰æ›´
+	sceneflag_ = FINISHED;					//çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 }
 
 void jk::map_select_renderer::backTitle()
 {
-	sceneflag_ = FINISHED;					//I—¹ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+	sceneflag_ = FINISHED;					//çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 }
 
 std::optional<jk::beatmap> jk::map_select_renderer::get_selected() const {
