@@ -24,6 +24,8 @@ namespace jk {
 
 		static const sf::Vector2f MAINBUTTON_MARGIN;		//曲選択ボタンのmargin
 		jk::SCENEFLAG sceneflag_;
+
+		event_handlers<> handlers_;
 				
 	public:
 		void init(sf::RenderWindow* window);
@@ -38,6 +40,12 @@ namespace jk {
 		void makeButton();
 		const sf::Text makeButtonName(const jk::beatmap& b) const;
 		void initButtonPos();
+		std::uint32_t on_key_down(const sf::Event &e);	//キーボード入力イベント
+
+		void buttonSelect_up();
+		void buttonSelect_down();
+		void executeClicked();
+		void backTitle();
 		
 	};
 }
