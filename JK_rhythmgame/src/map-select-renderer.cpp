@@ -7,7 +7,6 @@ const sf::Vector2f jk::map_select_renderer::MAINBUTTON_MARGIN = { 0.f, 0.040f };
 
 void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	//変数初期化
-	musicButtonsItr_ = std::end(musicButtons_);
 	window_ = window;
 
 	//イベント登録
@@ -29,6 +28,7 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	makeButton();
 	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
 
+	musicButtonsItr_ = std::begin(musicButtons_);
 	sceneflag_ = RUNNING;
 }
 
@@ -97,28 +97,30 @@ std::uint32_t jk::map_select_renderer::on_key_down(const sf::Event & e)
 
 void jk::map_select_renderer::buttonSelect_up()
 {
-	(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//今選択中のボタンを非選択に変更
+
 
 	if (musicButtonsItr_ == musicButtons_.begin()) {
-		musicButtonsItr_ = musicButtons_.end();
+		return;
 	}
 	else {
+		(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//今選択中のボタンを非選択に変更
 		--musicButtonsItr_;
+		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//選択先を変更
 	}
-	(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//選択先を変更
+
 }
 
 void jk::map_select_renderer::buttonSelect_down()
 {
-	(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//今選択中のボタンを非選択に変更
-
-	if (musicButtonsItr_ == musicButtons_.end()) {
-		musicButtonsItr_ = musicButtons_.begin();
+	if (musicButtonsItr_ == musicButtons_.end() || musicButtonsItr_+1 == musicButtons_.end()) {
+		return;
 	}
 	else {
+		(*musicButtonsItr_)->setState(musicButtonState::NOT_SELECTED);			//今選択中のボタンを非選択に変更
 		++musicButtonsItr_;
+		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//選択先を変更
 	}
-	(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//選択先を変更
+
 
 }
 
