@@ -25,15 +25,16 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 
 
 	//イベントハンドラ登録
-	handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
-		sf::Event::EventType::KeyPressed,
-		[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
-	);
+	{
+		handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
+			sf::Event::EventType::KeyPressed,
+			[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
+		);
+		    (backTitleButton_->handlers_) << std::make_pair(
+        sf::Event::EventType::MouseButtonPressed,
+        [this](auto const & e, auto & s, auto & t, auto & b) { return backTitleButton_pressed(e, s, t, b); });
+	}
 
-	/*この辺怪しい*/
-	(backTitleButton_->handlers_) << std::make_pair(
-		sf::Event::EventType::MouseButtonPressed,
-		this->backTitleButton_pressed());
 
 	musicButtonsItr_ = std::begin(musicButtons_);
 	sceneflag_ = RUNNING;
