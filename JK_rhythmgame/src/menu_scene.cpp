@@ -40,7 +40,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	next_scene_ = SCENE_LIST::Main_Menu;
 	if (did_init_) return;
 	handlers_ << 
-		std::make_pair<sf::Event::EventType, event_handler_t<>>(
+		std::make_pair<sf::Event::EventType, jk::event_handler_t<>>(
 			sf::Event::EventType::KeyPressed,
 			[&](const sf::Event & e) { return on_key_down(e); }
 		);
