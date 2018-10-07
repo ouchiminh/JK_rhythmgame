@@ -12,7 +12,6 @@
 namespace jk {
 
 	class map_select_renderer : public renderer {
-		enc::aes_utl encoder_;
 		sf::RenderWindow* window_;
 		ui_mng components_;
 		sf::Font f_;
@@ -24,7 +23,7 @@ namespace jk {
 
 		static const sf::Vector2f MAINBUTTON_MARGIN;		//‹È‘I‘ðƒ{ƒ^ƒ“‚Ìmargin
 		jk::SCENEFLAG sceneflag_;
-				
+
 	public:
 		void init(sf::RenderWindow* window);
 		[[nodiscard]] SCENEFLAG operator() () override;

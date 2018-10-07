@@ -17,7 +17,7 @@ namespace jk::test {
 					window.close();
 				else msr.input(event);
 			}
-			if (msr() == SCENEFLAG::FINISHED) return;
+			if (msr() == SCENEFLAG::FINISHED) break;
 		}
 	}
 }
