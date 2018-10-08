@@ -4,12 +4,13 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <thread>
 #include "SFML/Graphics.hpp"
 #include "src/scene-mng.hpp"
 #include "src/color-manager.hpp"
 #include "src/timeKeeper.h"
 
-#define ONLY_TEST
+//#define ONLY_TEST
 #include "test/test.hpp"
 #include "test/test-beatmap_directory.hpp"
 #include "test/test-aes_utl.hpp"
@@ -43,6 +44,7 @@ int WINAPI WinMain(
 		}
 		if (!window.hasFocus()) fps.sleep();
 		scenes.render();
+		std::this_thread::yield();
 	}
 #endif
 	return 0;
