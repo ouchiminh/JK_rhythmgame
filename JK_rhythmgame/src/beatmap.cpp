@@ -1,23 +1,27 @@
-#include <fstream>
+﻿#include <fstream>
 #include "aes/aes-utl.hpp"
 #include "aes/include/key.hpp"
 #include "boost/interprocess/sync/file_lock.hpp"
-#include "boost/tokenizer.hpp"
+#include "boost/algorithm/string.hpp"
+#include "boost/foreach.hpp"
 #include "boost/exception/all.hpp"
 #include "beatmap.hpp"
 
 namespace {
-	constexpr char password[]{ "sonouchi_kangaeru" };
+	constexpr char password[] = u8"sonouchi_kangaeru";
 }
 
 void jk::beatmap::fill_data(std::string & line) {
-	boost::tokenizer tk(line);
-	auto beg = tk.begin();
+	std::string delim(", ");
+	std::list<std::string> strlist;
+	boost::split(strlist, line, boost::is_any_of(delim));
+	auto beg = std::begin(strlist);
 	try {
 		float timing = std::stof(*beg++);
 		unsigned lane = std::stoul(*beg);
 		if (lane > MAX_LANE_CNT) throw;
-		for (unsigned i = lane + 1 - static_cast<unsigned>(notes_.size()); i > 0; i--)
+		const long long cur_lane_cnt = notes_.size();
+		for (int i = lane; i >= cur_lane_cnt; i--)
 			notes_.emplace_back();
 		notes_.at(lane).emplace_back(timing, lane, music_);
 	} catch(...){}
@@ -39,25 +43,28 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		try {
 			throw std::filesystem::filesystem_error(std::string("no such file:" + map_location_.generic_string()),
 				std::make_error_code(std::errc::no_such_file_or_directory));
-		} catch (...) { ep = std::current_exception(); }
+		} catch (...) { 
+			ep = std::current_exception();
+			return;
+		}
 	}
-	std::ifstream ifs(map_location_);
+	std::ifstream ifs(map_location_, std::ios::binary | std::ios::in);
 	std::stringstream data;
 	std::string line;
-	enc::aes_utl encoder(enc::aes(enc::makeKey(password)));
+	enc::aes_utl encoder{ enc::aes{enc::makeKey(std::string(password))} };
 	boost::interprocess::file_lock fl(map_location_.generic_string().c_str());
 
 	jk::beatmap::free();
 
 	try {
-		fl.lock();
+		//fl.lock();
 		encoder.decrypt(ifs, data);
 	} catch (boost::interprocess::interprocess_exception &) {
 		ep = std::current_exception();
 		return;
 	} catch (...) { 
 		ep = std::current_exception();
-		fl.unlock();
+		//fl.unlock();
 		return;
 	}
 
@@ -66,7 +73,7 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		std::getline(data, line);
 		fill_data(line);
 	}
-	fl.unlock();
+	//fl.unlock();
 
 	for (unsigned i = 0; i < notes_.size(); i++) notes_itr_.push_back(notes_.at(i).begin());
 }

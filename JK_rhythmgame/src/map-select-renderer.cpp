@@ -1,4 +1,4 @@
-#include "map-select-renderer.hpp"
+﻿#include "map-select-renderer.hpp"
 #include "sfml-button.hpp"
 #include "color-manager.hpp"
 #include <iostream>
@@ -27,8 +27,8 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 		}
 	}
 	
-	makeButton();
 	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
+	makeButton();
 
 
 	//イベントハンドラ登録
@@ -37,9 +37,9 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 			sf::Event::EventType::KeyPressed,
 			[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
 		);
-		    (backTitleButton_->handlers_) << std::make_pair(
-        sf::Event::EventType::MouseButtonPressed,
-        [this](auto const & e, auto & s, auto & t, auto & b) { return backTitleButton_pressed(e, s, t, b); });
+		(backTitleButton_->handlers_) << std::make_pair(
+			sf::Event::EventType::MouseButtonPressed,
+			[this](auto const & e, auto & s, auto & t, auto & b) { return backTitleButton_pressed(e, s, t, b); });
 	}
 
 
@@ -57,8 +57,9 @@ void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> b
 	//backTitleButtonの設定
 	{
 		sf::Text backTitleName("Back", f_);
+		backTitleName.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
 		backTitleButton_ = components_.create<jk::button>(backTitleName);
-		backTitleButton_->set_position(BACKBUTTON_POS);
+		backTitleButton_->set_position(BACKBUTTON_POS * (float)(1920/128));
 	}
 }
 

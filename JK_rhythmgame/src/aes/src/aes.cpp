@@ -4,7 +4,7 @@
 #include "../include/aes.hpp"
 #define NB	4
 enc::aesKey::aesKey(std::function<std::uint32_t()>&& engine) : keyLength{ 32 } {
-	std::random_device rd;
+	std::mt19937 rd;
 	for (auto & i : data.fours) i = (bool)engine ? engine() : rd();
 }
 

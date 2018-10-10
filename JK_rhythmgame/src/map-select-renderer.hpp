@@ -15,9 +15,7 @@ namespace jk {
 		sf::RenderWindow* window_;
 		ui_mng components_;
 		sf::Font f_;
-		// commented by ouchiminh
-    
-		// button��std::enable_shared_from_this��p�����Ă���̂Ńe���v���[�g��ς��܂����B
+
 		std::vector<std::shared_ptr<musicButton>> musicButtons_;				//���ʑI��{�^��
 		std::vector<std::shared_ptr<musicButton>>::iterator musicButtonsItr_;	//���ʑI��{�^���R���e�i�̃C�e���[�^
 		std::vector<std::shared_ptr<beatmap_directory>>  beatDirectories_;		//�ǂݍ���beatmap_directory��ێ����Ă����R���e�i
