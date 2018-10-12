@@ -57,14 +57,14 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 	jk::beatmap::free();
 
 	try {
-		//fl.lock();
+		fl.lock_sharable();
 		encoder.decrypt(ifs, data);
 	} catch (boost::interprocess::interprocess_exception &) {
 		ep = std::current_exception();
 		return;
 	} catch (...) { 
 		ep = std::current_exception();
-		//fl.unlock();
+		fl.unlock_sharable();
 		return;
 	}
 
@@ -73,7 +73,7 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		std::getline(data, line);
 		fill_data(line);
 	}
-	//fl.unlock();
+	fl.unlock_sharable();
 
 	for (unsigned i = 0; i < notes_.size(); i++) notes_itr_.push_back(notes_.at(i).begin());
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <filesystem>
 #include <optional>
 #include "SFML/System/Time.hpp"
@@ -20,7 +20,7 @@ namespace jk {
 			return count_++, total_ += value.value();
 		}
 		template<class ResultType>
-		ResultType avg() { return static_cast<ResultType>(total_) / static_cast<ResultType>(count_); }
+		ResultType avg() { return static_cast<ResultType>(total_) / count_; }
 	};
 
 	class lane_key_map {

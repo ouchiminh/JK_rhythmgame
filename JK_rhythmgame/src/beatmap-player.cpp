@@ -1,4 +1,4 @@
-#include <string>
+ï»¿#include <string>
 #include <utility>
 #include <algorithm>
 #include "boost/property_tree/json_parser.hpp"
@@ -40,16 +40,16 @@ jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned la
 void jk::lane_key_map::set_default(unsigned lane_cnt) noexcept {
 	keymap_.clear();
 	sf::Keyboard::Key candidate[] = {
-		sf::Keyboard::Key::F,
-		sf::Keyboard::Key::J,
-		sf::Keyboard::Key::K,
 		sf::Keyboard::Key::D,
-		sf::Keyboard::Key::S,
-		sf::Keyboard::Key::L
+		sf::Keyboard::Key::F,
+		sf::Keyboard::Key::G,
+		sf::Keyboard::Key::H,
+		sf::Keyboard::Key::J,
+		sf::Keyboard::Key::K
 	};
 	sf::Keyboard::Key center = sf::Keyboard::Key::Space;
 
-	// ƒŒ[ƒ“”‚ªŠï”‚Ìê‡ƒXƒy[ƒXƒL[‚ğ’Ç‰Á‚·‚é‚½‚ßAlane_cnt‚ğ’´‚¦‚È‚¢Å‘å‚Ì‹ô”‰ñ‚Åˆ—‚ğ~‚ß‚éB
+	// ãƒ¬ãƒ¼ãƒ³æ•°ãŒå¥‡æ•°ã®å ´åˆã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã‚’è¿½åŠ ã™ã‚‹ãŸã‚ã€lane_cntã‚’è¶…ãˆãªã„æœ€å¤§ã®å¶æ•°å›ã§å‡¦ç†ã‚’æ­¢ã‚ã‚‹ã€‚
 	for (unsigned i = 0; i < lane_cnt - (lane_cnt & 1); i++) keymap_.emplace(candidate[i], i);
 	if (lane_cnt % 2) keymap_.emplace(center, lane_cnt);
 }
@@ -74,7 +74,7 @@ bool jk::lane_key_map::load_config(std::filesystem::path && config_file, unsigne
 	boost::property_tree::ptree pt;
 	keymap_.clear();
 	try {
-		boost::property_tree::read_json(config_file.generic_string(), pt);
+		boost::property_tree::read_json(config_file.string(), pt);
 		if (pt.get<int>("version") != version) throw std::runtime_error("this config file is not compatible with this version.");
 
 		unsigned lane = 0;
@@ -105,13 +105,13 @@ std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const 
 jk::beatmap_player::beatmap_player(const beatmap & b, sf::Vector2i resolution) :
 	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
 {
-	lkm_.load_config(".\\setteing\\keycfg.json", b_.get_lane_cnt());
+	lkm_.load_config(".\\setting\\keycfg.json", b_.get_lane_cnt());
 	screen_.create(static_cast<int>(resolution.x * 80.0f / 128), resolution.y);
 	spr_.setTexture(screen_.getTexture());
 	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
 
 	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
-		hit_lines_.emplace_back(sf::Vector2f{ static_cast<float>(LANE_SIZE.first * screen_.getSize().x / b_.get_lane_cnt()), 1.0f });
+		hit_lines_.emplace_back(sf::Vector2f{ static_cast<float>(screen_.getSize().x / b_.get_lane_cnt()), 10.0f });
 		hit_lines_.back().setPosition(sf::Vector2f
 									  {
 										  static_cast<float>(calc_lane_left_xcoord(i, b_.get_lane_cnt(), screen_.getSize().x)),
@@ -124,10 +124,10 @@ void jk::beatmap_player::lightup_lane() {
 	// get pushed key
 	for (auto const & i : lkm_) {
 		if (sf::Keyboard::isKeyPressed(i.first)) {
-			// TODO:ƒŒ[ƒ“Œõ‚ç‚¹‚é
+			// TODO:ãƒ¬ãƒ¼ãƒ³å…‰ã‚‰ã›ã‚‹
 			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
 
-			// TODO:notes_‚É–â‚¢‡‚í‚¹
+			// TODO:notes_ã«å•ã„åˆã‚ã›
 			auto score = b_.get_current_note(i.second).hit();
 			if (score) {
 				sum_ += score;
@@ -137,11 +137,12 @@ void jk::beatmap_player::lightup_lane() {
 			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
 		}
 	}
+	for (auto const & i : hit_lines_) screen_.draw(i);
 }
 
 void jk::beatmap_player::update() {
 	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
-	screen_.clear();
+	screen_.clear(jk::color::color_mng::get("Data.lane_color.surface").value_or(jk::color::bkg_color));
 	lightup_lane();
 
 	screen_.display();
