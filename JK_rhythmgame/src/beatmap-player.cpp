@@ -133,20 +133,20 @@ jk::beatmap_player::beatmap_player(const beatmap & b, sf::Vector2i resolution) :
 void jk::beatmap_player::draw_notes() {
 	auto lane_cnt = b_.get_lane_cnt();
 	sf::VertexArray notes;
-	auto hit_level = screen_.getSize().x * bm_screen::LANE_HIT_LEVEL;
+	auto hit_level = screen_.getSize().y * bm_screen::LANE_HIT_LEVEL;
 	notes.setPrimitiveType(sf::PrimitiveType::Quads);
 	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
 		auto itr = b_.get_current_note_itr(i);
-		if (itr != b_.end(i) && itr->get_time_diff() < -jk::acceptable_range::OK_DURATION) itr++;
-		while (itr != b_.end(i)) {
+		for (; itr != b_.end(i); itr++) {
 			auto y = hit_level - itr->get_time_diff().asSeconds() * NOTE_SPEED * screen_.getSize().y;
 			if (y < -NOTE_THICKNESS) break;
+			// 画面外(下方向)にはみ出たノーツをこれ以降処理しない
+			if (y >= screen_.getSize().y) { b_.forward_note(i); continue; }
 			auto const & hit_line = hit_lines_.at(i);
 			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y }));
 			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y }));
 			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y + NOTE_THICKNESS }));
 			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y + NOTE_THICKNESS }));
-			itr++;
 		}
 	}
 	screen_.draw(notes);
@@ -156,15 +156,14 @@ void jk::beatmap_player::lightup_lane() {
 	// get pushed key
 	for (auto const & i : lkm_) {
 		if (sf::Keyboard::isKeyPressed(i.first)) {
-			// TODO:レーン光らせる
+			// レーン光らせる
 			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
 
-			// TODO:notes_に問い合わせ
-			auto score = b_.get_current_note(i.second).hit();
-			if (score) {
-				sum_ += score;
+			// notes_に問い合わせ
+			auto score = b_.get_current_note_itr(i.second) != b_.end(i.second) ? b_.get_current_note(i.second).hit():std::optional<float>(std::nullopt);
+			sum_ += score;
+			if (score)
 				b_.forward_note(i.second);
-			}
 		} else {
 			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
 		}
@@ -187,3 +186,7 @@ void jk::beatmap_player::draw(sf::RenderTarget & rt, sf::RenderStates rs) const 
 }
 
 sf::FloatRect jk::beatmap_player::get_rect() const noexcept { return spr_.getGlobalBounds(); }
+
+float jk::beatmap_player::get_score() const noexcept {
+	return sum_.avg<float>();
+}

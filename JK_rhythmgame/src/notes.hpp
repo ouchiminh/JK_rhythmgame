@@ -6,9 +6,9 @@
 
 namespace jk {
 	namespace acceptable_range {
-		const sf::Time PERFECT_DURATION = sf::milliseconds(19);
-		const sf::Time GOOD_DURATION = sf::milliseconds(30);
-		const sf::Time OK_DURATION = sf::microseconds(60);
+		const sf::Time PERFECT_DURATION = sf::milliseconds(19);	// 100%
+		const sf::Time GOOD_DURATION = sf::milliseconds(30);	// 60%
+		const sf::Time OK_DURATION = sf::milliseconds(120);		// 30%
 	}
 	class note {
 		std::shared_ptr<sf::Music> music_;
@@ -23,7 +23,7 @@ namespace jk {
 		/// </summary>
 		/// <returns>
 		/// @ 0.0 ~ 1.0	: sccessed. timing is good. 
-		/// @ nullopt	: timing is not good.
+		/// @ nullopt	: timing is out of range.
 		/// </returns>
 		[[nodiscard]] std::optional<float> hit();
 

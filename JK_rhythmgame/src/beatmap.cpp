@@ -141,7 +141,8 @@ auto jk::beatmap::cend(unsigned lane) const -> std::deque<note>::const_iterator 
 }
 
 void jk::beatmap::forward_note(unsigned lane) {
-	notes_itr_.at(lane)++;
+	if(notes_itr_.at(lane) != notes_.at(lane).end())
+		notes_itr_.at(lane)++;
 }
 
 bool jk::beatmap::operator!() const noexcept {

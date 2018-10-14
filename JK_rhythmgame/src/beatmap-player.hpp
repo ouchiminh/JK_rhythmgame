@@ -19,8 +19,8 @@ namespace jk {
 			if (!value) return total_;
 			return count_++, total_ += value.value();
 		}
-		template<class ResultType>
-		ResultType avg() { return static_cast<ResultType>(total_) / count_; }
+		template<class ResultType = Type>
+		ResultType avg() const { return static_cast<ResultType>(total_) / count_; }
 	};
 
 	class lane_key_map {
@@ -72,5 +72,6 @@ namespace jk {
 		void update() override;
 		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;
 		[[deprecated]] sf::FloatRect get_rect() const noexcept override;
+		float get_score() const noexcept;
 	};
 }

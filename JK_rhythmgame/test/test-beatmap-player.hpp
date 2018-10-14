@@ -14,7 +14,7 @@ namespace jk::test {
 		jk::fps_counter<std::chrono::high_resolution_clock> counter;
 		auto p = std::make_shared<sf::Music>();
 		p->openFromFile("beatmap\\harujion\\harujion.ogg");
-		p->setVolume(0.0f);
+		p->setVolume(30.0f);
 		jk::beatmap b("beatmap\\harujion\\harujion.map", p);
 		auto player = mng.create<jk::beatmap_player>(b, sf::Vector2i(1280, 720));
 		p->play();
