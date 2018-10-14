@@ -41,12 +41,6 @@ namespace {
 namespace {
 	constexpr auto NOTE_DISP_TIME = 0.8f;	// sec
 	constexpr auto NOTE_SPEED = 1.0f / NOTE_DISP_TIME;	// 1.0を移動距離とした時の速さ(distance/sec)
-
-	namespace accetable_range {
-		const sf::Time PERFECT_DURATION = sf::milliseconds(19);
-		const sf::Time GOOD_DURATION = sf::milliseconds(30);
-		const sf::Time OK_DURATION = sf::microseconds(60);
-	}
 }
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
@@ -143,6 +137,7 @@ void jk::beatmap_player::draw_notes() {
 	notes.setPrimitiveType(sf::PrimitiveType::Quads);
 	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
 		auto itr = b_.get_current_note_itr(i);
+		if (itr != b_.end(i) && itr->get_time_diff() < -jk::acceptable_range::OK_DURATION) itr++;
 		while (itr != b_.end(i)) {
 			auto y = hit_level - itr->get_time_diff().asSeconds() * NOTE_SPEED * screen_.getSize().y;
 			if (y < -NOTE_THICKNESS) break;

@@ -48,7 +48,6 @@ int WINAPI WinMain(
 		}
 		if (!window.hasFocus()) fps.sleep();
 		scenes.render();
-		std::this_thread::yield();
 	}
 #endif
 	return 0;

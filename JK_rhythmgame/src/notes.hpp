@@ -5,6 +5,11 @@
 #include "aes/aes-utl.hpp"
 
 namespace jk {
+	namespace acceptable_range {
+		const sf::Time PERFECT_DURATION = sf::milliseconds(19);
+		const sf::Time GOOD_DURATION = sf::milliseconds(30);
+		const sf::Time OK_DURATION = sf::microseconds(60);
+	}
 	class note {
 		std::shared_ptr<sf::Music> music_;
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "test.hpp"
 #include "../src/map-select-renderer.hpp"
 #include "SFML/Graphics.hpp"
@@ -19,5 +19,8 @@ namespace jk::test {
 			}
 			if (msr() == SCENEFLAG::FINISHED) break;
 		}
+		if (auto s = msr.get_selected()) {
+			LOG(s.value().get_path().string() + "\n");
+		} else LOG("no map selected.\n");
 	}
 }
