@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 #include <list>
 #include <cstdint>
@@ -30,6 +30,7 @@ namespace jk {
 		virtual ~ui_component() = default;
 
 	public:
+		virtual inline void update() {}
 		virtual void draw(sf::RenderTarget &, sf::RenderStates) const override = 0;
 		virtual result_t event_procedure(const sf::Event & e) { return result_t(); }
 		virtual sf::FloatRect get_rect() const noexcept = 0;
@@ -40,7 +41,7 @@ namespace jk {
 		
 	public:
 		std::uint32_t event_procedure(const sf::Event & e);
-		void draw(sf::RenderWindow & rt, sf::RenderStates rs = sf::RenderStates::Default) const;
+		void draw(sf::RenderWindow & rt, sf::RenderStates rs = sf::RenderStates::Default);
 		template<class T,typename ...Arg>
 		std::shared_ptr<T> create(Arg ...args);
 		[[nodiscard]] std::list<std::shared_ptr<ui_component>> & get_list() noexcept;

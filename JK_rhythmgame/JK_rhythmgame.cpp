@@ -11,6 +11,7 @@
 #include "src/timeKeeper.h"
 
 #define ONLY_TEST
+//#define NOTEST
 #include "test/test.hpp"
 #include "test/test-beatmap_directory.hpp"
 #include "test/test-beatmap.hpp"
@@ -26,7 +27,9 @@ int WINAPI WinMain(
 	LPSTR lpCmdLine,          // コマンドライン
 	int nCmdShow              // 表示状態
 ){
+#ifndef NOTEST
 	jk::test::test_base::test();
+#endif
 #ifndef ONLY_TEST
 	auto mode = sf::VideoMode::getDesktopMode();
 	mode.height += 1;

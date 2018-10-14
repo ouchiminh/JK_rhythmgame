@@ -29,10 +29,24 @@ namespace {
 
 	constexpr std::pair<double, double> LANE_COORD = { 24 / 128.0, (GAGE_COORD.second + GAGE_SIZE.second + 3) / 72.0 };
 	constexpr std::pair<double, double> LANE_SIZE = { 80 / 128.0,(51 + 7) / 72.0 };
-	constexpr double LANE_HIT_LEVEL = LANE_COORD.first + (51 / 72.0);
+	inline namespace bm_screen {
+		constexpr auto LANE_HIT_LEVEL = (51 / 58.0f);
+		constexpr auto NOTE_THICKNESS = 10;
+	}
 
 	constexpr std::pair<double, double> COMBO_DISP_COORD = { (LANE_COORD.first + LANE_SIZE.first + 4) / 128.0, 36 / 72.0 };
 	constexpr std::pair<double, double> COMBO_DISP_SIZE = { 10 / 128.0, 8 / 72.0 };
+}
+
+namespace {
+	constexpr auto NOTE_DISP_TIME = 0.8f;	// sec
+	constexpr auto NOTE_SPEED = 1.0f / NOTE_DISP_TIME;	// 1.0を移動距離とした時の速さ(distance/sec)
+
+	namespace accetable_range {
+		const sf::Time PERFECT_DURATION = sf::milliseconds(19);
+		const sf::Time GOOD_DURATION = sf::milliseconds(30);
+		const sf::Time OK_DURATION = sf::microseconds(60);
+	}
 }
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
@@ -40,18 +54,18 @@ jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned la
 void jk::lane_key_map::set_default(unsigned lane_cnt) noexcept {
 	keymap_.clear();
 	sf::Keyboard::Key candidate[] = {
+		sf::Keyboard::Key::S,
 		sf::Keyboard::Key::D,
 		sf::Keyboard::Key::F,
-		sf::Keyboard::Key::G,
-		sf::Keyboard::Key::H,
 		sf::Keyboard::Key::J,
-		sf::Keyboard::Key::K
+		sf::Keyboard::Key::K,
+		sf::Keyboard::Key::L,
 	};
 	sf::Keyboard::Key center = sf::Keyboard::Key::Space;
 
 	// レーン数が奇数の場合スペースキーを追加するため、lane_cntを超えない最大の偶数回で処理を止める。
 	for (unsigned i = 0; i < lane_cnt - (lane_cnt & 1); i++) keymap_.emplace(candidate[i], i);
-	if (lane_cnt % 2) keymap_.emplace(center, lane_cnt);
+	if (lane_cnt & 1) keymap_.emplace(center, lane_cnt);
 }
 
 jk::lane_key_map::iterator jk::lane_key_map::begin() {
@@ -105,19 +119,42 @@ std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const 
 jk::beatmap_player::beatmap_player(const beatmap & b, sf::Vector2i resolution) :
 	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
 {
+
+	b_.load();
 	lkm_.load_config(".\\setting\\keycfg.json", b_.get_lane_cnt());
-	screen_.create(static_cast<int>(resolution.x * 80.0f / 128), resolution.y);
+	screen_.create(static_cast<int>(resolution.x * LANE_SIZE.first), static_cast<int>(resolution.y * LANE_SIZE.second));
 	spr_.setTexture(screen_.getTexture());
 	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
-
+	
 	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
-		hit_lines_.emplace_back(sf::Vector2f{ static_cast<float>(screen_.getSize().x / b_.get_lane_cnt()), 10.0f });
+		hit_lines_.emplace_back(sf::Vector2f{ static_cast<float>(screen_.getSize().x / b_.get_lane_cnt()), static_cast<float>(NOTE_THICKNESS) });
 		hit_lines_.back().setPosition(sf::Vector2f
 									  {
 										  static_cast<float>(calc_lane_left_xcoord(i, b_.get_lane_cnt(), screen_.getSize().x)),
 										  static_cast<float>(LANE_HIT_LEVEL * screen_.getSize().y)
 									  });
 	}
+}
+
+void jk::beatmap_player::draw_notes() {
+	auto lane_cnt = b_.get_lane_cnt();
+	sf::VertexArray notes;
+	auto hit_level = screen_.getSize().x * bm_screen::LANE_HIT_LEVEL;
+	notes.setPrimitiveType(sf::PrimitiveType::Quads);
+	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
+		auto itr = b_.get_current_note_itr(i);
+		while (itr != b_.end(i)) {
+			auto y = hit_level - itr->get_time_diff().asSeconds() * NOTE_SPEED * screen_.getSize().y;
+			if (y < -NOTE_THICKNESS) break;
+			auto const & hit_line = hit_lines_.at(i);
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y }));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y }));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y + NOTE_THICKNESS }));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y + NOTE_THICKNESS }));
+			itr++;
+		}
+	}
+	screen_.draw(notes);
 }
 
 void jk::beatmap_player::lightup_lane() {
@@ -144,7 +181,7 @@ void jk::beatmap_player::update() {
 	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
 	screen_.clear(jk::color::color_mng::get("Data.lane_color.surface").value_or(jk::color::bkg_color));
 	lightup_lane();
-
+	draw_notes();
 	screen_.display();
 	spr_.setTexture(screen_.getTexture());
 }

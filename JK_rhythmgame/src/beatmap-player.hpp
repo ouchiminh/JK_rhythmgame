@@ -64,13 +64,12 @@ namespace jk {
 		beatmap_player(const beatmap & b, sf::Vector2i resolution);
 
 		void draw_notes();
-		void draw_gage();
 		void lightup_lane();
 	public:
 		// this class does not proceed event.
 		// result_t event_procedure(const sf::Event & e) override;
 
-		void update();
+		void update() override;
 		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;
 		[[deprecated]] sf::FloatRect get_rect() const noexcept override;
 	};

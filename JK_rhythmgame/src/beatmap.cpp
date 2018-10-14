@@ -74,8 +74,17 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		fill_data(line);
 	}
 	fl.unlock_sharable();
+	notes_.shrink_to_fit();
+	for (unsigned i = 0; i < notes_.size(); i++) {
+		notes_.at(i).shrink_to_fit();
+		notes_itr_.push_back(notes_.at(i).begin());
+	}
+}
 
-	for (unsigned i = 0; i < notes_.size(); i++) notes_itr_.push_back(notes_.at(i).begin());
+std::exception_ptr jk::beatmap::load() noexcept {
+	std::exception_ptr ep;
+	load(ep);
+	return ep;
 }
 
 void jk::beatmap::free() noexcept {
@@ -99,8 +108,36 @@ const std::vector<std::deque<jk::note>>& jk::beatmap::get_notes() const noexcept
 	return notes_;
 }
 
+std::vector<std::deque<jk::note>>& jk::beatmap::get_notes() noexcept {
+	return notes_;
+}
+
+const std::deque<jk::note>& jk::beatmap::get_notes(unsigned lane) const {
+	return notes_.at(lane);
+}
+
+std::deque<jk::note>& jk::beatmap::get_notes(unsigned lane) {
+	return notes_.at(lane);
+}
+
 jk::note & jk::beatmap::get_current_note(unsigned lane) {
 	return *notes_itr_.at(lane);
+}
+
+auto jk::beatmap::get_current_note_itr(unsigned lane) noexcept -> std::deque<jk::note>::iterator {
+	return notes_itr_[lane];
+}
+
+auto jk::beatmap::get_current_note_itr(unsigned lane) const noexcept -> const std::deque<note>::iterator {
+	return notes_itr_[lane];
+}
+
+auto jk::beatmap::end(unsigned lane) -> std::deque<note>::iterator {
+	return notes_.at(lane).end();
+}
+
+auto jk::beatmap::cend(unsigned lane) const -> std::deque<note>::const_iterator {
+	return notes_.at(lane).cend();
 }
 
 void jk::beatmap::forward_note(unsigned lane) {
