@@ -1,12 +1,16 @@
-#pragma once
+﻿#pragma once
 #include "scene.hpp"
 #include "map-select-renderer.hpp"
+#include "play-renderer.hpp"
 #include "SFML/Graphics.hpp"
 
 namespace jk {
 	
 	class game_scene : public scene {
+		sf::RenderWindow * rw_;
 		map_select_renderer map_select_;
+		beatmap_play_renderer beatmap_play_;
+
 
 		SCENE_LIST next_scene_;
 		SCENEFLAG status_;

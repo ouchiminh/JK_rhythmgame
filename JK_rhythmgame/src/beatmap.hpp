@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <filesystem>
 #include <string>
 #include <memory>
@@ -35,6 +35,7 @@ namespace jk {
 		/// </summary>
 		/// <param name="ep">pointer to the exception.</param>
 		void load(std::exception_ptr & ep) noexcept;
+		std::exception_ptr load() noexcept;
 		void free() noexcept;
 
 		[[nodiscard]] unsigned get_lane_cnt() const noexcept;
@@ -42,8 +43,17 @@ namespace jk {
 		[[nodiscard]] std::weak_ptr<sf::Music> get_music() const noexcept;
 		[[nodiscard]] std::filesystem::path const & get_path() const noexcept;
 
-		[[deprecated]][[nodiscard]] const std::vector<std::deque<note>> & get_notes() const noexcept;
+		[[deprecated]] [[nodiscard]] const std::vector<std::deque<note>> & get_notes() const noexcept;
+		[[deprecated]] [[nodiscard]] std::vector<std::deque<note>> & get_notes() noexcept;
+
+		[[nodiscard]] const std::deque<note> & get_notes(unsigned lane) const;
+		[[nodiscard]] std::deque<note> & get_notes(unsigned lane);
+
 		[[nodiscard]] note & get_current_note(unsigned lane);
+		[[nodiscard]] auto get_current_note_itr(unsigned lane) noexcept ->std::deque<note>::iterator;
+		[[nodiscard]] auto get_current_note_itr(unsigned lane) const noexcept -> const std::deque<note>::iterator;
+		[[nodiscard]] auto end(unsigned lane)->std::deque<note>::iterator;
+		[[nodiscard]] auto cend(unsigned lane) const-> std::deque<note>::const_iterator;
 		void forward_note(unsigned lane);
 
 		[[nodiscard]] bool operator!() const noexcept;

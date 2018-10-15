@@ -1,12 +1,14 @@
-#include "scene-mng.hpp"
+﻿#include "scene-mng.hpp"
 #include "exit-scene.hpp"
 #include "menu_scene.hpp"
+#include "game-scene.hpp"
 jk::scene_mng::scene_mng(HMODULE hm, sf::RenderWindow & w) : hm_{ hm }, rw_{ w } 
 {}
 
 void jk::scene_mng::init() {
 	scene_list_.insert_or_assign(SCENE_LIST::Main_Menu, std::make_shared<jk::mainmenu>());
 	scene_list_.insert_or_assign(SCENE_LIST::Exit, std::make_shared<jk::exit_scene>());
+	scene_list_.insert_or_assign(SCENE_LIST::Game_Play, std::make_shared<jk::game_scene>());
 	cur_scene_.push(SCENE_LIST::Main_Menu);
 	scene_list_[SCENE_LIST::Main_Menu]->init(hm_, rw_);
 }

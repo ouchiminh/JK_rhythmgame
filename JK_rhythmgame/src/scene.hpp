@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <cstdint>
 #include <memory>
 #include "SFML/Window.hpp"
@@ -9,18 +9,12 @@
 #include <Windows.h>
 
 namespace jk {
-	inline namespace color {
-		 const inline sf::Color bkg_color	= sf::Color(0);
-		 const inline sf::Color str_color	= sf::Color(238, 238, 238);
-		 const inline sf::Color theme_color	= sf::Color(0xFF, 0xA0, 0x00);
-	}
-
 	enum SCENEFLAG{
-		NOTYET, RUNNING, FINISHED
+		NOTYET, RUNNING, FINISHED, ABORTED
 	};
 
 	enum SCENE_LIST : std::intptr_t {
-		Null = 0, Exit, Main_Menu, Game_Play 
+		Null = 0, Exit, Main_Menu, Game_Play
 	};
 
 	class renderer {
@@ -54,6 +48,6 @@ namespace IKD {
 			return (obj->*func_)();
 		}
 	private:
-		MethodExec<T>(T::*func_)(); // Às‚·‚éTŒ^ƒNƒ‰ƒX‚Ìƒƒ\ƒbƒhƒ|ƒCƒ“ƒ^
+		MethodExec<T>(T::*func_)(); // å®Ÿè¡Œã™ã‚‹Tå‹ã‚¯ãƒ©ã‚¹ã®ãƒ¡ã‚½ãƒƒãƒ‰ãƒã‚¤ãƒ³ã‚¿
 	};
 }

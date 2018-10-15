@@ -101,6 +101,7 @@ namespace jk {
 				t.setScale(scale, scale);
 				
 				mtx_->unlock();
+				std::this_thread::yield();
 			}
 		}
 
@@ -121,6 +122,7 @@ namespace jk {
 				t.setScale(scale, scale);
 	
 				mtx_->unlock();
+				std::this_thread::yield();
 			}
 			es_ = EFFECT_STATE::NOT_WORKING;
 		}

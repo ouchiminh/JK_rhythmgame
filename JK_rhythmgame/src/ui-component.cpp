@@ -1,4 +1,4 @@
-#include "ui-component.hpp"
+﻿#include "ui-component.hpp"
 using namespace jk;
 std::uint32_t jk::ui_mng::event_procedure(const sf::Event & e) {
 	result_t r{ 0 };
@@ -8,8 +8,11 @@ std::uint32_t jk::ui_mng::event_procedure(const sf::Event & e) {
 	return r.get_retv();
 }
 
-void jk::ui_mng::draw(sf::RenderWindow & rt, sf::RenderStates rs) const {
-	for (auto const & i : ui_list_) rt.draw(*i, rs);
+void jk::ui_mng::draw(sf::RenderWindow & rt, sf::RenderStates rs) {
+	for (auto& i : ui_list_) {
+		i->update();
+		rt.draw(*i, rs);
+	}
 }
 
 std::list<std::shared_ptr<ui_component>> & jk::ui_mng::get_list() noexcept {

@@ -4,14 +4,17 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <thread>
 #include "SFML/Graphics.hpp"
 #include "src/scene-mng.hpp"
 #include "src/color-manager.hpp"
 #include "src/timeKeeper.h"
 
-#define ONLY_TEST
+//#define ONLY_TEST
+#define NOTEST
 #include "test/test.hpp"
 #include "test/test-beatmap_directory.hpp"
+#include "test/test-beatmap.hpp"
 #include "test/test-aes_utl.hpp"
 #include "test/test-lane_key_map.hpp"
 #include "test/test-color.hpp"
@@ -24,7 +27,9 @@ int WINAPI WinMain(
 	LPSTR lpCmdLine,          // コマンドライン
 	int nCmdShow              // 表示状態
 ){
+#ifndef NOTEST
 	jk::test::test_base::test();
+#endif
 #ifndef ONLY_TEST
 	auto mode = sf::VideoMode::getDesktopMode();
 	mode.height += 1;

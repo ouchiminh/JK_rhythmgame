@@ -1,9 +1,11 @@
 #exceptable folder
+game/
 arut/
 encoder/
 x64/
 JK_rhythmgame/doc/
 JK_rhythmgame/x64/
+JK_rhythmgame/beatmap/harujion/
 
 # Prerequisites
 *.d
@@ -69,6 +71,7 @@ JK_rhythmgame/x64/
 *.vcxproj
 *.config
 *.zip
+*.lnk
 
 # conflicted
 JK_rhythmgame/.vs/slnx.sqlite

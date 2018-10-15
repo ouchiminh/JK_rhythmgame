@@ -1,16 +1,17 @@
-#include "musicButton.hpp"
+ï»¿#include "musicButton.hpp"
+#include "color-manager.hpp"
 
 void jk::musicButton::update()
 {
 	switch (state_)
 	{
-	case jk::musicButtonState::NOT_SELECTED:	//”ñ‘I‘ðŽž
+	case jk::musicButtonState::NOT_SELECTED:	//éžé¸æŠžæ™‚
 		break;
 
-	case jk::musicButtonState::SELECTED:		//‘I‘ðŽž
+	case jk::musicButtonState::SELECTED:		//é¸æŠžæ™‚
 		break;
 
-	case jk::musicButtonState::CLICKED:			//ƒNƒŠƒbƒNŽž
+	case jk::musicButtonState::CLICKED:			//ã‚¯ãƒªãƒƒã‚¯æ™‚
 		break;
 
 	}
@@ -36,4 +37,10 @@ jk::beatmap* jk::musicButton::get_beatmap() const
 void jk::musicButton::setState(musicButtonState::STATE state)
 {
 	state_ = state;
+	if (state_ == musicButtonState::STATE::SELECTED)
+		button::title_.setFillColor(jk::color::color_mng::get("Data.theme_color").value_or(jk::color::theme_color));
+	else if (state_ == musicButtonState::STATE::NOT_SELECTED)
+		button::title_.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
 }
+
+auto jk::musicButton::getState() const noexcept->musicButtonState::STATE { return state_; }

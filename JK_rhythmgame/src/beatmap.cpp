@@ -1,23 +1,27 @@
-#include <fstream>
+﻿#include <fstream>
 #include "aes/aes-utl.hpp"
 #include "aes/include/key.hpp"
 #include "boost/interprocess/sync/file_lock.hpp"
-#include "boost/tokenizer.hpp"
+#include "boost/algorithm/string.hpp"
+#include "boost/foreach.hpp"
 #include "boost/exception/all.hpp"
 #include "beatmap.hpp"
 
 namespace {
-	constexpr char password[]{ "sonouchi_kangaeru" };
+	constexpr char password[] = u8"sonouchi_kangaeru";
 }
 
 void jk::beatmap::fill_data(std::string & line) {
-	boost::tokenizer tk(line);
-	auto beg = tk.begin();
+	std::string delim(", ");
+	std::list<std::string> strlist;
+	boost::split(strlist, line, boost::is_any_of(delim));
+	auto beg = std::begin(strlist);
 	try {
 		float timing = std::stof(*beg++);
 		unsigned lane = std::stoul(*beg);
 		if (lane > MAX_LANE_CNT) throw;
-		for (unsigned i = lane + 1 - static_cast<unsigned>(notes_.size()); i > 0; i--)
+		const long long cur_lane_cnt = notes_.size();
+		for (int i = lane; i >= cur_lane_cnt; i--)
 			notes_.emplace_back();
 		notes_.at(lane).emplace_back(timing, lane, music_);
 	} catch(...){}
@@ -39,25 +43,28 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		try {
 			throw std::filesystem::filesystem_error(std::string("no such file:" + map_location_.generic_string()),
 				std::make_error_code(std::errc::no_such_file_or_directory));
-		} catch (...) { ep = std::current_exception(); }
+		} catch (...) { 
+			ep = std::current_exception();
+			return;
+		}
 	}
-	std::ifstream ifs(map_location_);
+	std::ifstream ifs(map_location_, std::ios::binary | std::ios::in);
 	std::stringstream data;
 	std::string line;
-	enc::aes_utl encoder(enc::aes(enc::makeKey(password)));
+	enc::aes_utl encoder{ enc::aes{enc::makeKey(std::string(password))} };
 	boost::interprocess::file_lock fl(map_location_.generic_string().c_str());
 
 	jk::beatmap::free();
 
 	try {
-		fl.lock();
+		fl.lock_sharable();
 		encoder.decrypt(ifs, data);
 	} catch (boost::interprocess::interprocess_exception &) {
 		ep = std::current_exception();
 		return;
 	} catch (...) { 
 		ep = std::current_exception();
-		fl.unlock();
+		fl.unlock_sharable();
 		return;
 	}
 
@@ -66,9 +73,18 @@ void jk::beatmap::load(std::exception_ptr & ep) noexcept {
 		std::getline(data, line);
 		fill_data(line);
 	}
-	fl.unlock();
+	fl.unlock_sharable();
+	notes_.shrink_to_fit();
+	for (unsigned i = 0; i < notes_.size(); i++) {
+		notes_.at(i).shrink_to_fit();
+		notes_itr_.push_back(notes_.at(i).begin());
+	}
+}
 
-	for (unsigned i = 0; i < notes_.size(); i++) notes_itr_.push_back(notes_.at(i).begin());
+std::exception_ptr jk::beatmap::load() noexcept {
+	std::exception_ptr ep;
+	load(ep);
+	return ep;
 }
 
 void jk::beatmap::free() noexcept {
@@ -92,12 +108,41 @@ const std::vector<std::deque<jk::note>>& jk::beatmap::get_notes() const noexcept
 	return notes_;
 }
 
+std::vector<std::deque<jk::note>>& jk::beatmap::get_notes() noexcept {
+	return notes_;
+}
+
+const std::deque<jk::note>& jk::beatmap::get_notes(unsigned lane) const {
+	return notes_.at(lane);
+}
+
+std::deque<jk::note>& jk::beatmap::get_notes(unsigned lane) {
+	return notes_.at(lane);
+}
+
 jk::note & jk::beatmap::get_current_note(unsigned lane) {
 	return *notes_itr_.at(lane);
 }
 
+auto jk::beatmap::get_current_note_itr(unsigned lane) noexcept -> std::deque<jk::note>::iterator {
+	return notes_itr_[lane];
+}
+
+auto jk::beatmap::get_current_note_itr(unsigned lane) const noexcept -> const std::deque<note>::iterator {
+	return notes_itr_[lane];
+}
+
+auto jk::beatmap::end(unsigned lane) -> std::deque<note>::iterator {
+	return notes_.at(lane).end();
+}
+
+auto jk::beatmap::cend(unsigned lane) const -> std::deque<note>::const_iterator {
+	return notes_.at(lane).cend();
+}
+
 void jk::beatmap::forward_note(unsigned lane) {
-	notes_itr_.at(lane)++;
+	if(notes_itr_.at(lane) != notes_.at(lane).end())
+		notes_itr_.at(lane)++;
 }
 
 bool jk::beatmap::operator!() const noexcept {

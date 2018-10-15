@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "sfml-button.hpp"
 #include "beatmap.hpp"
@@ -13,8 +13,8 @@ namespace jk {
 		friend ui_mng;
 
 	private:
-		// beatmap_directory‚Åbeatmap‚ª¶¬‚³‚ê‚é‚Æ‚«‚ÉA
-		// make_shared‚³‚ê‚Ä‚¢‚È‚¢‚Ì‚Åshared_ptr‚ÅŠÇ—‚Å‚«‚È‚¢B(‚à‚µ‚·‚é‚ÆI—¹Žž‚É“ñd‰ð•ú)
+		// beatmap_directoryã§beatmapãŒç”Ÿæˆã•ã‚Œã‚‹ã¨ãã«ã€
+		// make_sharedã•ã‚Œã¦ã„ãªã„ã®ã§shared_ptrã§ç®¡ç†ã§ããªã„ã€‚(ã‚‚ã—ã™ã‚‹ã¨çµ‚äº†æ™‚ã«äºŒé‡è§£æ”¾)
 		beatmap* beatmap_ = nullptr;
 		musicButtonState::STATE state_ = musicButtonState::NOT_SELECTED;
 
@@ -29,6 +29,6 @@ namespace jk {
 		beatmap* get_beatmap() const;
 
 		void setState(musicButtonState::STATE state);
-
+		auto getState() const noexcept->musicButtonState::STATE;
 	};
 }

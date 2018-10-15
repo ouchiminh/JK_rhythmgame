@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <list>
 #include <filesystem>
 #include <utility>
@@ -28,7 +28,7 @@ namespace jk {
 
 		void clear() noexcept;
 
-		beatmap GetFirstBeatmapList() const;
+		const beatmap & front() const;
 
 		iterator begin();
 		iterator end();
