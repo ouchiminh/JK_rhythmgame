@@ -10,8 +10,8 @@
 #include "src/color-manager.hpp"
 #include "src/timeKeeper.h"
 
-#define ONLY_TEST
-//#define NOTEST
+//#define ONLY_TEST
+#define NOTEST
 #include "test/test.hpp"
 #include "test/test-beatmap_directory.hpp"
 #include "test/test-beatmap.hpp"

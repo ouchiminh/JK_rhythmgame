@@ -16,7 +16,7 @@ namespace jk::test {
 		p->openFromFile("beatmap\\harujion\\harujion.ogg");
 		p->setVolume(30.0f);
 		jk::beatmap b("beatmap\\harujion\\harujion.map", p);
-		auto player = mng.create<jk::beatmap_player>(b, sf::Vector2i(1280, 720));
+		auto player = mng.create<jk::beatmap_player>(b, sf::Vector2u(1280, 720));
 		p->play();
 		while (window.isOpen()) {
 			while (window.pollEvent(event)) {

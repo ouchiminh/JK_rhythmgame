@@ -110,13 +110,13 @@ std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const 
 	return result->first;
 }
 
-jk::beatmap_player::beatmap_player(const beatmap & b, sf::Vector2i resolution) :
+jk::beatmap_player::beatmap_player(jk::beatmap & b, sf::Vector2u const & resolution) :
 	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
 {
 
 	b_.load();
 	lkm_.load_config(".\\setting\\keycfg.json", b_.get_lane_cnt());
-	screen_.create(static_cast<int>(resolution.x * LANE_SIZE.first), static_cast<int>(resolution.y * LANE_SIZE.second));
+	screen_.create(static_cast<unsigned>(resolution.x * LANE_SIZE.first), static_cast<unsigned>(resolution.y * LANE_SIZE.second));
 	spr_.setTexture(screen_.getTexture());
 	jk::adjust_pos(spr_, resolution, jk::ADJUSTFLAG::CENTER);
 	
@@ -189,4 +189,14 @@ sf::FloatRect jk::beatmap_player::get_rect() const noexcept { return spr_.getGlo
 
 float jk::beatmap_player::get_score() const noexcept {
 	return sum_.avg<float>();
+}
+
+std::weak_ptr<sf::Music> jk::beatmap_player::get_music() const noexcept {
+	return b_.get_music();
+}
+
+bool jk::beatmap_player::is_end() const noexcept {
+	bool f_end = false;
+	for (auto i = 0u; i < b_.get_lane_cnt() && !f_end; i++) f_end = (b_.cend(i) == b_.get_current_note_itr(i));
+	return f_end;
 }

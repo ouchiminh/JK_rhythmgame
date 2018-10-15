@@ -1,6 +1,7 @@
 ﻿#include "map-select-renderer.hpp"
 #include "sfml-button.hpp"
 #include "color-manager.hpp"
+#include "button_effect.hpp"
 #include <iostream>
 
 const sf::Vector2f jk::map_select_renderer::MAINBUTTON_MARGIN = { 0.f, 0.040f };
@@ -8,15 +9,8 @@ const sf::Vector2f jk::map_select_renderer::BACKBUTTON_POS = { 0.063f, 0.097f };
 
 void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	//変数初期化
-	musicButtonsItr_ = std::end(musicButtons_);
 	window_ = window;
 
-	//イベント登録
-	handlers_ << std::make_pair < sf::Event::EventType, jk::event_handler_t<> >(
-		sf::Event::EventType::KeyPressed,
-		[this](sf::Event const& e)->std::uint32_t {return this->on_key_down(e); }
-	);
-	
 	namespace fs = std::filesystem;	
 	for (const auto &p : fs::directory_iterator(".\\beatmap\\"))	{
 		try {
@@ -41,8 +35,6 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 			sf::Event::EventType::MouseButtonPressed,
 			[this](auto const & e, auto & s, auto & t, auto & b) { return backTitleButton_pressed(e, s, t, b); });
 	}
-
-
 	musicButtonsItr_ = std::begin(musicButtons_);
 	sceneflag_ = RUNNING;
 }
@@ -95,7 +87,6 @@ void jk::map_select_renderer::initButtonPos() {
 
 std::uint32_t jk::map_select_renderer::on_key_down(const sf::Event & e)
 {
-	assert(e.type == sf::Event::EventType::KeyPressed);
 	switch (e.key.code)
 	{
 	case sf::Keyboard::Up:
@@ -169,8 +160,9 @@ void jk::map_select_renderer::backTitle()
 std::optional<jk::beatmap> jk::map_select_renderer::get_selected() const {
 	if (musicButtonsItr_ == musicButtons_.end()) return std::nullopt;
 	auto bptr = (*musicButtonsItr_)->get_beatmap();
-	
-	return bptr ? std::optional<jk::beatmap>(*bptr) : std::optional<jk::beatmap>(std::nullopt);
+	return ((*musicButtonsItr_)->getState() == musicButtonState::CLICKED && bptr) ?
+		std::optional<beatmap>(*bptr) :
+		std::optional<beatmap>(std::nullopt);
 }
 
 jk::SCENEFLAG jk::map_select_renderer::operator() () {
@@ -186,4 +178,12 @@ std::uint32_t jk::map_select_renderer::input(const sf::Event & e) noexcept
 	return components_.event_procedure(e);
 }
 
-void jk::map_select_renderer::free_resource() noexcept {}
+void jk::map_select_renderer::free_resource() noexcept {
+	window_ = nullptr;
+	components_.get_list().clear();
+	f_ = sf::Font();
+	musicButtons_.clear();
+	musicButtonsItr_ = std::end(musicButtons_);
+	beatDirectories_.clear();
+	backTitleButton_.reset();
+}

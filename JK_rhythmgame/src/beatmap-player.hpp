@@ -61,7 +61,7 @@ namespace jk {
 
 		std::vector<sf::RectangleShape> hit_lines_;
 	private:
-		beatmap_player(const beatmap & b, sf::Vector2i resolution);
+		beatmap_player(beatmap & b, sf::Vector2u const & resolution);
 
 		void draw_notes();
 		void lightup_lane();
@@ -73,5 +73,7 @@ namespace jk {
 		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;
 		[[deprecated]] sf::FloatRect get_rect() const noexcept override;
 		float get_score() const noexcept;
+		std::weak_ptr<sf::Music> get_music() const noexcept;
+		bool is_end() const noexcept;
 	};
 }

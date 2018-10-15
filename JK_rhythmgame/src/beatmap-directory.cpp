@@ -1,4 +1,4 @@
-#include <optional>
+﻿#include <optional>
 #include "boost/property_tree/ptree.hpp"
 #include "boost/foreach.hpp"
 #include "boost/property_tree/json_parser.hpp"
@@ -32,7 +32,7 @@ void jk::beatmap_directory::set_directory(std::filesystem::path const & path) no
 	beatmap_list_.clear();
 	// read music file name.
 	if (auto music_name = pt.get_optional<std::string>("Data.music.name"))
-		m->openFromFile(music_name.value());
+		m->openFromFile((path / std::filesystem::path(music_name.value())).string());
 
 	BOOST_FOREACH(const ptree::value_type & child, pt.get_child("Data.map_list")) {
 		const auto & info = child.second;
@@ -58,6 +58,6 @@ jk::beatmap_directory::const_iterator jk::beatmap_directory::cend() const {
 	return beatmap_list_.cend();
 }
 
-jk::beatmap jk::beatmap_directory::GetFirstBeatmapList() const {
-	return *(beatmap_list_.begin());
+const jk::beatmap & jk::beatmap_directory::front() const {
+	return *(beatmap_list_.cbegin());
 }
