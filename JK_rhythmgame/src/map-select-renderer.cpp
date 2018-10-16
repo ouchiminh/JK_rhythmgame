@@ -10,6 +10,8 @@ const sf::Vector2f jk::map_select_renderer::BACKBUTTON_POS = { 0.063f, 0.097f };
 void jk::map_select_renderer::init(sf::RenderWindow* window) {
 	//変数初期化
 	window_ = window;
+	sceneflag_ = RUNNING;
+	if (musicButtons_.size()) return;
 
 	namespace fs = std::filesystem;	
 	for (const auto &p : fs::directory_iterator(".\\beatmap\\"))	{
@@ -36,7 +38,6 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 			[this](auto const & e, auto & s, auto & t, auto & b) { return backTitleButton_pressed(e, s, t, b); });
 	}
 	musicButtonsItr_ = std::begin(musicButtons_);
-	sceneflag_ = RUNNING;
 }
 
 void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> bd) {

@@ -8,7 +8,7 @@ void jk::game_scene::change_renderer() {
 			beatmap_play_.init(std::move(selected_bm.value()), *rw_);
 		} else {
 			status_ = jk::SCENEFLAG::FINISHED;
-			next_scene_ = jk::SCENE_LIST::Main_Menu;
+			next_scene_ = jk::SCENE_LIST::Null;
 		}
 	} else if (cur_renderer_ == &beatmap_play_) {
 		cur_renderer_ = &map_select_;

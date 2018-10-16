@@ -1,4 +1,4 @@
-#ifndef NOMINMAX
+﻿#ifndef NOMINMAX
 #define NOMINMAX
 #endif
 #include <windows.h>
@@ -38,6 +38,9 @@ void jk::mainmenu::finish() {}
 
 void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 	next_scene_ = SCENE_LIST::Main_Menu;
+	logo_.init(hm, w);
+	bkg_.init(w);
+	menu_.init(hm, w);
 	if (did_init_) return;
 	handlers_ << 
 		std::make_pair<sf::Event::EventType, jk::event_handler_t<>>(
@@ -46,9 +49,7 @@ void jk::mainmenu::init(HMODULE hm, sf::RenderWindow & w) {
 		);
 
 	cur_renderer_ = &mainmenu::render_logo;
-	logo_.init(hm, w);
-	bkg_.init(w);
-	menu_.init(hm, w);
+
 	did_init_ = true;
 }
 
