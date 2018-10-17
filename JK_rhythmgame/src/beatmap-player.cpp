@@ -128,6 +128,7 @@ jk::beatmap_player::beatmap_player(jk::beatmap & b, sf::Vector2u const & resolut
 										  static_cast<float>(LANE_HIT_LEVEL * screen_.getSize().y)
 									  });
 	}
+	for (const auto & i : lkm_) key_state_.emplace(std::make_pair(i.first, utl::continuum_state<bool>(false)));
 }
 
 void jk::beatmap_player::draw_notes() {
@@ -155,12 +156,14 @@ void jk::beatmap_player::draw_notes() {
 void jk::beatmap_player::lightup_lane() {
 	// get pushed key
 	for (auto const & i : lkm_) {
-		if (sf::Keyboard::isKeyPressed(i.first)) {
+		if (auto is_key_hit = sf::Keyboard::isKeyPressed(i.first); key_state_.at(i.first) = is_key_hit) {
 			// レーン光らせる
 			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
 
 			// notes_に問い合わせ
-			auto score = b_.get_current_note_itr(i.second) != b_.end(i.second) ? b_.get_current_note(i.second).hit():std::optional<float>(std::nullopt);
+			auto score = b_.get_current_note_itr(i.second) != b_.end(i.second) && key_state_.at(i.first).is_not_continuum(true) ?
+				b_.get_current_note(i.second).hit():
+				std::optional<float>(std::nullopt);
 			sum_ += score;
 			if (score)
 				b_.forward_note(i.second);

@@ -6,6 +6,7 @@
 #include "ui-component.hpp"
 #include "event-handlers.hpp"
 #include "beatmap.hpp"
+#include "continuum-state.hpp"
 
 namespace jk {
 
@@ -53,6 +54,7 @@ namespace jk {
 
 		beatmap b_;
 		lane_key_map lkm_;
+		std::map<sf::Keyboard::Key, utl::continuum_state<bool>> key_state_;
 		sf::Time notes_visible_duration_;
 		sum<float> sum_;
 
