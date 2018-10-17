@@ -38,6 +38,7 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 			[this](auto const & e, auto & s, auto & t, auto & b) { return backTitleButton_pressed(e, s, t, b); });
 	}
 	musicButtonsItr_ = std::begin(musicButtons_);
+	musicButtons_.front()->setState(jk::musicButtonState::STATE::SELECTED);
 }
 
 void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> bd) {
@@ -187,4 +188,5 @@ void jk::map_select_renderer::free_resource() noexcept {
 	musicButtonsItr_ = std::end(musicButtons_);
 	beatDirectories_.clear();
 	backTitleButton_.reset();
+	handlers_.clear();
 }

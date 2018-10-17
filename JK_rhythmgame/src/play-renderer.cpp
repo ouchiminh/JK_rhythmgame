@@ -5,7 +5,7 @@ jk::SCENEFLAG jk::beatmap_play_renderer::operator()() {
 	mng_.draw(*rw_);
 	rw_->display();
 
-	return bp_->get_music().lock()->getStatus() == sf::SoundSource::Status::Stopped && bp_->is_end()?
+	return bp_->get_music().lock()->getStatus() == sf::SoundSource::Status::Stopped ?
 		jk::SCENEFLAG::FINISHED : jk::SCENEFLAG::RUNNING;
 }
 
@@ -15,6 +15,7 @@ void jk::beatmap_play_renderer::free_resource() noexcept {
 }
 
 void jk::beatmap_play_renderer::init(beatmap && b, sf::RenderWindow & rw) {
+	mng_.get_list().clear();
 	bp_ = mng_.create<jk::beatmap_player>(b, rw.getSize());
 	rw_ = &rw;
 

@@ -12,6 +12,7 @@ void jk::game_scene::change_renderer() {
 		}
 	} else if (cur_renderer_ == &beatmap_play_) {
 		cur_renderer_ = &map_select_;
+		map_select_.init(rw_);
 	}
 }
 

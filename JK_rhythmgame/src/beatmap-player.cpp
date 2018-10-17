@@ -113,8 +113,8 @@ std::optional<sf::Keyboard::Key> jk::lane_key_map::get_key(unsigned lane) const 
 jk::beatmap_player::beatmap_player(jk::beatmap & b, sf::Vector2u const & resolution) :
 	b_{ std::move(b) }, notes_visible_duration_{ sf::seconds(1.0f) }
 {
-
 	b_.load();
+	b_.get_music().lock()->setPlayingOffset(sf::microseconds(0));
 	lkm_.load_config(".\\setting\\keycfg.json", b_.get_lane_cnt());
 	screen_.create(static_cast<unsigned>(resolution.x * LANE_SIZE.first), static_cast<unsigned>(resolution.y * LANE_SIZE.second));
 	spr_.setTexture(screen_.getTexture());
