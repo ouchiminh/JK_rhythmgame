@@ -126,6 +126,7 @@ void jk::map_select_renderer::buttonSelect_up()
 
 
 	if (musicButtonsItr_ == musicButtons_.begin()) {
+		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//選択先を変更
 		return;
 	}
 	else {
@@ -139,6 +140,7 @@ void jk::map_select_renderer::buttonSelect_up()
 void jk::map_select_renderer::buttonSelect_down()
 {
 	if (musicButtonsItr_ == musicButtons_.end() || musicButtonsItr_+1 == musicButtons_.end()) {
+		(*musicButtonsItr_)->setState(musicButtonState::SELECTED);				//選択先を変更
 		return;
 	}
 	else {
@@ -163,7 +165,7 @@ std::optional<jk::beatmap> jk::map_select_renderer::get_selected() const {
 	if (musicButtonsItr_ == musicButtons_.end()) return std::nullopt;
 	auto bptr = (*musicButtonsItr_)->get_beatmap();
 	return ((*musicButtonsItr_)->getState() == musicButtonState::CLICKED && bptr) ?
-		std::optional<beatmap>(*bptr) :
+		(*musicButtonsItr_)->setState(jk::musicButtonState::NOT_SELECTED), std::optional<beatmap>(*bptr) :
 		std::optional<beatmap>(std::nullopt);
 }
 
