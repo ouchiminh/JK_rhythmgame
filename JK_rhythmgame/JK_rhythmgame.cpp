@@ -12,14 +12,16 @@
 
 //#define ONLY_TEST
 #define NOTEST
-#include "test/test.hpp"
-#include "test/test-beatmap_directory.hpp"
-#include "test/test-beatmap.hpp"
-#include "test/test-aes_utl.hpp"
-#include "test/test-lane_key_map.hpp"
-#include "test/test-color.hpp"
-#include "test/test-beatmap-player.hpp"
-#include "test/test-map_select_renderer.hpp"
+#ifndef NOTEST
+#	include "test/test.hpp"
+#	include "test/test-beatmap_directory.hpp"
+#	include "test/test-beatmap.hpp"
+#	include "test/test-aes_utl.hpp"
+#	include "test/test-lane_key_map.hpp"
+#	include "test/test-color.hpp"
+#	include "test/test-beatmap-player.hpp"
+#	include "test/test-map_select_renderer.hpp"
+#endif
 
 int WINAPI WinMain(
 	HINSTANCE hInstance,      // 現在のインスタンスのハンドル
