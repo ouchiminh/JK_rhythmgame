@@ -91,7 +91,7 @@ jk::SCENEFLAG jk::logo_renderer::operator()() {
 		(double)fade_time.count(), (double)(current_time - (current_pod + fade_time + disp_time)).count());
 
 	logoSpr_[render_idx].setColor(sf::Color{ 255,255,255,alpha });
-	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(bkg_color));
+	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(jk::color::bkg_color));
 	w_->draw(logoSpr_[render_idx], sf::BlendAlpha);
 	w_->display();
 	return SCENEFLAG::RUNNING;
@@ -131,7 +131,7 @@ jk::SCENEFLAG jk::bkg_renderer::operator()() {
 		started_ = true;
 		clock_.restart();
 	}
-	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(bkg_color));
+	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(jk::color::bkg_color));
 	w_->display();
 	return clock_.getElapsedTime() > time_ ? started_ = false, SCENEFLAG::FINISHED : SCENEFLAG::RUNNING;
 }
@@ -149,8 +149,8 @@ jk::SCENEFLAG jk::menu_renderer::operator()() {
 	using namespace std::literals::string_literals;
 	if (scene_flag_ == SCENEFLAG::NOTYET) scene_flag_ = SCENEFLAG::RUNNING;
 	sf::RectangleShape frame(sf::Vector2f((float)w_->getSize().x, (float)w_->getSize().y));
-	frame.setFillColor(jk::color::color_mng::get("Data.bkg_color").value_or(bkg_color));
-	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(bkg_color));
+	frame.setFillColor(jk::color::color_mng::get("Data.bkg_color").value_or(jk::color::bkg_color));
+	w_->clear(jk::color::color_mng::get("Data.bkg_color").value_or(jk::color::bkg_color));
 	frag_.setUniform("t"s, clock_.getElapsedTime().asSeconds());
 	frag_.setUniform("r"s, sf::Glsl::Vec2((float)w_->getSize().x, (float)w_->getSize().y));
 	w_->draw(frame, &frag_);
@@ -183,7 +183,7 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 		pos.y = w.getSize().y * 0.8f;
 		button_title.setCharacterSize(static_cast<unsigned>(w.getSize().y * 0.04));
 		button_title.setPosition(pos);
-		button_title.setFillColor(jk::color::color_mng::get("Data.theme_color").value_or(theme_color));
+		button_title.setFillColor(jk::color::color_mng::get("Data.theme_color").value_or(jk::color::theme_color));
 	}
 	ui_mng_.create<jk::button>(button_title)->handlers_ <<
 		std::make_pair(sf::Event::EventType::MouseButtonPressed, [&](const sf::Event & e, sf::Sprite & s, sf::Text & t, button & b) {

@@ -6,6 +6,7 @@
 #include "ui-component.hpp"
 #include "event-handlers.hpp"
 #include "beatmap.hpp"
+#include "timeKeeper.h"
 #include "continuum-state.hpp"
 
 namespace jk {
@@ -49,6 +50,26 @@ namespace jk {
 		[[nodiscard]] std::optional<sf::Keyboard::Key> get_key(unsigned lane) const noexcept;
 	};
 	
+	class judge_viewer : public sf::Drawable, public sf::Transformable {
+		timeKeeper disp_;
+		sf::Font f_;
+		sf::Text judge_[4];	// perfect, good, ok, miss
+		unsigned current_ = sizeof(judge_) / sizeof(*judge_);
+	public:
+		judge_viewer(sf::Font & f, sf::Vector2u const & res);
+		judge_viewer() = default;
+		void init(sf::Font & f, sf::Vector2u const & res);
+		void init(sf::Vector2u const & res);
+
+		/// <summary>
+		/// CALL ONLY WHEN HIT NOTES
+		/// </summary>
+		/// <param name="score">retval of note::hit</param>
+		void update(float score);
+		void update(std::optional<float> score);
+		void draw(sf::RenderTarget & rt, sf::RenderStates s = sf::RenderStates::Default) const override;
+	};
+
 	class beatmap_player : public ui_component, public sf::Transformable {
 		friend ui_mng;
 
@@ -56,6 +77,7 @@ namespace jk {
 		lane_key_map lkm_;
 		std::map<sf::Keyboard::Key, utl::continuum_state<bool>> key_state_;
 		sf::Time notes_visible_duration_;
+		judge_viewer jv_;
 		sum<float> sum_;
 
 		sf::RenderTexture screen_;

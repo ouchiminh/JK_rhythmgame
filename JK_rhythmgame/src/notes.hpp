@@ -9,6 +9,7 @@ namespace jk {
 		const sf::Time PERFECT_DURATION = sf::milliseconds(19);	// 100%
 		const sf::Time GOOD_DURATION = sf::milliseconds(30);	// 60%
 		const sf::Time OK_DURATION = sf::milliseconds(80);		// 30%
+		const sf::Time ACCEPTABLE = sf::milliseconds(150);		// 0%
 	}
 	class note {
 		std::shared_ptr<sf::Music> music_;

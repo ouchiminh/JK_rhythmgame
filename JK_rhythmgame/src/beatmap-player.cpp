@@ -31,7 +31,7 @@ namespace {
 	constexpr std::pair<double, double> LANE_SIZE = { 80 / 128.0,(51 + 7) / 72.0 };
 	inline namespace bm_screen {
 		constexpr auto LANE_HIT_LEVEL = (51 / 58.0f);
-		constexpr auto NOTE_THICKNESS = 10;
+		constexpr auto NOTE_THICKNESS = 20;
 	}
 
 	constexpr std::pair<double, double> COMBO_DISP_COORD = { (LANE_COORD.first + LANE_SIZE.first + 4) / 128.0, 36 / 72.0 };
@@ -42,6 +42,47 @@ namespace {
 	constexpr auto NOTE_DISP_TIME = 0.8f;	// sec
 	constexpr auto NOTE_SPEED = 1.0f / NOTE_DISP_TIME;	// 1.0を移動距離とした時の速さ(distance/sec)
 }
+
+jk::judge_viewer::judge_viewer(sf::Font & f, sf::Vector2u const & res) {
+	init(f, res);
+}
+
+void jk::judge_viewer::init(sf::Font & f, sf::Vector2u const & res) {
+	std::string str[] = { "PERFECT", "GOOD", "OK", "MISS" };
+	sf::Color cl[] = { sf::Color::Blue, sf::Color::Green, sf::Color::Yellow, sf::Color::Red };
+
+	for (auto i = 0; i < sizeof(judge_) / sizeof(*judge_); i++) {
+		judge_[i].setString(str[i]);
+		judge_[i].setFillColor(cl[i]);
+		judge_[i].setFont(f);
+		jk::adjust_pos(judge_[i], res, jk::ADJUSTFLAG::CENTER, 0u, 0u);
+	}
+	disp_.setDuration(std::chrono::milliseconds(300));
+}
+
+void jk::judge_viewer::init(sf::Vector2u const & res) {
+	f_.loadFromFile(".\\res\\fonts\\meiryo.ttc");
+	init(f_, res);
+}
+
+void jk::judge_viewer::update(float score) {
+	disp_.start();
+	current_ = score >= 1.0 ? 0 :
+		score > .6 ? 1 :
+		score > .3 ? 2 :
+		3;
+}
+
+void jk::judge_viewer::update(std::optional<float> score) {
+	if (score) update(score.value());
+}
+
+void jk::judge_viewer::draw(sf::RenderTarget & rt, sf::RenderStates s) const {
+	if (disp_.isTime() || current_ > sizeof(judge_)/ sizeof(*judge_)) return;
+	s.transform *= getTransform();
+	rt.draw(judge_[current_], s);
+}
+
 
 jk::lane_key_map::lane_key_map(std::filesystem::path && config_file, unsigned lane_cnt) { load_config(std::move(config_file), lane_cnt); }
 
@@ -129,6 +170,7 @@ jk::beatmap_player::beatmap_player(jk::beatmap & b, sf::Vector2u const & resolut
 									  });
 	}
 	for (const auto & i : lkm_) key_state_.emplace(std::make_pair(i.first, utl::continuum_state<bool>(false)));
+	jv_.init(screen_.getSize());
 }
 
 void jk::beatmap_player::draw_notes() {
@@ -137,23 +179,26 @@ void jk::beatmap_player::draw_notes() {
 	auto hit_level = screen_.getSize().y * bm_screen::LANE_HIT_LEVEL;
 	notes.setPrimitiveType(sf::PrimitiveType::Quads);
 	for (auto i = 0u; i < b_.get_lane_cnt(); i++) {
+		auto lane_color = jk::color::color_mng::get("Data.lane_color." + std::to_string(i)).value_or(jk::color::theme_color);
 		auto itr = b_.get_current_note_itr(i);
 		for (; itr != b_.end(i); itr++) {
 			auto y = hit_level - itr->get_time_diff().asSeconds() * NOTE_SPEED * screen_.getSize().y;
+			// 画面外(上方向)は描画しない
 			if (y < -NOTE_THICKNESS) break;
 			// 画面外(下方向)にはみ出たノーツをこれ以降処理しない
-			if (y >= screen_.getSize().y) { b_.forward_note(i); continue; }
+			if (y >= screen_.getSize().y) { b_.forward_note(i); jv_.update(0.); continue; }
 			auto const & hit_line = hit_lines_.at(i);
-			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y }));
-			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y }));
-			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y + NOTE_THICKNESS }));
-			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y + NOTE_THICKNESS }));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y }, lane_color));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y }, lane_color));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x + hit_line.getGlobalBounds().width, y + NOTE_THICKNESS }, lane_color));
+			notes.append(sf::Vertex(sf::Vector2f{ hit_line.getPosition().x, y + NOTE_THICKNESS }, lane_color));
 		}
 	}
 	screen_.draw(notes);
 }
 
 void jk::beatmap_player::lightup_lane() {
+	auto normal_color = jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color);
 	// get pushed key
 	for (auto const & i : lkm_) {
 		if (auto is_key_hit = sf::Keyboard::isKeyPressed(i.first); key_state_.at(i.first) = is_key_hit) {
@@ -165,10 +210,10 @@ void jk::beatmap_player::lightup_lane() {
 				b_.get_current_note(i.second).hit():
 				std::optional<float>(std::nullopt);
 			sum_ += score;
-			if (score)
-				b_.forward_note(i.second);
+			jv_.update(score);
+			score ? b_.forward_note(i.second) : (void)0;
 		} else {
-			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
+			hit_lines_[i.second].setFillColor(normal_color);
 		}
 	}
 	for (auto const & i : hit_lines_) screen_.draw(i);
@@ -179,6 +224,7 @@ void jk::beatmap_player::update() {
 	screen_.clear(jk::color::color_mng::get("Data.lane_color.surface").value_or(jk::color::bkg_color));
 	lightup_lane();
 	draw_notes();
+	jv_.draw(screen_);
 	screen_.display();
 	spr_.setTexture(screen_.getTexture());
 }

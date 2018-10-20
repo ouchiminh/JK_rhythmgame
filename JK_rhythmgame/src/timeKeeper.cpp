@@ -1,4 +1,4 @@
-#include <chrono>
+﻿#include <chrono>
 #include <thread>
 #include "timeKeeper.h"
 
@@ -8,18 +8,16 @@ timeKeeper::timeKeeper(microseconds d) {
 	m_duration = duration_cast<nanoseconds>(d);
 }
 
-void timeKeeper::start() const {
+void timeKeeper::start() {
 	m_lastCalled = steady_clock::now();
 }
 
 
 bool timeKeeper::isTime() const {
-	const bool istime = remainingTime().count() <= 0;
-	if (istime) m_lastCalled = steady_clock::now();
-	return istime;
+	return remainingTime().count() <= 0;
 }
 
-void timeKeeper::sleep() const {
+void timeKeeper::sleep() {
 	auto remaining = remainingTime();
 	if (remaining > nanoseconds(0)) std::this_thread::sleep_for(remaining);
 	m_lastCalled = steady_clock::now();
