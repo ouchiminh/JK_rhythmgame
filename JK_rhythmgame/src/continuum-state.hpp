@@ -17,7 +17,6 @@ namespace jk::utl {
 		bool is_not_continuum(const StateType & state) const;
 
 		StateType get_last() const;
-
 		StateType get_prev() const;
 
 		StateType operator=(const StateType & state);
