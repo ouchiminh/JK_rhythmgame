@@ -21,7 +21,7 @@ namespace jk::utl {
 		StateType get_prev() const;
 
 		StateType operator=(const StateType & state);
-		StateType & operator=(StateType && state);
+		StateType operator=(StateType && state);
 
 		operator StateType() const;
 	};
@@ -70,7 +70,7 @@ namespace jk::utl {
 	}
 
 	template<class StateType>
-	inline StateType & continuum_state<StateType>::operator=(StateType && state) {
+	inline StateType continuum_state<StateType>::operator=(StateType && state) {
 		return *this = state;
 	}
 

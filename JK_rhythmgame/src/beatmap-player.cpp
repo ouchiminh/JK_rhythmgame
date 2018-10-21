@@ -15,12 +15,12 @@ namespace {
 		auto lane_width = component_res / static_cast<float>(total_lane);
 		return static_cast<unsigned>(lane_width * lane + lane_width / 2.0);
 	}
+
 	[[nodiscard]] constexpr unsigned calc_lane_left_xcoord(unsigned lane, unsigned total_lane, unsigned component_res) {
 		auto lane_width = component_res / static_cast<float>(total_lane);
 		return static_cast<unsigned>(lane_width * lane);
 	}
 }
-
 
 namespace {
 	// these coord values is on DISPLAY. not on ui_component
@@ -202,20 +202,18 @@ void jk::beatmap_player::lightup_lane() {
 	auto normal_color = jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color);
 	// get pushed key
 	for (auto const & i : lkm_) {
-		if (auto is_key_hit = sf::Keyboard::isKeyPressed(i.first); key_state_.at(i.first) = is_key_hit) {
-			// レーン光らせる
-			hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
-
-			// notes_に問い合わせ
-			auto score = b_.get_current_note_itr(i.second) != b_.end(i.second) && key_state_.at(i.first).is_not_continuum(true) ?
-				b_.get_current_note(i.second).hit():
-				std::optional<float>(std::nullopt);
-			sum_ += score;
-			jv_.update(score);
-			score ? b_.forward_note(i.second) : (void)0;
-		} else {
+		key_state_.at(i.first) = sf::Keyboard::isKeyPressed(i.first);
+		if (!key_state_.at(i.first)) {
 			hit_lines_[i.second].setFillColor(normal_color);
+			continue;
 		}
+		hit_lines_[i.second].setFillColor(jk::color::color_mng::get("Data.lane_color." + std::to_string(i.second)).value_or(jk::color::theme_color));
+		auto score = b_.get_current_note_itr(i.second) != b_.end(i.second) && key_state_.at(i.first).is_not_continuum(true) ?
+			b_.get_current_note(i.second).hit():
+			std::optional<float>(std::nullopt);
+		sum_ += score;
+		jv_.update(score);
+		score ? b_.forward_note(i.second) : (void)0;
 	}
 	for (auto const & i : hit_lines_) screen_.draw(i);
 }
