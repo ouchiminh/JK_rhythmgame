@@ -9,6 +9,7 @@
 #include "color-manager.hpp"
 #include "sfmlUtl.hpp"
 #include "sfml-button.hpp"
+#include "resource_dic.hpp"
 
 jk::SCENEFLAG jk::mainmenu::render_logo() {
 	jk::SCENEFLAG ret;
@@ -174,9 +175,9 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 	sf::Text button_title;
 	event_handler_t<sf::Sprite&, sf::Text&, button&> eh;
 	eh = ee;
-	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
+	jk::load_from_file<sf::Font>(".\\res\\fonts\\Perfograma.otf");
 	{
-		button_title.setFont(f_);
+		button_title.setFont(jk::font_dictionary.at(".\\res\\fonts\\Perfograma.otf"));
 		button_title.setString("Game Start");
 		jk::adjust_pos(button_title, w, jk::ADJUSTFLAG::HCENTER);
 		auto pos = button_title.getPosition();
@@ -197,7 +198,6 @@ void jk::menu_renderer::init(HMODULE hm, sf::RenderWindow & w) {
 
 void jk::menu_renderer::free_resource() noexcept {
 	std::lock_guard<std::shared_mutex> lg(mtx_);
-	f_ = sf::Font{};
 	ui_mng_.get_list().clear();
 	did_initialized_ = false;
 }

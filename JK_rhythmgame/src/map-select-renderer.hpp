@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <optional>
 #include <filesystem>
@@ -14,7 +14,6 @@ namespace jk {
 	class map_select_renderer : public renderer {
 		sf::RenderWindow* window_;
 		ui_mng components_;
-		sf::Font f_;
 
 		std::vector<std::shared_ptr<musicButton>> musicButtons_;				//���ʑI��{�^��
 		std::vector<std::shared_ptr<musicButton>>::iterator musicButtonsItr_;	//���ʑI��{�^���R���e�i�̃C�e���[�^

@@ -1,9 +1,10 @@
-#include <string>
+﻿#include <string>
 #include "color-manager.hpp"
 #include "exit-scene.hpp"
 #include "sfml-button.hpp"
 #include "button_effect.hpp"
 #include "sfmlUtl.hpp"
+#include "resource_dic.hpp"
 
 inline std::int32_t jk::exit_scene::on_mouse_click(const sf::Event & e, sf::Sprite &, sf::Text &, jk::button & b) {
 	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)) ||
@@ -24,8 +25,9 @@ std::int32_t jk::exit_scene::on_mouse_click_yes(const sf::Event & e, sf::Sprite 
 void jk::exit_scene::finish() {}
 
 void jk::exit_scene::init_ui() {
+	auto f = font_dictionary.at(".\\res\\fonts\\Perfograma.otf");
 	jk::change_color_effect<jk::on_mouse_hover> effect(jk::color::color_mng::get("Data.theme_color").value_or(theme_color), &mtx_);
-	sf::Text button_title[2] = { sf::Text(sf::String("Yes"), f_, 50), sf::Text(sf::String("No"), f_, 50) };
+	sf::Text button_title[2] = { sf::Text(sf::String("Yes"), f, 50), sf::Text(sf::String("No"), f, 50) };
 	for (auto i = 0; i < 2; i++) {
 		auto screen = w_->getSize();
 		screen.x /= 2;
@@ -44,8 +46,8 @@ void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
 	flag_ = jk::SCENEFLAG::RUNNING;
 	if (w_) return;
 	w_ = &w;
-	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
-	verification_message_.setFont(f_);
+	jk::load_from_file<sf::Font>(".\\res\\fonts\\Perfograma.otf");
+	verification_message_.setFont(font_dictionary.at(".\\res\\fonts\\Perfograma.otf"));
 	verification_message_.setString(L"Are you sure you want to exit?");
 	verification_message_.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(str_color));
 	verification_message_.setCharacterSize(80);
@@ -57,7 +59,6 @@ bool jk::exit_scene::free_resource() noexcept {
 	std::lock_guard<decltype(mtx_)> l(mtx_);
 	finish();
 	ui_mng_.get_list().clear();
-	f_ = sf::Font();
 	verification_message_ = sf::Text();
 	w_ = nullptr;
 	return true;

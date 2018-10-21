@@ -52,7 +52,6 @@ namespace jk {
 	
 	class judge_viewer : public sf::Drawable, public sf::Transformable {
 		timeKeeper disp_;
-		sf::Font f_;
 		sf::Text judge_[4];	// perfect, good, ok, miss
 		unsigned current_ = sizeof(judge_) / sizeof(*judge_);
 	public:

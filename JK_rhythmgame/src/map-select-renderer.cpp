@@ -2,6 +2,7 @@
 #include "sfml-button.hpp"
 #include "color-manager.hpp"
 #include "button_effect.hpp"
+#include "resource_dic.hpp"
 #include <iostream>
 
 const sf::Vector2f jk::map_select_renderer::MAINBUTTON_MARGIN = { 0.f, 0.040f };
@@ -23,7 +24,7 @@ void jk::map_select_renderer::init(sf::RenderWindow* window) {
 		}
 	}
 	
-	f_.loadFromFile(".\\res\\fonts\\Perfograma.otf");
+	jk::load_from_file<sf::Font>(".\\res\\fonts\\Perfograma.otf");
 	makeButton();
 
 
@@ -50,7 +51,7 @@ void jk::map_select_renderer::addButton(std::shared_ptr<jk::beatmap_directory> b
 	}
 	//backTitleButtonの設定
 	{
-		sf::Text backTitleName("Back", f_);
+		sf::Text backTitleName("Back", font_dictionary.at(".\\res\\fonts\\Perfograma.otf"));
 		backTitleName.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
 		backTitleButton_ = components_.create<jk::button>(backTitleName);
 		backTitleButton_->set_position(BACKBUTTON_POS * (float)(1920/128));
@@ -71,7 +72,7 @@ const sf::Text jk::map_select_renderer::makeButtonName(const jk::beatmap& b) con
 	name.setString(sname);
 
 	name.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(jk::color::str_color));
-	name.setFont(f_);
+	name.setFont(font_dictionary.at(".\\res\\fonts\\Perfograma.otf"));
 
 	return name;
 }
@@ -185,7 +186,6 @@ std::uint32_t jk::map_select_renderer::input(const sf::Event & e) noexcept
 void jk::map_select_renderer::free_resource() noexcept {
 	window_ = nullptr;
 	components_.get_list().clear();
-	f_ = sf::Font();
 	musicButtons_.clear();
 	musicButtonsItr_ = std::end(musicButtons_);
 	beatDirectories_.clear();

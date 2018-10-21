@@ -52,7 +52,6 @@ namespace jk {
 		std::shared_mutex mtx_;
 		sf::Clock clock_;
 		sf::Shader frag_;
-		sf::Font f_;
 		ui_mng ui_mng_;
 		sf::RenderWindow * w_;
 

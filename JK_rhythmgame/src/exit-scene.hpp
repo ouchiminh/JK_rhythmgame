@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <shared_mutex>
 #include "SFML/Graphics.hpp"
 #include "scene.hpp"
@@ -8,7 +8,6 @@
 namespace jk {
 	class exit_scene : public scene {
 		ui_mng ui_mng_;
-		sf::Font f_;
 		sf::Text verification_message_;
 		std::shared_mutex mtx_;
 		SCENEFLAG flag_;

@@ -8,6 +8,7 @@
 #include "color-manager.hpp"
 #include "scene.hpp"
 #include "sfmlUtl.hpp"
+#include "resource_dic.hpp"
 
 namespace {
 	[[nodiscard]] constexpr unsigned calc_lane_center_xcoord(unsigned lane, unsigned total_lane, unsigned component_res) {
@@ -61,8 +62,8 @@ void jk::judge_viewer::init(sf::Font & f, sf::Vector2u const & res) {
 }
 
 void jk::judge_viewer::init(sf::Vector2u const & res) {
-	f_.loadFromFile(".\\res\\fonts\\meiryo.ttc");
-	init(f_, res);
+	jk::load_from_file<sf::Font>(".\\res\\fonts\\meiryo.ttc");
+	init(font_dictionary.at(".\\res\\fonts\\meiryo.ttc"), res);
 }
 
 void jk::judge_viewer::update(float score) {
