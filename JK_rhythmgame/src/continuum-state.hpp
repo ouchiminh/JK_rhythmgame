@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <utility>
 
 namespace jk::utl {
 	template<class StateType>
@@ -10,19 +11,19 @@ namespace jk::utl {
 		continuum_state() = default;
 		continuum_state(const StateType & initial);
 		
-		bool is_continuum(StateType && state) const;
-		bool is_continuum(const StateType & state) const;
+		[[nodiscard]] bool is_continuum(StateType && state) const;
+		[[nodiscard]] bool is_continuum(const StateType & state) const;
 
-		bool is_not_continuum(StateType && state) const;
-		bool is_not_continuum(const StateType & state) const;
+		[[nodiscard]] bool is_not_continuum(StateType && state) const;
+		[[nodiscard]] bool is_not_continuum(const StateType & state) const;
 
-		StateType get_last() const;
-		StateType get_prev() const;
+		[[nodiscard]] StateType get_last() const;
+		[[nodiscard]] StateType get_prev() const;
 
 		StateType operator=(const StateType & state);
 		StateType operator=(StateType && state);
 
-		operator StateType() const;
+		[[nodiscard]] operator StateType() const;
 	};
 
 
@@ -38,7 +39,7 @@ namespace jk::utl {
 
 	template<class StateType>
 	inline bool continuum_state<StateType>::is_continuum(const StateType & state) const {
-		return states_[0] == states_[1];
+		return states_[1] == state && states_[0] == states_[1];
 	}
 
 	template<class StateType>
