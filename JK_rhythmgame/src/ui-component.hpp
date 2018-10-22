@@ -22,6 +22,13 @@ namespace jk {
 		uint32_t get_retv() const noexcept { return each[1]; }
 		FALLTHROUGH get_fallthrough() const noexcept { return static_cast<FALLTHROUGH>(mini[0]); }
 		bool get_is_processed() const noexcept { return mini[1] ? true : false; }
+
+		result_t(std::uint32_t retval){
+			processed();
+			set_retv(retval);
+			fallthrough();
+		}
+		result_t() = default;
 	};
 
 	class ui_component : public sf::Drawable, public std::enable_shared_from_this<ui_component> {

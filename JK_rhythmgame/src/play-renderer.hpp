@@ -10,6 +10,7 @@ namespace jk {
 		std::shared_ptr<beatmap_player> bp_;
 	public:
 		SCENEFLAG operator()() override;
+		virtual std::uint32_t input(const sf::Event & e);
 		void free_resource() noexcept override;
 		void init(beatmap && b, sf::RenderWindow & rw);
 	};

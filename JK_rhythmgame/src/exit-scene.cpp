@@ -10,7 +10,7 @@ inline std::int32_t jk::exit_scene::on_mouse_click(const sf::Event & e, sf::Spri
 	if (!b.get_rect().contains(sf::Vector2f((float)e.mouseButton.x, (float)e.mouseButton.y)) ||
 		e.mouseButton.button != sf::Mouse::Button::Left)
 		return 0;
-	flag_ = SCENEFLAG::FINISHED;
+	finish();
 	return 0;
 }
 
@@ -22,10 +22,12 @@ std::int32_t jk::exit_scene::on_mouse_click_yes(const sf::Event & e, sf::Sprite 
 	return 0;
 }
 
-void jk::exit_scene::finish() {}
+void jk::exit_scene::finish() {
+	flag_ = SCENEFLAG::FINISHED;
+}
 
 void jk::exit_scene::init_ui() {
-	auto f = font_dictionary.at(".\\res\\fonts\\Perfograma.otf");
+	decltype(auto) f = font_dictionary.at(".\\res\\fonts\\Perfograma.otf");
 	jk::change_color_effect<jk::on_mouse_hover> effect(jk::color::color_mng::get("Data.theme_color").value_or(theme_color), &mtx_);
 	sf::Text button_title[2] = { sf::Text(sf::String("Yes"), f, 50), sf::Text(sf::String("No"), f, 50) };
 	for (auto i = 0; i < 2; i++) {
@@ -41,17 +43,29 @@ void jk::exit_scene::init_ui() {
 	}
 }
 
+std::uint32_t jk::exit_scene::on_key_down(const sf::Event & e) {
+	assert(e.type == sf::Event::EventType::KeyPressed);
+	switch (e.key.code) {
+	case sf::Keyboard::Key::Escape:
+		finish();
+		break;
+	}
+
+	return 0;
+}
+
 void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
 	std::lock_guard<decltype(mtx_)> l(mtx_);
 	flag_ = jk::SCENEFLAG::RUNNING;
 	if (w_) return;
+	handlers_ << std::make_pair(sf::Event::EventType::KeyPressed, [this](const sf::Event & e) { return on_key_down(e); });
 	w_ = &w;
 	jk::load_from_file<sf::Font>(".\\res\\fonts\\Perfograma.otf");
 	verification_message_.setFont(font_dictionary.at(".\\res\\fonts\\Perfograma.otf"));
-	verification_message_.setString(L"Are you sure you want to exit?");
+	verification_message_.setString("Are you sure you want to exit?");
 	verification_message_.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(str_color));
 	verification_message_.setCharacterSize(80);
-	jk::adjust_pos(verification_message_, *w_, jk::ADJUSTFLAG::TOP | jk::ADJUSTFLAG::HCENTER, 0, static_cast<float>(w_->getSize().y * 0.2f));
+	jk::adjust_pos(verification_message_, *w_, jk::ADJUSTFLAG::TOP | jk::ADJUSTFLAG::HCENTER, 0, static_cast<float>(w_->getSize().y * 0.21875f));
 	init_ui();
 }
 
@@ -81,5 +95,6 @@ jk::SCENE_LIST jk::exit_scene::get_next_scene() const noexcept {
 }
 
 void jk::exit_scene::input(const sf::Event & e) noexcept {
-	ui_mng_.event_procedure(e);
+	if(handlers_(e).get_is_processed() == false)
+		ui_mng_.event_procedure(e);
 }

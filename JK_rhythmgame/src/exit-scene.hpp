@@ -8,6 +8,7 @@
 namespace jk {
 	class exit_scene : public scene {
 		ui_mng ui_mng_;
+		event_handlers<> handlers_;
 		sf::Text verification_message_;
 		std::shared_mutex mtx_;
 		SCENEFLAG flag_;
@@ -19,6 +20,9 @@ namespace jk {
 
 		virtual void finish();
 		void init_ui();
+
+		std::uint32_t on_key_down(const sf::Event & e);
+		
 	public:
 		exit_scene() noexcept : w_{ nullptr } {}
 		virtual void init(HMODULE hm, sf::RenderWindow & w);

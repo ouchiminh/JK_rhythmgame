@@ -9,6 +9,14 @@
 #include "timeKeeper.h"
 #include "continuum-state.hpp"
 
+namespace jk::key {
+
+enum KeyAssignableAct : unsigned {
+	LANE_COUNT = jk::MAX_LANE_CNT, PAUSE
+};
+
+}
+
 namespace jk {
 
 	template<class Type>
@@ -89,8 +97,7 @@ namespace jk {
 		void draw_notes();
 		void lightup_lane();
 	public:
-		// this class does not proceed event.
-		// result_t event_procedure(const sf::Event & e) override;
+		result_t event_procedure(const sf::Event & e) override;
 
 		void update() override;
 		void draw(sf::RenderTarget & rt, sf::RenderStates rs = sf::RenderStates::Default) const override;

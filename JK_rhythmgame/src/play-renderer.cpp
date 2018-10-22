@@ -9,6 +9,10 @@ jk::SCENEFLAG jk::beatmap_play_renderer::operator()() {
 		jk::SCENEFLAG::FINISHED : jk::SCENEFLAG::RUNNING;
 }
 
+std::uint32_t jk::beatmap_play_renderer::input(const sf::Event & e) {
+	return mng_.event_procedure(e);
+}
+
 void jk::beatmap_play_renderer::free_resource() noexcept {
 	mng_.get_list().clear();
 	rw_ = nullptr;

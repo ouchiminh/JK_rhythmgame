@@ -218,6 +218,15 @@ void jk::beatmap_player::lightup_lane() {
 	for (auto const & i : hit_lines_) screen_.draw(i);
 }
 
+jk::result_t jk::beatmap_player::event_procedure(const sf::Event & e) {
+	if (e.type != sf::Event::EventType::KeyPressed) return result_t();
+	if (e.key.code == sf::Keyboard::Key::Escape) {
+		b_.get_music().lock()->stop();
+
+	}
+	return 0;
+}
+
 void jk::beatmap_player::update() {
 	if (auto m = b_.get_music().lock()) m->getPlayingOffset();
 	screen_.clear(jk::color::color_mng::get("Data.lane_color.surface").value_or(jk::color::bkg_color));
