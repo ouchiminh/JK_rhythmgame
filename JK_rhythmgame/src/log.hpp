@@ -5,7 +5,8 @@
 #include <vector>
 #include <variant>
 #include <iomanip>
-
+#include <fstream>
+#include <utility>
 
 namespace ouchi::log{
 
@@ -28,7 +29,6 @@ inline std::basic_string<CharT> time() {
 	return time_to_ISO8601(time(NULL));
 }
 
-// TODO:log format指定用関数/クラス
 template<class CharT>
 class msg_element {
 public:
@@ -56,6 +56,7 @@ public:
 	iterator begin();
 	iterator end();
 };
+
 #pragma region "message_format_def"
 template<class CharT>
 inline message_format<CharT> & message_format<CharT>::operator<<(msg_element<CharT> elm) {
@@ -102,5 +103,35 @@ inline msg_element<CharT>::var_t msg_element<CharT>::get_content() const noexcep
 
 #pragma endregion
 
-// TODO:ログ出力クラス
+template<class CharT>
+class default_output {
+	inline static std::basic_ofstream<CharT> file("app.log");
+public:
+	void operator()(std::basic_string_view<CharT> str) { file << str << std::endl; }
+};
+
+/// <summary>
+/// this class writes log.
+/// </summary>
+/// <param name="Func">このクラスの()演算子に渡された文字列が出力されます。</param>
+/// <param name="Args">Funcのコンストラクタに渡す引数。</param>
+template<class CharT, class Func = default_output<CharT>, class ...Args>
+class basic_out {
+	Func f_;
+public:
+	basic_out(Args ...args);
+	
+	void fatal(std::basic_string_view<CharT> msg) noexcept(noexcept(std::declval<Func>()()));
+	void error(std::basic_string_view<CharT> msg) noexcept(noexcept(std::declval<Func>()()));
+	void warn(std::basic_string_view<CharT> msg) noexcept(noexcept(std::declval<Func>()()));
+	void info(std::basic_string_view<CharT> msg) noexcept(noexcept(std::declval<Func>()()));
+	void debug(std::basic_string_view<CharT> msg) noexcept(noexcept(std::declval<Func>()()));
+	void trace(std::basic_string_view<CharT> msg) noexcept(noexcept(std::declval<Func>()()));
+
+	message_format<CharT> format_;
+};
+
+template<class CharT, class Func, class ...Args>
+inline basic_out<CharT, Func, Args...>::basic_out(Args ...args) : f_(args...) {}
+
 } // jk::log
