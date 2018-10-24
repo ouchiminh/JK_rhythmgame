@@ -6,6 +6,7 @@
 #include <variant>
 #include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <utility>
 
 namespace ouchi::log{
@@ -18,7 +19,7 @@ struct Msg {}msg;
 struct Category{}cat;
 
 struct Time{}time;
-}
+}// msg_elem_types
 
 template<typename CHAR_T>
 inline std::basic_string<CHAR_T> time_to_ISO8601(time_t gmt) {
@@ -39,9 +40,10 @@ inline std::basic_string<CharT> time_to_ISO8601() {
 template<class CharT>
 class msg_element {
 public:
-	typedef std::variant<std::basic_string<CharT>, Msg, Category, Time> var_t;
+	typedef std::variant<std::basic_string<CharT>, CharT, Msg, Category, Time> var_t;
 	msg_element(std::basic_string<CharT> const & str) : content_(str) {}
 	msg_element(std::basic_string<CharT> && str) : content_(str) {}
+	msg_element(CharT c) : content_(c) {}
 	msg_element(Msg & m) : content_(m) {}
 	msg_element(Category & c) : content_(c) {}
 	msg_element(Time & t) : content_(t) {}
@@ -59,7 +61,7 @@ class message_format {
 
 public:
 	message_format<CharT> & operator<<(msg_element<CharT> elm);
-	message_format<CharT> & operator<<(std::basic_string_view<CharT> str);
+	message_format<CharT> & operator<<(CharT c);
 
 	void clear() noexcept {
 		format_.clear();
@@ -82,8 +84,8 @@ inline message_format<CharT> & message_format<CharT>::operator<<(msg_element<Cha
 }
 
 template<class CharT>
-inline message_format<CharT>& message_format<CharT>::operator<<(std::basic_string_view<CharT> str) {
-	format_.emplace_back(str);
+inline message_format<CharT>& message_format<CharT>::operator<<(CharT c) {
+	format_.emplace_back(c);
 	return *this;
 }
 
@@ -129,16 +131,19 @@ public:
 	message_format<CharT> format_;
 };
 
+#pragma region "basic_out def"
+
 template<class CharT, class Func, class ...Args>
 inline void basic_out<CharT, Func, Args...>::out(cat_v c, std::basic_string_view<CharT> msg) {
 	std::basic_string<CharT> str;
 	for (msg_element<CharT> const & i : format_) 
 		std::visit(
 			overloaded{
-				[&str](Time) {str.append(time_to_ISO8601<CharT>()); },
-				[&](Category) {std::basic_string<CharT> result; for (auto const & i : category_str[(unsigned)c]) result.push_back(std::basic_ofstream<CharT>().widen(i)); str.append(result); },
+				[&str](Time) { str.append(time_to_ISO8601<CharT>()); },
+				[&](Category) { std::basic_string<CharT> result; for (auto const & i : category_str[(unsigned)c]) { if (i == '\0') break; result.push_back(std::basic_ofstream<CharT>().widen(i)); } str.append(result); },
 				[&msg, &str](Msg) { str.append(msg); },
-				[&str](std::basic_string<CharT> const & arg) { str.append(arg); }
+				[&str](std::basic_string<CharT> const & arg) { str.append(arg); },
+				[&str](CharT c) { str.push_back(c); }
 			},
 			i.get_content()
 		);
@@ -147,12 +152,27 @@ inline void basic_out<CharT, Func, Args...>::out(cat_v c, std::basic_string_view
 }
 
 template<class CharT, class Func, class ...Args>
-inline basic_out<CharT, Func, Args...>::basic_out(Args ...args) : f_(args...) {}
+inline basic_out<CharT, Func, Args...>::basic_out(Args ...args) : f_(args...) {
+	std::basic_ostringstream<CharT> ss;
+	format_ << cat << ss.widen(' ') << msg << ss.widen(' ') << time;
+}
 
 template<class CharT, class Func, class ...Args>
 inline basic_out<CharT, Func, Args...> & basic_out<CharT, Func, Args...>::fatal(std::basic_string_view<CharT> msg) {
 	out(cat_v::fatal, msg);
 	return *this;
 }
+
+#pragma endregion
+
+#pragma region "log out utl macro"
+
+#define LOG_WITH_FILEINFO(writer, msg)	do{\
+	std::basic_stringstream<char> ss;\
+	ss << msg << '@' << __FILE__ << ':' << __LINE__;\
+	writer(ss.str());\
+}while(false)
+
+#pragma endregion
 
 } // jk::log
