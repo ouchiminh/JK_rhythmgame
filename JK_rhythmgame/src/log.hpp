@@ -117,6 +117,7 @@ class basic_out {
 		"[FATAL]", "[ERROR]", "[WARN]", "[INFO]", "[DEBUG]", "[TRACE]"
 	};
 	Func f_;
+	message_format<CharT> format_;
 
 	void out(cat_v c, std::basic_string_view<CharT> msg);
 	// ビジターのためのヘルパー型。
@@ -128,7 +129,7 @@ public:
 	using self_t = basic_out<CharT, Func, Args...>;
 	basic_out<CharT, Func, Args...> & fatal(std::basic_string_view<CharT> msg);
 
-	message_format<CharT> format_;
+	message_format<CharT> & reset_format();
 };
 
 #pragma region "basic_out def"
@@ -154,13 +155,19 @@ inline void basic_out<CharT, Func, Args...>::out(cat_v c, std::basic_string_view
 template<class CharT, class Func, class ...Args>
 inline basic_out<CharT, Func, Args...>::basic_out(Args ...args) : f_(args...) {
 	std::basic_ostringstream<CharT> ss;
-	format_ << cat << ss.widen(' ') << msg << ss.widen(' ') << time;
+	format_ << time << ss.widen(' ') << cat << ss.widen(' ') << msg;
 }
 
 template<class CharT, class Func, class ...Args>
 inline basic_out<CharT, Func, Args...> & basic_out<CharT, Func, Args...>::fatal(std::basic_string_view<CharT> msg) {
 	out(cat_v::fatal, msg);
 	return *this;
+}
+
+template<class CharT, class Func, class ...Args>
+inline message_format<CharT>& basic_out<CharT, Func, Args...>::reset_format() {
+	format_.clear();
+	return format_;
 }
 
 #pragma endregion
