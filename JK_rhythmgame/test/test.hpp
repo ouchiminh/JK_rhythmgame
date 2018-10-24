@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <list>
 #include <string>
 #include <iostream>
@@ -19,13 +19,16 @@ namespace jk::test {
 			for (auto & i : test_list_) {
 				try { (*i)(); }
 				catch (std::exception & e) {
-					r << util::FatalLog<char>(i->name_ + "detected unhandled exception! : "s + std::string(e.what()));
+					r << util::FatalLog<char>(i->name_ + " detected unhandled exception! : "s + std::string(e.what()));
 				} catch (...) {
 					r << util::FatalLog<char>(i->name_ + " failed. unhandled exception!");
 				}
 			}
 		}
-		~test_base() = default;
+		virtual ~test_base() {
+			auto itr = std::find(std::begin(test_list_), std::end(test_list_), this);
+			test_list_.erase(itr);
+		}
 	};
 
 }

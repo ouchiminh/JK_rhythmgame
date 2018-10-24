@@ -5,7 +5,7 @@
 
 namespace jk {
 
-inline std::unordered_map<std::string, sf::Font> font_dictionary;
+extern std::unordered_map<std::string, sf::Font> font_dictionary;
 
 template<class SFML_Resource>
 inline void load_from_file(std::string && path) { }
