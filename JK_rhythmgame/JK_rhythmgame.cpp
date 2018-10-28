@@ -1,5 +1,5 @@
 ﻿#ifndef NOMINMAX
-#define NOMINMAX
+#	define NOMINMAX
 #endif
 #include <Windows.h>
 #include <stdlib.h>
@@ -15,14 +15,14 @@
 //#define NOTEST
 #ifndef NOTEST
 #	include "test/test.hpp"
-//#	include "test/test-beatmap_directory.hpp"
-//#	include "test/test-beatmap.hpp"
-//#	include "test/test-aes_utl.hpp"
-//#	include "test/test-lane_key_map.hpp"
-//#	include "test/test-color.hpp"
+#	include "test/test-beatmap_directory.hpp"
+#	include "test/test-beatmap.hpp"
+#	include "test/test-aes_utl.hpp"
+#	include "test/test-lane_key_map.hpp"
+#	include "test/test-color.hpp"
 //#	include "test/test-beatmap-player.hpp"
 //#	include "test/test-map_select_renderer.hpp"
-#	include "test/test_ouchi-log.h"
+#	include "test/test_ouchi-log.hpp"
 #endif
 
 int WINAPI WinMain(

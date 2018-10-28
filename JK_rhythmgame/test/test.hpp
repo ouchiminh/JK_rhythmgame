@@ -96,12 +96,12 @@ namespace jk::test {
 #define CHECK_EQUAL(expr, value) CHECK_TRUE((expr) == (value))
 
 #define DEFINE_TEST(test_name) \
+namespace test{\
 class test_name : public ::jk::test::test_base{\
 public:\
 	test_name() : test_base(#test_name) {test_list_.push_back(this);}\
 	void operator()() override;\
 };\
-namespace {\
-	test_name test_name ## _instance;\
+test_name test_name ## _instance;\
 }\
-inline void test_name::operator()()
+inline void test:: test_name::operator()()
