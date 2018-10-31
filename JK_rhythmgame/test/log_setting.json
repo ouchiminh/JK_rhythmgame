@@ -1,0 +1,6 @@
+﻿{
+	"setting":
+	[
+		{"file":"./log/app.log", "upper":5, "lower":3}
+	]
+}

@@ -13,7 +13,30 @@
 
 namespace ouchi::log{
 
-inline auto default_out = [](std::string_view str){std::clog << str << std::endl; };
+inline auto default_out = [](std::string_view str) { std::clog << str << std::endl; };
+
+template<class CharT>
+class out_func {
+	inline static std::map<std::string, std::basic_ofstream<CharT>> files_;
+	std::string my_file_;
+
+	void open_file() {
+		if (files_.count(my_file_)) return;
+		files_.insert_or_assign(my_file_, std::basic_ofstream<CharT>(my_file_));
+	}
+public:
+	out_func(std::string && filename) : my_file_(std::move(filename)) { open_file(); }
+	out_func(std::string const & filename) : my_file_(filename) { open_file(); }
+	out_func() = default;
+	void set(std::string_view str) {
+		my_file_ = str;
+		open_file();
+	}
+
+	void operator() (std::basic_string_view<CharT> str) {
+		files_.at(my_file_) << str << std::endl;
+	}
+};
 
 /// <summary>
 /// this class writes log.
@@ -34,7 +57,7 @@ class basic_out {
 	template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;
 
 public:
-	basic_out(Func && func) : f_(std::forward<Func>(func)) {
+	basic_out(Func && func = default_out) : f_(std::forward<Func>(func)) {
 		std::basic_ostringstream<CharT> ss;
 		format_ << time << ss.widen(' ') << cat << ss.widen(' ') << msg;
 	}
