@@ -40,7 +40,7 @@ namespace {
 }
 
 namespace {
-	constexpr auto NOTE_DISP_TIME = 0.8f;	// sec
+	constexpr auto NOTE_DISP_TIME = 1.5f;	// sec
 	constexpr auto NOTE_SPEED = 1.0f / NOTE_DISP_TIME;	// 1.0を移動距離とした時の速さ(distance/sec)
 }
 

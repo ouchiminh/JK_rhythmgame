@@ -11,8 +11,8 @@
 #include "src/timeKeeper.h"
 #include "src/resource_dic.hpp"
 
-#define ONLY_TEST
-//#define NOTEST
+//#define ONLY_TEST
+#define NOTEST
 #ifndef NOTEST
 #	include "test/test.hpp"
 #	include "test/test-beatmap_directory.hpp"

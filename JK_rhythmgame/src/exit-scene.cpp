@@ -64,7 +64,7 @@ void jk::exit_scene::init(HMODULE hm, sf::RenderWindow & w) {
 	verification_message_.setFont(font_dictionary.at(".\\res\\fonts\\Perfograma.otf"));
 	verification_message_.setString("Are you sure you want to exit?");
 	verification_message_.setFillColor(jk::color::color_mng::get("Data.str_color").value_or(str_color));
-	verification_message_.setCharacterSize(80);
+	verification_message_.setCharacterSize(70);
 	jk::adjust_pos(verification_message_, *w_, jk::ADJUSTFLAG::TOP | jk::ADJUSTFLAG::HCENTER, 0, static_cast<float>(w_->getSize().y * 0.21875f));
 	init_ui();
 }

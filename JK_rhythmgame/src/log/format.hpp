@@ -6,6 +6,7 @@
 #include <variant>
 #include <iomanip>
 #include <fstream>
+#include <algorithm>
 
 
 namespace ouchi::log {
